@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.7.1)  6 OCT 2024 16:41
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.7.1)  6 OCT 2024 18:41
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -273,41 +273,37 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 \openout4 = `proposal.toc'.
 
  [2]
-Underfull \hbox (badness 10000) in paragraph at lines 64--65
+Underfull \hbox (badness 10000) in paragraph at lines 65--66
 
  []
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 66.
+(Font)              <7> on input line 68.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 66.
+(Font)              <5> on input line 68.
 [3]
 <../Use_Case_Diagram.png, id=54, 851.18pt x 693.59125pt>
 File: ../Use_Case_Diagram.png Graphic file (type png)
 <use ../Use_Case_Diagram.png>
-Package pdftex.def Info: ../Use_Case_Diagram.png  used on input line 83.
-(pdftex.def)             Requested size: 271.7857pt x 210.1533pt.
-File: ../Use_Case_Diagram.png Graphic file (type png)
-<use ../Use_Case_Diagram.png>
-Package pdftex.def Info: ../Use_Case_Diagram.png  used on input line 88.
+Package pdftex.def Info: ../Use_Case_Diagram.png  used on input line 87.
 (pdftex.def)             Requested size: 271.7857pt x 210.1533pt.
  [4 <../Use_Case_Diagram.png>] (./proposal.aux)
 Package rerunfilecheck Info: File `proposal.out' has not changed.
 (rerunfilecheck)             Checksum: 31E851466387506F87D93FB72FA1CA4F;751.
  ) 
 Here is how much of TeX's memory you used:
- 8641 strings out of 478287
- 136306 string characters out of 5849290
- 438277 words of memory out of 5000000
+ 8640 strings out of 478287
+ 136298 string characters out of 5849290
+ 437305 words of memory out of 5000000
  26738 multiletter control sequences out of 15000+600000
  474157 words of font info for 44 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  60i,8n,63p,293b,322s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on proposal.pdf (4 pages, 154101 bytes).
+Output written on proposal.pdf (4 pages, 155107 bytes).
 PDF statistics:
- 96 PDF objects out of 1000 (max. 8388607)
- 75 compressed objects within 1 object stream
- 14 named destinations out of 1000 (max. 500000)
+ 95 PDF objects out of 1000 (max. 8388607)
+ 74 compressed objects within 1 object stream
+ 13 named destinations out of 1000 (max. 500000)
  54 words of extra memory for PDF output out of 10000 (max. 10000000)
 

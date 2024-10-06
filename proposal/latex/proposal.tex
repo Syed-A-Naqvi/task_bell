@@ -7,9 +7,9 @@
 % Create title page
 \title{\vspace*{100pt}CSCI4100U: Mobile Devices \\ \underline{Project Proposal} \vspace*{30pt}}
 \author{
-    Syed Naqvi \\ 
-    Brendan Murray \\ 
-    Evan Goldenberg
+    Syed Naqvi 100590852\\ 
+    Brendan Murray 100825624\\ 
+    Evan Goldenberg 100826897
     \vspace*{30pt}
 }
 \date{\today}
@@ -38,7 +38,8 @@ This section outlines the key features and functionalities of the proposed mobil
     Individual groups or alarms can optionally be set to 'inheritance blocking mode' making them immune from any propagated settings.
 
     \item \textbf{Date/Time - Based Recurrence Settings:}\\The user will be able to set recurrence patterns for their alarms/groups based on
-    calendar dates and times of the day.
+    calendar dates and times of the day. There will also be the inclusion of a relative adjustment feature that can shift all times based on
+    the time of the first alarm/timer of the group.
 
     \item \textbf{Location - Based Recurrence Settings:}\\The user can choose to make their alarms/groups recur based on their location.
     
@@ -63,13 +64,16 @@ The app will be built using the following technologies:
 \section{Work Distribution}
 The planned workload distribution is as follows:\\
 
-\begin{tabular}{|p{3cm}|p{4cm}|p{7cm}|}
+\renewcommand{\arraystretch}{1.5} % Increase row height
+\begin{tabular}{|p{3cm}|p{8cm}|}
     \hline
-    \textbf{Team Member} & \textbf{Task} & \textbf{Description} \\
+    \textbf{Team Member} & \textbf{Task} \\
     \hline
-    Syed Naqvi        & [Task] & [Description] \\
-    Evan Goldenberg   & [Task] & [Description] \\
-    Brendan Murray    & [Task] & [Description] \\
+    Syed Naqvi        & Location Based Recurrence and Disabling Tasks \\
+    \hline
+    Evan Goldenberg   & Timer/Stopwatch and Data/Time Recurrence \\
+    \hline
+    Brendan Murray    & Alarm Grouping and Date/Time Recurrence \\
     \hline
 \end{tabular}
 
@@ -83,11 +87,6 @@ The following UML diagrams are intended to provide an overview of the applicatio
     \includegraphics[width=0.6\textwidth, height=0.3\textheight]{../Use_Case_Diagram.png}
     \caption{Use Case Diagram}
 \end{figure}
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.6\textwidth, height=0.3\textheight]{../Use_Case_Diagram.png}
-    \caption{Design Class Diagram}
-\end{figure}1
 
 \section{Mockup User Interface}
 This is a rough overview of the proposed user-interface:
