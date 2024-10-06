@@ -1,4 +1,4 @@
-## Mobile_Alarm_System
+## Task Bell - Mobile Alarm System
 
 An effective local alarm system for shift workers and busy individuals.
 
