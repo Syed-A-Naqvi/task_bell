@@ -26,7 +26,7 @@
 
 \section{Overview}
 The purpose of this document is to propose the development of a mobile application titled \textbf{Task Bell}.
-This app offers an effective and local solution for shift-workers as well as individuals requiring multitasking
+This app offers an effective solution for shift-workers and individuals requiring multitasking
 or productivity management assistance.
 
 \section{Core Features}
@@ -35,7 +35,7 @@ This section outlines the key features and functionalities of the proposed mobil
     
     \item \textbf{Alarm Grouping:}\\The ability to create a hierarchical alarm grouping structure, similar to a directory tree,
     that can be used to set multiple alarms at once. Settings of a parent group can be applied locally or propagated to all child groups.
-    Individual groups or alarms can optionally be set to 'inheritance blocking mode' making them immune from any propagated settings.
+    Individual groups or alarms can optionally be set to "inheritance blocking mode" making them immune from any propagated settings.
 
     \item \textbf{Date/Time - Based Recurrence Settings:}\\The user will be able to set recurrence patterns for their alarms/groups based on
     calendar dates and times of the day. There will also be the inclusion of a relative adjustment feature that can shift all times based on
@@ -49,6 +49,11 @@ This section outlines the key features and functionalities of the proposed mobil
     \item \textbf{Timer/Stopwatch Support:}\\The app will allow standard stopwatch and timer support including multiple stopwatches and/or
     timers running simultaneously.
 
+    \item \textbf{Basic Functional Requirements:}\\The user's saved alarms/groups as well as the associated recurrence settings (both data/time and location based)
+    will require both local and cloud databases for storage and device synchronization. Location based recurrence will involve geolocation and http requests.
+    The app will contain multiple screens for stopwatches, alarms and timers while utilizing dialogs/pickers and snack bars for interacting with and modifying alarms.
+    Notifications will be heavily leveraged for upcoming alarms and active alarms.
+
 \end{itemize}
 
 \section{Technical Specifications}
@@ -61,35 +66,45 @@ The app will be built using the following technologies:
     \item \textbf{APIs:} Fused Location Provider API, Google Maps Android API, Geofencing API, Dart:Core - DateTime API
 \end{itemize}
 
+\newpage
+
 \section{Work Distribution}
+
 The planned workload distribution is as follows:\\
 
 \renewcommand{\arraystretch}{1.5} % Increase row height
-\begin{tabular}{|p{3cm}|p{8cm}|}
+\begin{tabular}{|p{3cm}|p{10cm}|}
     \hline
     \textbf{Team Member} & \textbf{Task} \\
     \hline
-    Syed Naqvi        & Location Based Recurrence and Disabling Tasks \\
+    Syed Naqvi        & - Back-end for location-based recurrence and disabling tasks\\
+                      & - Front-end/UI design\\
     \hline
-    Evan Goldenberg   & Timer/Stopwatch and Data/Time Recurrence \\
+    Evan Goldenberg   & - Back-end for timer/stopwatch and date/time recurrence\\
+                      & - Date/time UI as applies\\
     \hline
-    Brendan Murray    & Alarm Grouping and Date/Time Recurrence \\
+    Brendan Murray    & - Back-end for alarm grouping and date/time recurrence\\
+                      & - Date/time UI as applies\\
     \hline
 \end{tabular}
 
-\newpage
-
-\section{UML Diagrams}
-The following UML diagrams are intended to provide an overview of the application design:
+\section{Application Design}
+The following UML diagram is intended to provide an overview of application usage:
 % Add an image
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.6\textwidth, height=0.3\textheight]{../Use_Case_Diagram.png}
+    \includegraphics[width=0.8\textwidth, height=0.4\textheight]{../Use_Case_Diagram.png}
     \caption{Use Case Diagram}
 \end{figure}
 
-\section{Mockup User Interface}
-This is a rough overview of the proposed user-interface:
+\newpage
 
+\section{Mockup User Interface}
+Initial user-interface design:
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth, height=0.4\textheight]{../UI_mockup.png}
+    \caption{UI Mockup}
+\end{figure}
 
 \end{document}
