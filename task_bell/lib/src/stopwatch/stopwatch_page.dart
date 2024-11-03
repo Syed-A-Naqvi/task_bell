@@ -147,8 +147,8 @@ class _StopwatchPageState extends State<StopwatchPage> {
                       lapTextColor = Colors.red;
                     }
                     return ListTile(
-                      title: Text('Lap ${laps.length - index}'),
-                      trailing: Text('$minutes:$seconds.$milliseconds', style: TextStyle(color: lapTextColor)),
+                      title: Text('Lap ${laps.length - index}', style: TextStyle(color: lapTextColor, fontSize: 16)),
+                      trailing: Text('$minutes:$seconds.$milliseconds', style: TextStyle(color: lapTextColor, fontSize: 16)),
                     );
                   },
                 );
