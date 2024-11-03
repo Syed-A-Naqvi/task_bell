@@ -6,9 +6,11 @@ import 'sample_feature/sample_item_details_view.dart';
 import 'sample_feature/sample_item_list_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
+import 'alarm_clock/alarm_clock_page.dart';
+import 'timer/timer_page.dart';
+import 'stopwatch/stopwatch_page.dart';
 
-/// The Widget that configures your application.
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({
     super.key,
     required this.settingsController,
@@ -17,15 +19,42 @@ class MyApp extends StatelessWidget {
   final SettingsController settingsController;
 
   @override
+  MyAppState createState() => MyAppState();
+}
+
+
+/// The Widget that configures your application.
+class MyAppState extends State<MyApp> {
+
+  int _selectedIndex = 0;
+
+  static const List<Widget> _pages = <Widget>[
+    AlarmClockPage(),
+    TimerPage(),
+    StopwatchPage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Glue the SettingsController to the MaterialApp.
     //
     // The ListenableBuilder Widget listens to the SettingsController for changes.
     // Whenever the user updates their settings, the MaterialApp is rebuilt.
     return ListenableBuilder(
-      listenable: settingsController,
+      listenable: widget.settingsController,
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
+
+          // Turning the red debug banner off (default is true)
+          // I don't want to see the red debug banner in the top right corner
+          debugShowCheckedModeBanner: false,
+
           // Providing a restorationScopeId allows the Navigator built by the
           // MaterialApp to restore the navigation stack when a user leaves and
           // returns to the app after it has been killed while running in the
@@ -58,7 +87,29 @@ class MyApp extends StatelessWidget {
           // SettingsController to display the correct theme.
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
-          themeMode: settingsController.themeMode,
+          themeMode: widget.settingsController.themeMode,
+
+          home: Scaffold(
+            body: _pages[_selectedIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.alarm),
+                  label: 'Alarm Clock',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.timer),
+                  label: 'Timer',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.timer),
+                  label: 'Stopwatch',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+            ),
+          ),
 
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
@@ -68,7 +119,7 @@ class MyApp extends StatelessWidget {
               builder: (BuildContext context) {
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
-                    return SettingsView(controller: settingsController);
+                    return SettingsView(controller: widget.settingsController);
                   case SampleItemDetailsView.routeName:
                     return const SampleItemDetailsView();
                   case SampleItemListView.routeName:
