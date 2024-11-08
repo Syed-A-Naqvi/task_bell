@@ -2,6 +2,7 @@ import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
 import '../alarm/alarm_folder.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class AlarmClockPage extends StatefulWidget {
   const AlarmClockPage({super.key});
@@ -15,9 +16,29 @@ class _AlarmClockPageState extends State<AlarmClockPage> {
 
   AlarmFolder defaultFolder = AlarmFolder(
     id: "0",
-    name: "default",
+    name: "/",
     position: 0,
   );
+
+  SpeedDial _buildSpeedDial() {
+    return SpeedDial(
+      icon: Icons.add,
+      activeIcon: Icons.close,
+      visible: true,
+      children: [
+        SpeedDialChild(
+          child: Icon(Icons.access_alarm),
+          onTap: () {debugPrint("alarm pressed"); },
+          label: "new alarm",
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.folder),
+          onTap: () {debugPrint("folder pressed"); },
+          label: "new folder",
+        ),
+      ]
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,16 +54,8 @@ class _AlarmClockPageState extends State<AlarmClockPage> {
           ),
         ],
       ),
-      // body: Center(
-      //   // child: Text('Alarm Clock Page'),
-      //   child: 
-      // ),
       body: defaultFolder,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async { debugPrint("stopall"); await Alarm.stopAll(); },
-        tooltip: "New Alarm",
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: _buildSpeedDial(),
     );
   }
 }

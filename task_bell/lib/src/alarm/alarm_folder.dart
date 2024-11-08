@@ -41,6 +41,8 @@ class _AlarmFolderState extends State<AlarmFolder> {
 
   bool _expanded = false;
 
+  // TabController _tabController = 
+
   Icon icon = const Icon(Icons.expand_less);
 
   void _toggleExpansion() {
@@ -48,6 +50,56 @@ class _AlarmFolderState extends State<AlarmFolder> {
     icon = !_expanded ? const Icon(Icons.expand_less) : const Icon(Icons.expand_more);
     setState((){});
   }
+
+  void addNewAlarmFolder() {
+    // showDialog(context: context, builder: (context) => Dialog(
+    //   child: DefaultTabController(
+    //     length: 2, 
+    //     initialIndex: 0,
+    //     child: child)
+    // ));
+    showDialog(
+      context: context,
+      builder: (context) => DefaultTabController(
+        length: 2,
+        child: Dialog(
+          child: SizedBox(
+            width: 200,
+            height: 200,
+            child: Column(
+              children: [
+                Expanded(child: _buildTabBar(context)),
+                Expanded(child: _buildTabView()),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+
+  }
+
+  Widget _buildTabBar(BuildContext context) {
+  return const TabBar(
+    tabs: [
+      Tab(icon: Icon(Icons.alarm)),
+      Tab(icon: Icon(Icons.folder)),
+    ],
+  );
+}
+
+Widget _buildTabView() {
+  return const TabBarView(
+    children: [
+      // Create Alarm
+      Text("Create Alarm"),
+
+      // Create Folder
+      Text("Create Folder")
+    ],
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -65,31 +117,8 @@ class _AlarmFolderState extends State<AlarmFolder> {
             Text(widget.name),
             IconButton(
               icon: const Icon(Icons.add),
-              onPressed: () {
-                widget.alarms.add(
-                  AlarmInstance(
-                    name: "Sample Alarm",
-                    alarmSettings: AlarmSettings(
-                      id: DateTime.now().millisecondsSinceEpoch % 2147483647, 
-                      dateTime: DateTime.now(), 
-                      assetAudioPath: "", 
-                      notificationSettings: const NotificationSettings(
-                        title: 'This is the title',
-                        body: 'This is the body',
-                        stopButton: 'Stop the alarm',
-                        icon: 'notification_icon',
-                      ),
-                    ),
-                  )
-                );
-                setState((){});
-              }
-            ),
-            IconButton(
-              icon: const Icon(Icons.abc),
-              onPressed: () {
-                widget.subfolders.add(AlarmFolder(id: "abc", name: "testname", position: 1));
-              }
+              onPressed: addNewAlarmFolder,
+                
             ),
             Expanded(child: Container()),
             const Padding(
