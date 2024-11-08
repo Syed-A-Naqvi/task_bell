@@ -59,6 +59,8 @@ class _AlarmFolderState extends State<AlarmFolder> {
       showDialog(context: context, builder: (context) => const AlertDialog(
         title: Text("Invalid name"),
       ));
+
+      return;
     }
 
     widget.alarms.add(AlarmInstance(
@@ -91,6 +93,8 @@ class _AlarmFolderState extends State<AlarmFolder> {
       showDialog(context: context, builder: (context) => const AlertDialog(
         title: Text("Invalid name"),
       ));
+
+      return;
     }
 
     AlarmFolder subFolder = AlarmFolder(
@@ -152,7 +156,9 @@ final TextEditingController _alarmTimeController = TextEditingController();
     child: TabBarView(
     children: [
       Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text("Create alarm for ${widget.name}"),
           Row(
             children: [
               Expanded(
@@ -194,7 +200,9 @@ final TextEditingController _alarmTimeController = TextEditingController();
 
       // Create Folder
       Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text("Create folder for ${widget.name}"),
           Row(
             children: [
               Expanded(
