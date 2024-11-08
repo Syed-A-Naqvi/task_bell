@@ -16,7 +16,7 @@ class _AlarmClockPageState extends State<AlarmClockPage> {
 
   AlarmFolder defaultFolder = AlarmFolder(
     id: "0",
-    name: "/",
+    name: "default",
     position: 0,
   );
 
@@ -33,7 +33,7 @@ class _AlarmClockPageState extends State<AlarmClockPage> {
         ),
         SpeedDialChild(
           child: Icon(Icons.folder),
-          onTap: () {debugPrint("folder pressed"); },
+          onTap: () { debugPrint(defaultFolder.subfolders.toList().toString()); },
           label: "new folder",
         ),
       ]
