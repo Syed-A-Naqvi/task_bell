@@ -1,5 +1,6 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../settings/settings_view.dart';
 import 'package:collection/collection.dart';
 
@@ -58,23 +59,41 @@ class _AlarmFolderState extends State<AlarmFolder> {
     //     initialIndex: 0,
     //     child: child)
     // ));
+    // showDialog(
+    //   context: context,
+    //   builder: (context) => DefaultTabController(
+    //     length: 2,
+    //     child: Dialog(
+    //       child: Container(
+    //         // width: 200,
+    //         // height: 340,
+    //         // child: Column(
+    //         //   children: [
+    //         //     // Expanded(child: _buildTabBar(context)),
+    //         //     // Expanded(child: _buildTabView()),
+    //         //   _buildTabBar(context),
+    //         //   _buildTabView(),
+    //         //   ],
+    //         // ),
+    //         child: _buildTabBar(context),
+    //       ),
+    //     ),
+    //   ),
+    // );
     showDialog(
       context: context,
-      builder: (context) => DefaultTabController(
-        length: 2,
-        child: Dialog(
-          child: SizedBox(
-            width: 200,
-            height: 200,
-            child: Column(
-              children: [
-                Expanded(child: _buildTabBar(context)),
-                Expanded(child: _buildTabView()),
-              ],
-            ),
-          ),
-        ),
-      ),
+      builder: (context) => Dialog(
+        child: DefaultTabController(
+          length: 2,
+          // child: _buildTabBar(context)
+          child: Column(
+            children: [
+              _buildTabBar(context),
+              _buildTabView()
+            ],
+          )
+        )
+      )
     );
 
 
@@ -89,14 +108,76 @@ class _AlarmFolderState extends State<AlarmFolder> {
   );
 }
 
+final TextEditingController _alarmNameController = TextEditingController();
+final TextEditingController _alarmTimeController = TextEditingController();
+
 Widget _buildTabView() {
-  return const TabBarView(
+  
+  if (true) {
+    return const SizedBox(
+      height: 100,
+      child: TabBarView(
+        children: [
+          Text("3"),
+          Text("2")
+        ],
+      )
+    );
+  }
+
+  return TabBarView(
     children: [
       // Create Alarm
-      Text("Create Alarm"),
+      // SizedBox(
+      //   width: 100,
+      //   height: 100,
+      //   child: Text("Create Alarm :0"),
+      // ),
+      Column(
+        children: [
+          Text("Create Alarm?"),
+          // Row(
+          //   children: [
+          //     // Text("Name: "),
+          //     Expanded(
+          //       child: TextFormField(
+          //         decoration: const InputDecoration(
+          //           border: UnderlineInputBorder(),
+          //           labelText: 'Enter Alarm Name',
+          //         ),
+          //       controller: _alarmNameController,
+          //       )
+          //     ),
+          //   ],
+          // ),
+          // Row(
+          //   children: [
+          //     // Text("Time: "),
+          //     Expanded(
+          //       child: TextFormField(
+          //         decoration: const InputDecoration(
+          //           border: UnderlineInputBorder(),
+          //           labelText: 'Enter Alarm Time',
+          //         ),
+          //       controller: _alarmTimeController,
+          //       )
+          //     ),
+          //   ],
+          // ),
+          // Row(
+          //   children: [
+          //     Expanded(child:Container()),
+          //     TextButton(
+          //       child: Text("ADD"),
+          //       onPressed: (){},
+          //     )
+          //   ],
+          // )
+        ],
+      ),
 
       // Create Folder
-      Text("Create Folder")
+      Text("Create Folder"),
     ],
   );
 }

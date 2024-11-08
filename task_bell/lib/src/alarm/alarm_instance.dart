@@ -39,6 +39,11 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     return _isActive;
   }
 
+  // @override
+  // Map<String, dynamic> toMap(){
+  //   return {"name" : this.name}
+  // }
+
   @override
   State<StatefulWidget> createState() => _AlarmInstanceState();
   
