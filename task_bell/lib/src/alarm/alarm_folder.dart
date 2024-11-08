@@ -21,7 +21,7 @@ class AlarmFolder extends StatefulWidget implements Comparable {
 
   // Generic settings
   double containerHeight = 50;
-  double childIndent = 40;
+  double childIndent = 50;
 
   // Keep track of subfolders, folders should also not be alarms, so keep them separate
   HeapPriorityQueue<AlarmFolder> subfolders = HeapPriorityQueue<AlarmFolder>();
@@ -45,20 +45,49 @@ class _AlarmFolderState extends State<AlarmFolder> {
 
   // TabController _tabController = 
 
-  Icon icon = const Icon(Icons.expand_less);
+  Icon icon = const Icon(Icons.chevron_right);
 
   void _toggleExpansion() {
     _expanded = !_expanded;
-    icon = !_expanded ? const Icon(Icons.expand_less) : const Icon(Icons.expand_more);
+    icon = !_expanded ? const Icon(Icons.chevron_right) : const Icon(Icons.expand_more);
     setState((){});
   }
 
-  void _createNewAlarm(AlarmFolder folder, AlarmInstance alarm) {
-    folder.alarms.add(alarm);
+  void _createNewAlarm() {
+    if (_nameController.text.isEmpty) {
+      debugPrint("Invalid name provided");
+      showDialog(context: context, builder: (context) => const AlertDialog(
+        title: Text("Invalid name"),
+      ));
+    }
+
+    widget.alarms.add(AlarmInstance(
+      name: _nameController.text, 
+      alarmSettings: AlarmSettings(
+        id: (DateTime.now().millisecondsSinceEpoch ~/1000) % 2147483647, 
+        dateTime: DateTime.now().add(const Duration(seconds: 5)), 
+        assetAudioPath: "", 
+        vibrate: true,
+        androidFullScreenIntent: true,
+        notificationSettings: const NotificationSettings(
+          title: 'This is the title',
+          body: 'This is the body',
+          stopButton: 'Stop the alarm',
+          icon: 'notification_icon',
+        ),
+      ))
+    );
+
+    debugPrint("Added alarm ${_nameController.text}");
+
+    Navigator.of(context).pop();
+    _nameController.text = "";
+    setState((){});
   }
 
   void _createNewFolder() {
     if (_nameController.text.isEmpty) {
+      debugPrint("Invalid name provided");
       showDialog(context: context, builder: (context) => const AlertDialog(
         title: Text("Invalid name"),
       ));
@@ -70,7 +99,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
       position: widget.subfolders.length,
     );
 
-    debugPrint("Before ${widget.name}");
+    debugPrint("Before ${widget.name}, adding ${_nameController.text}");
     debugPrint(widget.subfolders.toList().toString());
     widget.subfolders.add(subFolder);
 
@@ -79,6 +108,8 @@ class _AlarmFolderState extends State<AlarmFolder> {
     debugPrint("Created new folder");
     debugPrint(widget.subfolders.toList().toString());
     Navigator.of(context).pop();
+
+    _nameController.text = "";
   }
 
   void addNewAlarmFolder() {
@@ -115,7 +146,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
 final TextEditingController _nameController = TextEditingController();
 final TextEditingController _alarmTimeController = TextEditingController();
 
-Widget _buildTabView() {
+  Widget _buildTabView() {
   return Expanded(child: Padding(
     padding: const EdgeInsets.all(10),
     child: TabBarView(
@@ -154,7 +185,7 @@ Widget _buildTabView() {
               Expanded(child:Container()),
               TextButton(
                 child: const Text("ADD"),
-                onPressed: (){},
+                onPressed: _createNewAlarm,
               )
             ],
           )
@@ -193,65 +224,63 @@ Widget _buildTabView() {
   )));
 }
 
+  List<Widget> indentChildren() {
+    List<Widget> indented = [];
+
+    final folders = widget.subfolders.toList();
+    final alarms = widget.alarms.toList();
+
+    for (AlarmFolder af in folders) {
+      indented.add(
+        Padding(
+          padding: EdgeInsets.fromLTRB(widget.childIndent, 0,0,0),
+          child: af,
+        )
+      );
+    }
+    for (final af in alarms) {
+      indented.add(
+        Padding(
+          padding: EdgeInsets.fromLTRB(widget.childIndent, 0,0,0),
+          child: af,
+        )
+      );
+    }
+
+    return indented;
+  }
+
   @override
   Widget build(BuildContext context) {
-    
-    return Column(
-      // mainAxisAlignment: MainAxisAlignment.end,
-      // crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            IconButton(
-              icon: icon,
-              onPressed: _toggleExpansion,
-            ),
-            Text(widget.name),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: addNewAlarmFolder,
-                
-            ),
-            Expanded(child: Container()),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(0,0,10,0),
-              child: Icon(Icons.folder),
-            ),
-          ]
-        ),
-        Visibility(
-          visible: _expanded,
-          child: Expanded(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(widget.childIndent,0,0,0),
-              // child: ListView(
-              //   children: widget.subfolders.toList()
-              // )
-              child: ListView.builder(
-                itemCount: widget.subfolders.length + widget.alarms.length,
-                itemBuilder: (context, index) {
-
-                  List<AlarmFolder> folders = widget.subfolders.toList();
-                  List<AlarmInstance> alarms = widget.alarms.toList();
-
-                  Widget child;
-                  if (index < widget.subfolders.length) {
-                    child = folders[index];
-                  } else {
-                    child = alarms[index - folders.length];
-                  }
-
-                  return GestureDetector(
-                    onLongPress: (){ debugPrint("long pressed the item, show edit options"); },
-                    child: child
-                  );
-                }
-                )
-            ),
-          )
-        ),
-        
-      ],
+    return GestureDetector(
+      onLongPress: (){debugPrint("pressed ${widget.name}");},
+      // onTap: _toggleExpansion, // do not want this, gaps between children trigger
+      child: Column(
+        // mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: [
+              IconButton(
+                icon: icon,
+                onPressed: _toggleExpansion,
+              ),
+              Text(widget.name),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: addNewAlarmFolder,
+                  
+              ),
+              Expanded(child: Container()),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0,0,10,0),
+                child: Icon(Icons.folder),
+              ),
+            ]
+          ),
+          
+        ] + (_expanded ? indentChildren() : []),
+      )
     );
   }
   

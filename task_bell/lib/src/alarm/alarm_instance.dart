@@ -32,7 +32,6 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     }
     
     await Alarm.stop(alarmSettings.id);
-
   }
 
   bool isActive() {
@@ -63,7 +62,7 @@ class _AlarmInstanceState extends State<AlarmInstance> {
       child: Row(
         children: [
           IconButton(
-            onPressed: widget.toggleAlarm, 
+            onPressed: (){widget.toggleAlarm(); setState((){});}, 
             icon: Icon(widget.isActive() ? Icons.toggle_on : Icons.toggle_off),
           ),
           Text(widget.name),
