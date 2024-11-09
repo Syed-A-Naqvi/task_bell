@@ -5,6 +5,7 @@ import '../settings/settings_view.dart';
 import 'package:collection/collection.dart';
 
 import 'alarm_instance.dart';
+import 'recurrence/week_recur.dart';
 
 class AlarmFolder extends StatefulWidget implements Comparable {
 
@@ -77,7 +78,13 @@ class _AlarmFolderState extends State<AlarmFolder> {
           stopButton: 'Stop the alarm',
           icon: 'notification_icon',
         ),
-      ))
+      ),
+      recur: WeekRecur(
+        activeDays: (WeekRecur.monday | WeekRecur.wednesday | WeekRecur.saturday),
+        recurTime: DateTime.now().add(const Duration(minutes: 5)),
+      )
+      ),
+      
     );
 
     debugPrint("Added alarm ${_nameController.text}");

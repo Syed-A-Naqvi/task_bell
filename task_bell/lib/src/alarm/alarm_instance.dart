@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
+import 'recurrence/recur.dart';
 
 class AlarmInstance extends StatefulWidget implements Comparable {
 
@@ -9,9 +10,12 @@ class AlarmInstance extends StatefulWidget implements Comparable {
   String name;
   bool _isActive = false;
 
+  Recur recur;
+
   AlarmInstance({
     required this.name,
     required this.alarmSettings,
+    required this.recur,
     isActive = false,
     super.key,
   }) {
@@ -26,7 +30,32 @@ class AlarmInstance extends StatefulWidget implements Comparable {
       
     _isActive = !_isActive;
 
+    
+
     if (_isActive) {
+      DateTime? nextOccur = recur.getNextOccurence(DateTime.now());
+
+      // If it fails to grab the next occurence for whatever reason,
+      // the alarm should not be set, because there is no time to trigger at
+      if (nextOccur == null) {
+        _isActive = false;
+        return;
+      }
+
+      alarmSettings = AlarmSettings(
+        id: alarmSettings.id, 
+        dateTime: nextOccur, 
+        assetAudioPath: alarmSettings.assetAudioPath, 
+        notificationSettings: alarmSettings.notificationSettings,
+        loopAudio: alarmSettings.loopAudio,
+        vibrate: alarmSettings.vibrate,
+        volume: alarmSettings.volume,
+        volumeEnforced: alarmSettings.volumeEnforced,
+        fadeDuration: alarmSettings.fadeDuration,
+        warningNotificationOnKill: alarmSettings.warningNotificationOnKill,
+        androidFullScreenIntent: alarmSettings.androidFullScreenIntent
+      );
+
       await Alarm.set(alarmSettings: alarmSettings);
       return;
     }
@@ -58,6 +87,13 @@ class AlarmInstance extends StatefulWidget implements Comparable {
 
 class _AlarmInstanceState extends State<AlarmInstance> {
 
+  void _toggleAlarm() {
+
+    widget.toggleAlarm();
+
+    setState((){});
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -65,7 +101,15 @@ class _AlarmInstanceState extends State<AlarmInstance> {
       child: Row(
         children: [
           IconButton(
-            onPressed: (){widget.toggleAlarm(); setState((){});}, 
+            onPressed: _toggleAlarm, 
+            // onPressed: (){
+            //   DateTime? nextOccur = widget.recur.getNextOccurence(DateTime.now());
+            //   if (nextOccur == null) {
+            //     debugPrint("its null");
+            //     return;
+            //   }
+            //   debugPrint((nextOccur.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch).toString());
+            // },
             icon: Icon(widget.isActive() ? Icons.toggle_on : Icons.toggle_off),
           ),
           Text(widget.name),

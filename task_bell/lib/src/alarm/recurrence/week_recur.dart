@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+
 import 'recur.dart';
 
 
@@ -69,6 +71,7 @@ class WeekRecur implements Recur {
 
     // Ignore skipWeeks and repeatWeeks for now
     if (activeDays == 0) {
+      debugPrint("active days is zero");
       return null;
     }
 
@@ -119,6 +122,7 @@ class WeekRecur implements Recur {
       );
     }
 
+    debugPrint("Somehow got to impossible null");
     return null;
   }
 
