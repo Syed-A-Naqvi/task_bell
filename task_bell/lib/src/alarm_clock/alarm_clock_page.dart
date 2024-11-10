@@ -55,7 +55,7 @@ class _AlarmClockPageState extends State<AlarmClockPage> {
         ],
       ),
       body: defaultFolder,
-      floatingActionButton: _buildSpeedDial(),
+      // floatingActionButton: _buildSpeedDial(),
     );
   }
 }
