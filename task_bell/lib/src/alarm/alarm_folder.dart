@@ -55,7 +55,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
     setState((){});
   }
 
-  void _createNewAlarm() {
+  void _createNewAlarm() async {
     if (_nameController.text.isEmpty) {
       debugPrint("Invalid name provided");
       showDialog(context: context, builder: (context) => const AlertDialog(
@@ -65,33 +65,57 @@ class _AlarmFolderState extends State<AlarmFolder> {
       return;
     }
 
+    TimeOfDay? selectedTime24Hour = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 10, minute: 47),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
+
+    // user closed dialog, did not select time
+    if (selectedTime24Hour == null) {
+      return;
+    }
+
+    Navigator.of(context).pop();
+
+    debugPrint(selectedTime24Hour.hour.toString());
+
+    DateTime recurTime = DateTime(
+      DateTime.now().year, 
+      DateTime.now().month,
+      DateTime.now().day,
+      selectedTime24Hour.hour,
+      selectedTime24Hour.minute,  
+    );
+
     widget.alarms.add(AlarmInstance(
       name: _nameController.text, 
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/1000) % 2147483647, 
-        dateTime: DateTime.now().add(const Duration(seconds: 5)), 
+        dateTime: recurTime,
         assetAudioPath: "", 
         vibrate: true,
         androidFullScreenIntent: true,
-        notificationSettings: const NotificationSettings(
-          title: 'This is the title',
-          body: 'This is the body',
+        notificationSettings: NotificationSettings(
+          title: _nameController.text,
+          body: "Alarm triggered at ${recurTime.hour}:${recurTime.minute}",
           stopButton: 'Stop the alarm',
           icon: 'notification_icon',
         ),
       ),
       recur: WeekRecur(
         activeDays: weekdaySelector.activeDays,
-        recurTime: DateTime.now().add(const Duration(minutes: 5)),
+        recurTime: recurTime
       )
-      ),
-      
-    );
+    ),);
 
-    debugPrint("Added alarm ${_nameController.text}");
-
-    Navigator.of(context).pop();
     _nameController.text = "";
+
     setState((){});
   }
 
@@ -117,8 +141,6 @@ class _AlarmFolderState extends State<AlarmFolder> {
 
     setState((){});
 
-    debugPrint("Created new folder");
-    debugPrint(widget.subfolders.toList().toString());
     Navigator.of(context).pop();
 
     _nameController.text = "";
@@ -156,7 +178,6 @@ class _AlarmFolderState extends State<AlarmFolder> {
   }
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _alarmTimeController = TextEditingController();
 
   WeekdaySelector weekdaySelector = WeekdaySelector(activeDays: 0,);
 
@@ -282,7 +303,6 @@ class _AlarmFolderState extends State<AlarmFolder> {
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: addNewAlarmFolder,
-                  
               ),
               Expanded(child: Container()),
               const Padding(

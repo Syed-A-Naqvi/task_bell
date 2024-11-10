@@ -59,6 +59,8 @@ class AlarmInstance extends StatefulWidget implements Comparable {
       );
 
       await Alarm.set(alarmSettings: alarmSettings);
+
+      debugPrint("Alarm set for ${nextOccur.toString()}");
       return;
     }
     
