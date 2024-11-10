@@ -30,8 +30,6 @@ class AlarmInstance extends StatefulWidget implements Comparable {
       
     _isActive = !_isActive;
 
-    
-
     if (_isActive) {
       DateTime? nextOccur = recur.getNextOccurence(DateTime.now());
 
@@ -71,7 +69,6 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     return _isActive;
   }
 
-  @override
   Map<String, dynamic> toMap(){
     return {
       "name" : this.name,

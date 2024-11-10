@@ -32,7 +32,7 @@ class AlarmFolder extends StatefulWidget implements Comparable {
   HeapPriorityQueue<AlarmInstance> alarms = HeapPriorityQueue<AlarmInstance>();
   
   @override
-  State<StatefulWidget> createState() => _AlarmFolderState();
+  State<StatefulWidget> createState() => AlarmFolderState();
   
   @override
   int compareTo(other) {
@@ -41,11 +41,9 @@ class AlarmFolder extends StatefulWidget implements Comparable {
 
 }
 
-class _AlarmFolderState extends State<AlarmFolder> {
+class AlarmFolderState extends State<AlarmFolder> {
 
   bool _expanded = false;
-
-  // TabController _tabController = 
 
   Icon icon = const Icon(Icons.chevron_right);
 
@@ -55,8 +53,8 @@ class _AlarmFolderState extends State<AlarmFolder> {
     setState((){});
   }
 
-  void _createNewAlarm() async {
-    if (_nameController.text.isEmpty) {
+  void createNewAlarm() async {
+    if (nameController.text.isEmpty) {
       debugPrint("Invalid name provided");
       showDialog(context: context, builder: (context) => const AlertDialog(
         title: Text("Invalid name"),
@@ -94,7 +92,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
     );
 
     widget.alarms.add(AlarmInstance(
-      name: _nameController.text, 
+      name: nameController.text, 
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/1000) % 2147483647, 
         dateTime: recurTime,
@@ -102,7 +100,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
         vibrate: true,
         androidFullScreenIntent: true,
         notificationSettings: NotificationSettings(
-          title: _nameController.text,
+          title: nameController.text,
           body: "Alarm triggered at ${recurTime.hour}:${recurTime.minute}",
           stopButton: 'Stop the alarm',
           icon: 'notification_icon',
@@ -114,13 +112,13 @@ class _AlarmFolderState extends State<AlarmFolder> {
       )
     ),);
 
-    _nameController.text = "";
+    nameController.text = "";
 
     setState((){});
   }
 
   void _createNewFolder() {
-    if (_nameController.text.isEmpty) {
+    if (nameController.text.isEmpty) {
       debugPrint("Invalid name provided");
       showDialog(context: context, builder: (context) => const AlertDialog(
         title: Text("Invalid name"),
@@ -131,11 +129,11 @@ class _AlarmFolderState extends State<AlarmFolder> {
 
     AlarmFolder subFolder = AlarmFolder(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: _nameController.text,
+      name: nameController.text,
       position: widget.subfolders.length,
     );
 
-    debugPrint("Before ${widget.name}, adding ${_nameController.text}");
+    debugPrint("Before ${widget.name}, adding ${nameController.text}");
     debugPrint(widget.subfolders.toList().toString());
     widget.subfolders.add(subFolder);
 
@@ -143,7 +141,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
 
     Navigator.of(context).pop();
 
-    _nameController.text = "";
+    nameController.text = "";
   }
 
   void addNewAlarmFolder() {
@@ -177,7 +175,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
     );
   }
 
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
   WeekdaySelector weekdaySelector = WeekdaySelector(activeDays: 0,);
 
@@ -198,7 +196,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
                     border: UnderlineInputBorder(),
                     labelText: 'Enter Alarm Name',
                   ),
-                controller: _nameController,
+                controller: nameController,
                 )
               ),
             ],
@@ -216,7 +214,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
             children: [
               Expanded(child:Container()),
               TextButton(
-                onPressed: _createNewAlarm,
+                onPressed: createNewAlarm,
                 child: const Text("SET TIME"),
               )
             ],
@@ -237,7 +235,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
                     border: UnderlineInputBorder(),
                     labelText: 'Enter Folder Name',
                   ),
-                controller: _nameController,
+                controller: nameController,
                 )
               ),
             ],

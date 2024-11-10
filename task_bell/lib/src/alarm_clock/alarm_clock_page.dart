@@ -16,29 +16,9 @@ class _AlarmClockPageState extends State<AlarmClockPage> {
 
   AlarmFolder defaultFolder = AlarmFolder(
     id: "0",
-    name: "default",
+    name: "timers",
     position: 0,
   );
-
-  SpeedDial _buildSpeedDial() {
-    return SpeedDial(
-      icon: Icons.add,
-      activeIcon: Icons.close,
-      visible: true,
-      children: [
-        SpeedDialChild(
-          child: Icon(Icons.access_alarm),
-          onTap: () {debugPrint("alarm pressed"); },
-          label: "new alarm",
-        ),
-        SpeedDialChild(
-          child: Icon(Icons.folder),
-          onTap: () { debugPrint(defaultFolder.subfolders.toList().toString()); },
-          label: "new folder",
-        ),
-      ]
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +35,6 @@ class _AlarmClockPageState extends State<AlarmClockPage> {
         ],
       ),
       body: defaultFolder,
-      // floatingActionButton: _buildSpeedDial(),
     );
   }
 }
