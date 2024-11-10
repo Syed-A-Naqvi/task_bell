@@ -1,6 +1,7 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:task_bell/src/alarm/weekday_selector.dart';
 import '../settings/settings_view.dart';
 import 'package:collection/collection.dart';
 
@@ -80,7 +81,7 @@ class _AlarmFolderState extends State<AlarmFolder> {
         ),
       ),
       recur: WeekRecur(
-        activeDays: (WeekRecur.monday | WeekRecur.wednesday | WeekRecur.saturday),
+        activeDays: weekdaySelector.activeDays,
         recurTime: DateTime.now().add(const Duration(minutes: 5)),
       )
       ),
@@ -146,16 +147,18 @@ class _AlarmFolderState extends State<AlarmFolder> {
   }
 
   Widget _buildTabBar(BuildContext context) {
-  return const TabBar(
-    tabs: [
-      Tab(icon: Icon(Icons.alarm)),
-      Tab(icon: Icon(Icons.folder)),
-    ],
-  );
-}
+    return const TabBar(
+      tabs: [
+        Tab(icon: Icon(Icons.alarm)),
+        Tab(icon: Icon(Icons.folder)),
+      ],
+    );
+  }
 
-final TextEditingController _nameController = TextEditingController();
-final TextEditingController _alarmTimeController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _alarmTimeController = TextEditingController();
+
+  WeekdaySelector weekdaySelector = WeekdaySelector(activeDays: 0,);
 
   Widget _buildTabView() {
   return Expanded(child: Padding(
@@ -165,7 +168,7 @@ final TextEditingController _alarmTimeController = TextEditingController();
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Create alarm for ${widget.name}"),
+          
           Row(
             children: [
               Expanded(
@@ -179,26 +182,21 @@ final TextEditingController _alarmTimeController = TextEditingController();
               ),
             ],
           ),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Enter Alarm Time',
-                  ),
-                controller: _alarmTimeController,
-                )
-              ),
-            ],
+
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0,10,10,0),
+              child: weekdaySelector,
+            )
           ),
+
           Expanded(child: Container(),),
           Row(
             children: [
               Expanded(child:Container()),
               TextButton(
-                child: const Text("ADD"),
                 onPressed: _createNewAlarm,
+                child: const Text("SET TIME"),
               )
             ],
           )

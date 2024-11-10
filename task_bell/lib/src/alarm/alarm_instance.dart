@@ -42,6 +42,8 @@ class AlarmInstance extends StatefulWidget implements Comparable {
         return;
       }
 
+      // Create new AlarmSettings object to modify the next occurence.
+      // cannot modify directly due to constant fields
       alarmSettings = AlarmSettings(
         id: alarmSettings.id, 
         dateTime: nextOccur, 
@@ -97,25 +99,16 @@ class _AlarmInstanceState extends State<AlarmInstance> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // height: widget.containerHeight,
       child: Row(
         children: [
           IconButton(
             onPressed: _toggleAlarm, 
-            // onPressed: (){
-            //   DateTime? nextOccur = widget.recur.getNextOccurence(DateTime.now());
-            //   if (nextOccur == null) {
-            //     debugPrint("its null");
-            //     return;
-            //   }
-            //   debugPrint((nextOccur.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch).toString());
-            // },
+
             icon: Icon(widget.isActive() ? Icons.toggle_on : Icons.toggle_off),
           ),
           Text(widget.name),
         ],
       ),
     );
-    // return Text("Hello World");
   }
 }
