@@ -12,6 +12,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
   AlarmSettings alarmSettings;
   String name;
   bool _isActive = false;
+  final String parentId;
 
   Recur recur;
 
@@ -19,6 +20,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     required this.name,
     required this.alarmSettings,
     required this.recur,
+    required this.parentId,
     isActive = false,
     super.key,
   }) {
@@ -76,6 +78,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     Map<String, dynamic> map = {
       "name" : name,
       "isactive": _isActive,
+      "parendId": parentId,
     };
     map.addAll(recur.toMap());
     map.addAll(MapConverters.alarmSettingsToMap(alarmSettings));
@@ -83,6 +86,29 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     return map;
   }
 
+
+  /* Current List of all fields for alarm instance
+    "name" String
+    "isactive" bool
+    "recurtype" String
+    "parentId" String
+    "inittime" int
+    "recurtime" int
+    "id" int // this refers to the alarmsettings id, could potentially benefit from renaming
+    "datetime" int // milliseconds since epoch when alarm will go off
+    "assetAudioPath" String
+    "loopAudio" bool
+    "vibrate" bool
+    "volume" double (nullable)
+    "volumeEnforced" bool
+    "fadeDuration" double
+    "warningNotificationOnKill" bool
+    "androidFullScreenIntent" bool
+    "title" String // notification title
+    "body" String // notification body
+    "stopButton" String (nullable) // notification stop button text 
+    "icon" String (nullable) // icon path? to for the icon of the alarm, for notification
+  */
   AlarmInstance fromMap(Map<String, dynamic> map) {
     Recur? recur;
     if (map["recurtype"] == "week") {
@@ -92,7 +118,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
       recur = RelativeRecur.fromMap(map);
     }
     if (recur == null) {
-      throw Exception(); 
+      throw Exception("unknown or missing recur type when reading AlarmInstance from map"); 
     }
 
     AlarmSettings as = MapConverters.alarmSettingsFromMap(map);
@@ -101,6 +127,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
       name: map["name"], 
       alarmSettings: as, 
       recur: recur,
+      parentId: map["parentId"],
       isActive: map["isactive"],
     );
 

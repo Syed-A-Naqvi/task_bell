@@ -9,6 +9,7 @@ class TimerInstance extends AlarmInstance {
     required super.name, 
     required super.alarmSettings, 
     required super.recur,
+    required super.parentId,
     super.key,
   });
 

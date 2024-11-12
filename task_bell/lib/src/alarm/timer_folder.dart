@@ -71,7 +71,8 @@ class TimerFolderState extends AlarmFolderState {
       recur: RelativeRecur(
         initTime: DateTime.now(),
         recurTime: recurTime
-      )
+      ),
+      parentId: widget.id,
     ),);
 
     nameController.text = "";

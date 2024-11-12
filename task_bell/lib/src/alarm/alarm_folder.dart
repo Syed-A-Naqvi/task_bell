@@ -121,7 +121,8 @@ class AlarmFolderState extends State<AlarmFolder> {
       recur: WeekRecur(
         activeDays: weekdaySelector.activeDays,
         recurTime: recurTime
-      )
+      ),
+      parentId: widget.id,
     ),);
 
     nameController.text = "";
