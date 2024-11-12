@@ -94,7 +94,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
                   ),
                   child: Text(
                     _isRunning ? 'Lap' : 'Reset',
-                    style: const TextStyle(fontSize: 20)
+                    style: const TextStyle(fontSize: 20),
                   ),
                 ),
               ),
@@ -118,7 +118,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
             ],
           ),
           Expanded(
-            child: StreamBuilder<List<Duration>>(
+            child: StreamBuilder<List<Map<String, Duration>>>(
               stream: _stopwatchService.lapsStream,
               builder: (context, snapshot) {
                 final laps = snapshot.data ?? [];
@@ -129,21 +129,22 @@ class _StopwatchPageState extends State<StopwatchPage> {
                 Duration? fastestLap;
                 Duration? slowestLap;
                 if (laps.length > 1) {
-                  fastestLap = laps.reduce((a, b) => a < b ? a : b);
-                  slowestLap = laps.reduce((a, b) => a > b ? a : b);
+                  fastestLap = laps.map((lap) => lap['duration']!).reduce((a, b) => a < b ? a : b);
+                  slowestLap = laps.map((lap) => lap['duration']!).reduce((a, b) => a > b ? a : b);
                 }
 
                 return ListView.builder(
                   itemCount: laps.length,
                   itemBuilder: (context, index) {
                     final lap = laps[laps.length - 1 - index];
-                    final minutes = lap.inMinutes.remainder(60).toString().padLeft(2, '0');
-                    final seconds = lap.inSeconds.remainder(60).toString().padLeft(2, '0');
-                    final milliseconds = (lap.inMilliseconds.remainder(1000) ~/ 10).toString().padLeft(2, '0');
+                    final lapDuration = lap['duration']!;
+                    final minutes = lapDuration.inMinutes.remainder(60).toString().padLeft(2, '0');
+                    final seconds = lapDuration.inSeconds.remainder(60).toString().padLeft(2, '0');
+                    final milliseconds = (lapDuration.inMilliseconds.remainder(1000) ~/ 10).toString().padLeft(2, '0');
                     Color lapTextColor = textColor;
-                    if (lap == fastestLap) {
+                    if (lapDuration == fastestLap) {
                       lapTextColor = Colors.green;
-                    } else if (lap == slowestLap) {
+                    } else if (lapDuration == slowestLap) {
                       lapTextColor = Colors.red;
                     }
                     return ListTile(
