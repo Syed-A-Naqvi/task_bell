@@ -145,7 +145,46 @@ class AlarmInstance extends StatefulWidget implements Comparable {
   }
 }
 
+
 class _AlarmInstanceState extends State<AlarmInstance> {
+
+  bool _relative = false;
+
+  /// This will do custom formatting for display
+  String _dateTimeToString() {
+
+    DateTime? nextOccur = widget.recur.getNextOccurence(DateTime.now());
+    DateTime dt = DateTime.now();
+    
+    if (nextOccur == null) {
+      return "";
+    }
+    
+
+    if (_relative) {
+      int days = nextOccur.day - dt.day;
+      int hours = nextOccur.hour - dt.hour;
+      int minutes = nextOccur.minute - dt.minute;
+      int seconds = nextOccur.second - dt.second;
+
+      if (seconds < 0) { 
+        minutes -= 1;
+        seconds = 60 + seconds;
+      }
+      if (minutes < 0) {
+        hours -= 1;
+        minutes = 60 + minutes;
+      }
+      if (hours < 0) {
+        days -= 1;
+        hours = 24 + hours;
+      }
+      return "${days}d, ${hours}h, ${minutes}m ${seconds}s";
+
+      // return "${dt.day*24 + dt.hour}h, ${dt.minute}m";
+    }
+    return nextOccur.toString();
+  }
 
   void _toggleAlarm() {
 
@@ -165,6 +204,18 @@ class _AlarmInstanceState extends State<AlarmInstance> {
             icon: Icon(widget.isActive() ? Icons.toggle_on : Icons.toggle_off),
           ),
           Text(widget.name),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10,0,10,0),
+            child: Text(_dateTimeToString()),
+          ),
+
+          IconButton(
+            onPressed: (){setState((){_relative = !_relative;});}, 
+            icon: const Icon(Icons.swap_horiz),
+          ),
+
+
+          
         ],
       ),
     );
