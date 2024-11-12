@@ -1,8 +1,6 @@
-import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
 import '../alarm/alarm_folder.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class AlarmClockPage extends StatefulWidget {
   const AlarmClockPage({super.key});

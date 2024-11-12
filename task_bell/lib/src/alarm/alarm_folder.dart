@@ -1,9 +1,6 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:task_bell/src/alarm/timer_instance.dart';
 import 'package:task_bell/src/alarm/weekday_selector.dart';
-import '../settings/settings_view.dart';
 import 'package:collection/collection.dart';
 
 import 'alarm_instance.dart';
@@ -14,12 +11,14 @@ class AlarmFolder extends StatefulWidget implements Comparable {
 
   // AlarmFolder info
   String id;
+  String parentId;
   String name;
   int position;
   AlarmFolder({
     required this.id,
     required this.name,
     required this.position,
+    this.parentId = '-1',
     super.key,
   });
 
@@ -44,13 +43,19 @@ class AlarmFolder extends StatefulWidget implements Comparable {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'parentId': parentId,
       'name': name,
       'position': position,
     };
   }
 
   static AlarmFolder fromMap(Map<String, dynamic> map) {
-    return AlarmFolder(id: map["id"], name: map["name"], position: map["position"]);
+    return AlarmFolder(
+      id: map["id"],
+      parentId: map['parentId'],
+      name: map["name"],
+      position: map["position"]
+    );
   }
 
 }
@@ -152,6 +157,7 @@ class AlarmFolderState extends State<AlarmFolder> {
 
     AlarmFolder subFolder = AlarmFolder(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
+      parentId: widget.id,
       name: nameController.text,
       position: widget.subfolders.length,
     );
@@ -175,7 +181,7 @@ class AlarmFolderState extends State<AlarmFolder> {
         child: Dialog(
           child: SizedBox(
             width: 200,
-            height: 250,
+            height: 300,
             child: Column(
               children: [
               _buildTabBar(context),

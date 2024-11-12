@@ -162,7 +162,7 @@ class _AlarmInstanceState extends State<AlarmInstance> {
           IconButton(
             onPressed: _toggleAlarm, 
 
-            icon: Icon(widget.isActive() ? Icons.toggle_on : Icons.toggle_off),
+            icon: Icon(widget.isActive() ? Icons.toggle_on : Icons.toggle_off_outlined),
           ),
           Text(widget.name),
         ],
