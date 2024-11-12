@@ -25,7 +25,7 @@ class RelativeRecur implements Recur {
       initTime.day,
       initTime.hour + recurTime.hour,
       initTime.minute + recurTime.minute,
-      initTime.second + recurTime.second + recurTime.millisecond > 500 ? 1 : 0,
+      initTime.second + recurTime.second + (recurTime.millisecond > 500 ? 1 : 0),
     );
 
     debugPrint("scheduled for ${out.toString()}, current time: ${DateTime.now()}");

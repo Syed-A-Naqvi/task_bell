@@ -66,6 +66,8 @@ class AlarmInstance extends StatefulWidget implements Comparable {
       await Alarm.set(alarmSettings: alarmSettings);
 
       debugPrint("Alarm set for ${nextOccur.toString()}");
+
+      
       return;
     }
     
@@ -151,7 +153,7 @@ class _AlarmInstanceState extends State<AlarmInstance> {
   bool _relative = false;
 
   /// This will do custom formatting for display
-  String _dateTimeToString() {
+  String _dateTimeToString(bool relative) {
 
     DateTime? nextOccur = widget.recur.getNextOccurence(DateTime.now());
     DateTime dt = DateTime.now();
@@ -159,9 +161,13 @@ class _AlarmInstanceState extends State<AlarmInstance> {
     if (nextOccur == null) {
       return "";
     }
+
+    if (widget.recur is RelativeRecur) {
+      dt = (widget.recur as RelativeRecur).initTime;
+    }
     
 
-    if (_relative) {
+    if (relative) {
       int days = nextOccur.day - dt.day;
       int hours = nextOccur.hour - dt.hour;
       int minutes = nextOccur.minute - dt.minute;
@@ -191,6 +197,19 @@ class _AlarmInstanceState extends State<AlarmInstance> {
     widget.toggleAlarm();
 
     setState((){});
+
+    DateTime? nextOccur = widget.recur.getNextOccurence(DateTime.now());
+
+    if (nextOccur == null) {
+      return;
+    }
+    if (widget._isActive) {
+      SnackBar snackBar = SnackBar(content: Text("Alarm set for ${_dateTimeToString(true)} from now"));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    
+
+    
   }
 
   @override
@@ -206,7 +225,7 @@ class _AlarmInstanceState extends State<AlarmInstance> {
           Text(widget.name),
           Padding(
             padding: const EdgeInsets.fromLTRB(10,0,10,0),
-            child: Text(_dateTimeToString()),
+            child: Text(_dateTimeToString(_relative)),
           ),
 
           IconButton(
