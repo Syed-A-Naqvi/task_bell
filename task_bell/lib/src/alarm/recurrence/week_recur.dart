@@ -126,8 +126,10 @@ class WeekRecur implements Recur {
     return null;
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
+      "recurtype": "week",
       "activedays" : activeDays,
       "skipweeks" : skipWeeks,
       "repeatweeks" : repeatWeeks,
@@ -135,6 +137,7 @@ class WeekRecur implements Recur {
     };
   }
 
+  // @override
   static fromMap(Map<String, dynamic> map) {
     return WeekRecur(
       activeDays: map["activedays"], 

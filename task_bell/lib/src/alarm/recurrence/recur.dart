@@ -6,4 +6,7 @@ abstract interface class Recur {
   time provided
   */
   DateTime? getNextOccurence(DateTime time);
+
+  Map<String, dynamic> toMap();
+  // Recur? fromMap(Map<String, dynamic> map);
 }

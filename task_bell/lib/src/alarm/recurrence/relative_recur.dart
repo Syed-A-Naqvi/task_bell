@@ -24,5 +24,25 @@ class RelativeRecur implements Recur {
       seconds: recurTime.second,
     ));
   }
+  
+  static Recur? fromMap(Map<String, dynamic> map) {
+    if (map["recurtype"] != "relative") {
+      return null;
+    }
+
+    return RelativeRecur(
+      initTime: DateTime.fromMillisecondsSinceEpoch(map["inittime"]),
+      recurTime: DateTime.fromMillisecondsSinceEpoch(map["recurtime"]),
+    );
+  }
+  
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      "recurtype": "relative",
+      "inittime": initTime.millisecondsSinceEpoch,
+      "recurtime": recurTime.millisecondsSinceEpoch,
+    };
+  }
 
 }

@@ -39,6 +39,18 @@ class AlarmFolder extends StatefulWidget implements Comparable {
     return position.compareTo(other.position);
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'position': position,
+    };
+  }
+
+  static AlarmFolder fromMap(Map<String, dynamic> map) {
+    return AlarmFolder(id: map["id"], name: map["name"], position: map["position"]);
+  }
+
 }
 
 class AlarmFolderState extends State<AlarmFolder> {
