@@ -20,17 +20,12 @@ class RelativeRecur implements Recur {
   DateTime? getNextOccurence(DateTime time) {
 
     DateTime out = DateTime(
-      // initTime.year + recurTime.year,
       initTime.year,
       initTime.month,
       initTime.day,
-      // initTime.month + recurTime.month,
-      // initTime.day + recurTime.day,
       initTime.hour + recurTime.hour,
       initTime.minute + recurTime.minute,
-      initTime.second + recurTime.second,
-      // initTime.millisecond + recurTime.millisecond,
-      // initTime.microsecond + recurTime.microsecond,
+      initTime.second + recurTime.second + (recurTime.millisecond > 500 ? 1 : 0),
     );
 
     debugPrint("scheduled for ${out.toString()}, current time: ${DateTime.now()}");

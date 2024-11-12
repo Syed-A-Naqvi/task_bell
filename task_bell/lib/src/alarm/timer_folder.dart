@@ -81,10 +81,7 @@ class TimerFolderState extends AlarmFolderState {
           icon: 'notification_icon',
         ),
       ),
-      // recur: WeekRecur(
-      //   activeDays: weekdaySelector.activeDays,
-      //   recurTime: recurTime
-      // ),
+
       recur: getRecurObject(recurTime),
       parentId: widget.id,
     ),);
