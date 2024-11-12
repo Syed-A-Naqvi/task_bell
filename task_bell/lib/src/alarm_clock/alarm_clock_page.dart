@@ -16,7 +16,7 @@ class _AlarmClockPageState extends State<AlarmClockPage> {
 
   AlarmFolder defaultFolder = AlarmFolder(
     id: "0",
-    name: "timers",
+    name: "Alarms",
     position: 0,
   );
 

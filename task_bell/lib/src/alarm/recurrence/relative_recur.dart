@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'recur.dart';
 
 class RelativeRecur implements Recur {
@@ -16,13 +18,25 @@ class RelativeRecur implements Recur {
 
   @override
   DateTime? getNextOccurence(DateTime time) {
+
+    DateTime out = DateTime(
+      // initTime.year + recurTime.year,
+      initTime.year,
+      initTime.month,
+      initTime.day,
+      // initTime.month + recurTime.month,
+      // initTime.day + recurTime.day,
+      initTime.hour + recurTime.hour,
+      initTime.minute + recurTime.minute,
+      initTime.second + recurTime.second,
+      // initTime.millisecond + recurTime.millisecond,
+      // initTime.microsecond + recurTime.microsecond,
+    );
+
+    debugPrint("scheduled for ${out.toString()}, current time: ${DateTime.now()}");
+    debugPrint("recurTime: ${recurTime.toString()}, initTime: ${initTime.toString()}");
     
-    return initTime.add(Duration(
-      days: recurTime.day + 30*recurTime.month + 365*recurTime.year,
-      hours: recurTime.hour,
-      minutes: recurTime.minute,
-      seconds: recurTime.second,
-    ));
+    return out;
   }
   
   static Recur? fromMap(Map<String, dynamic> map) {

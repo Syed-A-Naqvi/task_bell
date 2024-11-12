@@ -6,6 +6,7 @@ import '../settings/settings_view.dart';
 import 'package:collection/collection.dart';
 
 import 'alarm_instance.dart';
+import 'recurrence/recur.dart';
 import 'recurrence/week_recur.dart';
 
 class AlarmFolder extends StatefulWidget implements Comparable {
@@ -118,16 +119,24 @@ class AlarmFolderState extends State<AlarmFolder> {
           icon: 'notification_icon',
         ),
       ),
-      recur: WeekRecur(
-        activeDays: weekdaySelector.activeDays,
-        recurTime: recurTime
-      ),
+      // recur: WeekRecur(
+      //   activeDays: weekdaySelector.activeDays,
+      //   recurTime: recurTime
+      // ),
+      recur: getRecurObject(recurTime),
       parentId: widget.id,
     ),);
 
     nameController.text = "";
 
     setState((){});
+  }
+
+  Recur getRecurObject(DateTime recurTime) {
+    return WeekRecur(
+      activeDays: weekdaySelector.activeDays,
+      recurTime: recurTime
+    );
   }
 
   void _createNewFolder() {
@@ -314,6 +323,7 @@ class AlarmFolderState extends State<AlarmFolder> {
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: addNewAlarmFolder,
+                // onPressed: () {debugPrint("Test");}
               ),
               Expanded(child: Container()),
               const Padding(

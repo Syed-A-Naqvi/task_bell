@@ -18,6 +18,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Alarm.init();
 
+  Alarm.ringStream.stream.listen((_) {
+    debugPrint("LISTENER: ${_.toString()}");
+    debugPrint("WENT OFF AT ${DateTime.now()}");
+  });
+
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the
   // SettingsView.

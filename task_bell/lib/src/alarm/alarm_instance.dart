@@ -32,6 +32,8 @@ class AlarmInstance extends StatefulWidget implements Comparable {
   }
 
   void toggleAlarm() async {
+
+    debugPrint("Toggle alarm called");
       
     _isActive = !_isActive;
 
