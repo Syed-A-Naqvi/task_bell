@@ -1,6 +1,7 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:task_bell/src/alarm/timer_instance.dart';
 import 'package:task_bell/src/alarm/weekday_selector.dart';
 import '../settings/settings_view.dart';
 import 'package:collection/collection.dart';
@@ -30,7 +31,7 @@ class AlarmFolder extends StatefulWidget implements Comparable {
   HeapPriorityQueue<AlarmFolder> subfolders = HeapPriorityQueue<AlarmFolder>();
   
   // Keep track of alarms contained within the folder
-  HeapPriorityQueue<AlarmInstance> alarms = HeapPriorityQueue<AlarmInstance>();
+  HeapPriorityQueue<dynamic> alarms = HeapPriorityQueue<dynamic>();
   
   @override
   State<StatefulWidget> createState() => AlarmFolderState();
