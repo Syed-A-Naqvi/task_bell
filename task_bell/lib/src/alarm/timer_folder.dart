@@ -1,10 +1,8 @@
 import 'package:alarm/alarm.dart';
-import 'package:collection/collection.dart';
 import 'package:task_bell/src/alarm/timer_instance.dart';
 import 'recurrence/recur.dart';
 import 'recurrence/relative_recur.dart';
 import 'package:flutter/material.dart';
-import 'alarm_instance.dart';
 
 import 'alarm_folder.dart';
 

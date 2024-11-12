@@ -17,7 +17,6 @@ class TimerInstance extends AlarmInstance {
   @override
   void toggleAlarm() {
     super.recur = RelativeRecur(recurTime: (recur as RelativeRecur).recurTime, initTime: DateTime.now());
-    debugPrint("TOGGLED ALARM${(super.recur as RelativeRecur).initTime.toString()}\n");
     super.toggleAlarm();
   }
 
