@@ -1,26 +1,29 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../alarm/helpers/map_converters.dart'; // Import your MapConverters class
-import 'package:alarm/alarm.dart'; // Adjust import based on your file structure
+import '../alarm/helpers/map_converters.dart';
+import 'package:alarm/alarm.dart';
+import '../alarm/alarm_folder.dart';
 
-class AlarmDatabase {
-  static final AlarmDatabase _instance = AlarmDatabase._internal();
+class TaskBellDatabase {
+
+  // ensures a singleton intance of the databse
+  static final TaskBellDatabase _instance = TaskBellDatabase._internal();
   static Database? _database;
-
-  factory AlarmDatabase() {
+  factory TaskBellDatabase() {
     return _instance;
   }
+  TaskBellDatabase._internal();
 
-  AlarmDatabase._internal();
-
+  // database getter
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
+  // initialize a new empty database
   Future<Database> _initDatabase() async {
-    final path = join(await getDatabasesPath(), 'alarms.db');
+    final path = join(await getDatabasesPath(), 'taskBell.db');
     return await openDatabase(
       path,
       version: 1,
@@ -32,6 +35,7 @@ class AlarmDatabase {
     await db.execute('''
       CREATE TABLE alarms (
         id TEXT PRIMARY KEY,
+        parentId TEXT,
         datetime INTEGER,
         assetAudioPath TEXT,
         loopAudio INTEGER,
@@ -47,7 +51,52 @@ class AlarmDatabase {
         icon TEXT
       )
     ''');
+    await db.execute('''
+      CREATE TABLE folders (
+        id TEXT PRIMARY KEY,
+        parentId TEXT
+        name TEXT,
+        position INTEGER,
+      )
+    ''');
   }
+
+  // ------------------------------------- FOLDER CRUD METHODS-------------------------------------
+
+  Future<void> insertFolder(AlarmFolder folder) async {
+    final db = await database;
+    await db.insert(
+      'folders',
+      folder.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<AlarmFolder?> getFolder(String id) async {
+    final db = await database;
+    final maps = await db.query(
+      'folders',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return AlarmFolder.fromMap(maps.first);
+    }
+    return null;
+  }
+  
+  Future<List<AlarmFolder>> getAllFolders() async {
+    final db = await database;
+    final maps = await db.query('folders');
+    return List.generate(maps.length, (i) {
+      return AlarmFolder.fromMap(maps[i]);
+    });
+  }
+  
+  // ------------------------------------- FOLDER CRUD METHODS-------------------------------------
+
+
+  // ------------------------------------- ALARM CRUD METHODS-------------------------------------
 
   Future<void> insertAlarm(AlarmSettings alarmSettings) async {
     final db = await database;
@@ -102,6 +151,8 @@ class AlarmDatabase {
     final db = await database;
     await db.delete('alarms');
   }
+  
+  // ------------------------------------- ALARM CRUD METHODS-------------------------------------
 
   Future<void> closeDatabase() async {
     final db = await database;

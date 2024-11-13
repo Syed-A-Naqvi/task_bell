@@ -56,4 +56,5 @@ class MapConverters {
       icon: map["icon"],
     );
   }
+
 }

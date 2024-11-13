@@ -12,7 +12,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
   AlarmSettings alarmSettings;
   String name;
   bool _isActive = false;
-  final String parentId;
+  String parentId;
 
   Recur recur;
 
@@ -20,7 +20,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     required this.name,
     required this.alarmSettings,
     required this.recur,
-    required this.parentId,
+    this.parentId = '-1',
     isActive = false,
     super.key,
   }) {

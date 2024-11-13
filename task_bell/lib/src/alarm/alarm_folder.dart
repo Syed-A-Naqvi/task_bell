@@ -10,11 +10,11 @@ import 'recurrence/week_recur.dart';
 class AlarmFolder extends StatefulWidget implements Comparable {
 
   // AlarmFolder info
-  String id;
-  String parentId;
-  String name;
-  int position;
-  AlarmFolder({
+  final String id;
+  final String parentId;
+  final String name;
+  final int position;
+  const AlarmFolder({
     required this.id,
     required this.name,
     required this.position,
@@ -23,14 +23,8 @@ class AlarmFolder extends StatefulWidget implements Comparable {
   });
 
   // Generic settings
-  double containerHeight = 50;
-  double childIndent = 50;
-
-  // Keep track of subfolders, folders should also not be alarms, so keep them separate
-  HeapPriorityQueue<AlarmFolder> subfolders = HeapPriorityQueue<AlarmFolder>();
-  
-  // Keep track of alarms contained within the folder
-  HeapPriorityQueue<dynamic> alarms = HeapPriorityQueue<dynamic>();
+  final double containerHeight = 50;
+  final double childIndent = 30;
   
   @override
   State<StatefulWidget> createState() => AlarmFolderState();
@@ -62,6 +56,11 @@ class AlarmFolder extends StatefulWidget implements Comparable {
 
 class AlarmFolderState extends State<AlarmFolder> {
 
+  // Keep track of subfolders, folders should also not be alarms, so keep them separate
+  HeapPriorityQueue<AlarmFolder> subfolders = HeapPriorityQueue<AlarmFolder>();  
+  // Keep track of alarms contained within the folder
+  HeapPriorityQueue<dynamic> alarms = HeapPriorityQueue<dynamic>();
+  
   bool _expanded = false;
 
   Icon icon = const Icon(Icons.chevron_right);
@@ -110,8 +109,9 @@ class AlarmFolderState extends State<AlarmFolder> {
       selectedTime24Hour.minute,  
     );
 
-    widget.alarms.add(AlarmInstance(
-      name: nameController.text, 
+    alarms.add(AlarmInstance(
+      name: nameController.text,
+      parentId: widget.id,
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/1000) % 2147483647, 
         dateTime: recurTime,
@@ -130,7 +130,6 @@ class AlarmFolderState extends State<AlarmFolder> {
       //   recurTime: recurTime
       // ),
       recur: getRecurObject(recurTime),
-      parentId: widget.id,
     ),);
 
     nameController.text = "";
@@ -159,12 +158,12 @@ class AlarmFolderState extends State<AlarmFolder> {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       parentId: widget.id,
       name: nameController.text,
-      position: widget.subfolders.length,
+      position: subfolders.length,
     );
 
     debugPrint("Before ${widget.name}, adding ${nameController.text}");
-    debugPrint(widget.subfolders.toList().toString());
-    widget.subfolders.add(subFolder);
+    debugPrint(subfolders.toList().toString());
+    subfolders.add(subFolder);
 
     setState((){});
 
@@ -283,13 +282,13 @@ class AlarmFolderState extends State<AlarmFolder> {
       ),
     ],
   )));
-}
+  }
 
   List<Widget> indentChildren() {
     List<Widget> indented = [];
 
-    final folders = widget.subfolders.toList();
-    final alarms = widget.alarms.toList();
+    final folders = subfolders.toList();
+    final alarmsList = alarms.toList();
 
     for (AlarmFolder af in folders) {
       indented.add(
@@ -299,11 +298,11 @@ class AlarmFolderState extends State<AlarmFolder> {
         )
       );
     }
-    for (final af in alarms) {
+    for (AlarmInstance al in alarmsList) {
       indented.add(
         Padding(
           padding: EdgeInsets.fromLTRB(widget.childIndent, 0,0,0),
-          child: af,
+          child: al,
         )
       );
     }
@@ -326,6 +325,10 @@ class AlarmFolderState extends State<AlarmFolder> {
                 icon: icon,
                 onPressed: _toggleExpansion,
               ),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0,0,8,0),
+                child: Icon(Icons.folder),
+              ),
               Text(widget.name),
               IconButton(
                 icon: const Icon(Icons.add),
@@ -333,10 +336,6 @@ class AlarmFolderState extends State<AlarmFolder> {
                 // onPressed: () {debugPrint("Test");}
               ),
               Expanded(child: Container()),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(0,0,10,0),
-                child: Icon(Icons.folder),
-              ),
             ]
           ),
           

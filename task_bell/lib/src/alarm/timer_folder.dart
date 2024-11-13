@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'alarm_folder.dart';
 
 class TimerFolder extends AlarmFolder {
-  TimerFolder({super.key, required super.id, required super.name, required super.position});
 
+  const TimerFolder({super.key, required super.id, required super.name, required super.position});
 
   @override
   State<StatefulWidget> createState() => TimerFolderState();
@@ -66,7 +66,7 @@ class TimerFolderState extends AlarmFolderState {
       selectedTime24Hour.minute,  
     );
 
-    widget.alarms.add(TimerInstance(
+    alarms.add(TimerInstance(
       name: nameController.text, 
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/1000) % 2147483647, 
