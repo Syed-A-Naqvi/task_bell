@@ -7,6 +7,13 @@ import 'alarm_instance.dart';
 import 'recurrence/recur.dart';
 import 'recurrence/week_recur.dart';
 
+// Each folder will need to pull all its children from the database upon initialization
+// this should be implemented in the state's initstate logic
+// the inline function passed to creation widgets' onCreate parameter will need to
+  // 1. insert the newly created object into a local collection
+  // 2. insert the newly created object into the sqflite db
+
+
 class AlarmFolder extends StatefulWidget implements Comparable {
 
   // AlarmFolder info
