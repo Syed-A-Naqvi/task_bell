@@ -6,98 +6,162 @@ import 'recurrence/relative_recur.dart';
 import 'recurrence/week_recur.dart';
 
 class AlarmInstance extends StatefulWidget implements Comparable {
+  
+  final double containerHeight = 50;
+  final String name;
+  final bool isActive;
+  final String parentId;
+  final Recur recur;
+  final AlarmSettings alarmSettings;
 
-  double containerHeight = 50;
-
-  AlarmSettings alarmSettings;
-  String name;
-  bool _isActive = false;
-  String parentId;
-
-  Recur recur;
-
-  AlarmInstance({
+  const AlarmInstance({
     required this.name,
     required this.alarmSettings,
     required this.recur,
     this.parentId = '-1',
-    isActive = false,
+    this.isActive = false,
     super.key,
-  }) {
-    _isActive = isActive;
+  });
 
-    if (_isActive) {
+  static AlarmInstance fromMap(Map<String, dynamic> map) {
+    Recur? recur;
+    if (map["recurtype"] == "week") {
+      recur = WeekRecur.fromMap(map);
+    } else if (map["recurtype"] == "relative") {
+      recur = RelativeRecur.fromMap(map);
+    }
+    if (recur == null) {
+      throw Exception("Unknown or missing recur type when reading AlarmInstance from map");
+    }
+
+    AlarmSettings alarmSettings = MapConverters.alarmSettingsFromMap(map);
+
+    return AlarmInstance(
+      name: map["name"],
+      parentId: map["parentId"],
+      isActive: map["isactive"],
+      recur: recur,
+      alarmSettings: alarmSettings,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+        "name": name,
+        "isactive": isActive,
+        "parentId": parentId,
+        ...recur.toMap(),
+        ...MapConverters.alarmSettingsToMap(alarmSettings),
+      };
+
+  @override
+  State<StatefulWidget> createState() => AlarmInstanceState();
+
+  @override
+  int compareTo(other) {
+    return alarmSettings.dateTime.millisecondsSinceEpoch
+        .compareTo(other.alarmSettings.dateTime.millisecondsSinceEpoch);
+  }
+}
+
+class AlarmInstanceState extends State<AlarmInstance> {
+  
+  bool _showRelativeTime = false;
+  late bool isActive;
+  late AlarmSettings alarmSettings;
+
+  @override
+  void initState() {
+    super.initState();
+    isActive = widget.isActive;
+    alarmSettings = widget.alarmSettings;
+    if (isActive) {
       Alarm.set(alarmSettings: alarmSettings);
     }
   }
 
-  void toggleAlarm() async {
+  Future<void> toggleAlarmStatus() async {
+    setState(() {
+      isActive = !isActive;
+    });
 
-    debugPrint("Toggle alarm called");
-      
-    _isActive = !_isActive;
-
-    if (_isActive) {
-      DateTime? nextOccur = recur.getNextOccurrence(DateTime.now());
-
-      // If it fails to grab the next occurence for whatever reason,
-      // the alarm should not be set, because there is no time to trigger at
-      if (nextOccur == null) {
-        _isActive = false;
+    if (isActive) {
+      DateTime? nextOccurrence = widget.recur.getNextOccurrence(DateTime.now());
+      if (nextOccurrence == null) {
+        setState(() {
+          isActive = false;
+        });
         return;
       }
 
-      // Create new AlarmSettings object to modify the next occurence.
-      // cannot modify directly due to constant fields
-      alarmSettings = AlarmSettings(
-        id: alarmSettings.id, 
-        dateTime: nextOccur, 
-        assetAudioPath: alarmSettings.assetAudioPath, 
-        notificationSettings: alarmSettings.notificationSettings,
-        loopAudio: alarmSettings.loopAudio,
-        vibrate: alarmSettings.vibrate,
-        volume: alarmSettings.volume,
-        volumeEnforced: alarmSettings.volumeEnforced,
-        fadeDuration: alarmSettings.fadeDuration,
-        warningNotificationOnKill: alarmSettings.warningNotificationOnKill,
-        androidFullScreenIntent: alarmSettings.androidFullScreenIntent
-      );
-
+      alarmSettings = alarmSettings.copyWith(dateTime: nextOccurrence);
       await Alarm.set(alarmSettings: alarmSettings);
 
-      debugPrint("Alarm set for ${nextOccur.toString()}");
-
-      
-      return;
+      debugPrint("Alarm set for $nextOccurrence");
+    } else {
+      await Alarm.stop(alarmSettings.id);
     }
-    
-    await Alarm.stop(alarmSettings.id);
   }
 
-  bool isActive() {
-    return _isActive;
+  String _formatDateTime(bool relative) {
+    DateTime now = DateTime.now();
+    DateTime? nextOccurrence = widget.recur.getNextOccurrence(now);
+
+    print(" HOW MANY GODDAMN DAYS? ${(widget.recur as WeekRecur).activeDays}");
+
+    if (nextOccurrence == null) return "";
+
+    if (relative) {
+      final diff = nextOccurrence.difference(now);
+      final days = diff.inDays;
+      final hours = diff.inHours % 24;
+      final minutes = diff.inMinutes % 60;
+      final seconds = diff.inSeconds % 60;
+
+      return "${days}d, ${hours}h, ${minutes}m, ${seconds}s";
+    }
+
+    return nextOccurrence.toString();
   }
 
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {
-      "name" : name,
-      "isactive": _isActive,
-      "parendId": parentId,
-    };
-    map.addAll(recur.toMap());
-    map.addAll(MapConverters.alarmSettingsToMap(alarmSettings));
-
-    return map;
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () {
+              toggleAlarmStatus();
+              if (mounted) setState(() {});
+            },
+            icon: Icon(isActive ? Icons.toggle_on : Icons.toggle_off_outlined),
+          ),
+          Text(widget.name),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Text(_formatDateTime(_showRelativeTime)),
+          ),
+          IconButton(
+            onPressed: () => setState(() {
+              _showRelativeTime = !_showRelativeTime;
+            }),
+            icon: const Icon(Icons.swap_horiz),
+          ),
+        ],
+      ),
+    );
   }
-
+}
 
   /* Current List of all fields for alarm instance
     "name" String
     "isactive" bool
-    "recurtype" String
     "parentId" String
-    "inittime" int
-    "recurtime" int
+    "recurtype" String
+    "activedays": int,
+    "skipweeks": int,
+    "repeatweeks": int,
+    "recurtime": int,
+    "inittime": int,
     "id" int // this refers to the alarmsettings id, could potentially benefit from renaming
     "datetime" int // milliseconds since epoch when alarm will go off
     "assetAudioPath" String
@@ -113,126 +177,3 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     "stopButton" String (nullable) // notification stop button text 
     "icon" String (nullable) // icon path? to for the icon of the alarm, for notification
   */
-  AlarmInstance fromMap(Map<String, dynamic> map) {
-    Recur? recur;
-    if (map["recurtype"] == "week") {
-      recur = WeekRecur.fromMap(map);
-    } 
-    else if (map["recurtype"] == "relative") {
-      recur = RelativeRecur.fromMap(map);
-    }
-    if (recur == null) {
-      throw Exception("unknown or missing recur type when reading AlarmInstance from map"); 
-    }
-
-    AlarmSettings as = MapConverters.alarmSettingsFromMap(map);
-  
-    return AlarmInstance(
-      name: map["name"], 
-      alarmSettings: as, 
-      recur: recur,
-      parentId: map["parentId"],
-      isActive: map["isactive"],
-    );
-
-  }
-
-  @override
-  State<StatefulWidget> createState() => _AlarmInstanceState();
-  
-  @override
-  int compareTo(other) {
-    return alarmSettings.dateTime.millisecondsSinceEpoch
-      .compareTo(other.alarmSettings.dateTime.millisecondsSinceEpoch);
-  }
-}
-
-
-class _AlarmInstanceState extends State<AlarmInstance> {
-
-  bool _relative = false;
-
-  /// This will do custom formatting for display
-  String _dateTimeToString(bool relative) {
-
-    DateTime dt = DateTime.now();
-    DateTime? nextOccur = widget.recur.getNextOccurrence(dt);
-    
-    if (nextOccur == null) {
-      return "";
-    }
-
-    if (widget.recur is RelativeRecur) {
-      dt = (widget.recur as RelativeRecur).initTime;
-    }
-    
-
-    if (relative) {
-      int days = nextOccur.day - dt.day;
-      int hours = nextOccur.hour - dt.hour;
-      int minutes = nextOccur.minute - dt.minute;
-      int seconds = nextOccur.second - dt.second;
-
-      if (seconds < 0) { 
-        minutes -= 1;
-        seconds = 60 + seconds;
-      }
-      if (minutes < 0) {
-        hours -= 1;
-        minutes = 60 + minutes;
-      }
-      if (hours < 0) {
-        days -= 1;
-        hours = 24 + hours;
-      }
-      return "${days}d, ${hours}h, ${minutes}m ${seconds}s";
-
-      // return "${dt.day*24 + dt.hour}h, ${dt.minute}m";
-    }
-    return nextOccur.toString();
-  }
-
-  void _toggleAlarm() {
-
-    widget.toggleAlarm();
-
-    setState((){});
-
-    DateTime? nextOccur = widget.recur.getNextOccurrence(DateTime.now());
-
-    if (nextOccur == null) {
-      return;
-    }
-    if (widget._isActive) {
-      SnackBar snackBar = SnackBar(content: Text("Alarm set for ${_dateTimeToString(true)} from now"));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-    
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: _toggleAlarm, 
-
-            icon: Icon(widget.isActive() ? Icons.toggle_on : Icons.toggle_off_outlined),
-          ),
-          Text(widget.name),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10,0,10,0),
-            child: Text(_dateTimeToString(_relative)),
-          ),
-
-          IconButton(
-            onPressed: (){setState((){_relative = !_relative;});}, 
-            icon: const Icon(Icons.swap_horiz),
-          ),
-          
-        ],
-      ),
-    );
-  }
-}

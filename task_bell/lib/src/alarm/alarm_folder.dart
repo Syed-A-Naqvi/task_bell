@@ -60,10 +60,26 @@ class AlarmFolderState extends State<AlarmFolder> {
   HeapPriorityQueue<AlarmFolder> subfolders = HeapPriorityQueue<AlarmFolder>();  
   // Keep track of alarms contained within the folder
   HeapPriorityQueue<dynamic> alarms = HeapPriorityQueue<dynamic>();
-  
   bool _expanded = false;
-
   Icon icon = const Icon(Icons.chevron_right);
+  TextEditingController nameController = TextEditingController();
+  
+  int activeDays = 0;
+  void _handleActiveDaysChanged(int newActiveDays){
+    setState(() {
+      activeDays = newActiveDays;
+    });    
+  }
+  late WeekdaySelector weekdaySelector;
+  
+  @override
+  void initState(){
+    super.initState();
+    weekdaySelector = WeekdaySelector(
+      activeDays: activeDays,
+      onActiveDaysChanged: _handleActiveDaysChanged
+    );
+  }
 
   void _toggleExpansion() {
     _expanded = !_expanded;
@@ -139,7 +155,7 @@ class AlarmFolderState extends State<AlarmFolder> {
 
   Recur getRecurObject(DateTime recurTime) {
     return WeekRecur(
-      activeDays: weekdaySelector.activeDays,
+      activeDays: activeDays,
       recurTime: recurTime
     );
   }
@@ -201,10 +217,6 @@ class AlarmFolderState extends State<AlarmFolder> {
       ],
     );
   }
-
-  final TextEditingController nameController = TextEditingController();
-
-  WeekdaySelector weekdaySelector = WeekdaySelector(activeDays: 0,);
 
   Widget _buildTabView() {
   return Expanded(child: Padding(

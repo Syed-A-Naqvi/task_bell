@@ -53,7 +53,8 @@ class TimerFolderState extends AlarmFolderState {
     if (selectedTime24Hour == null) {
       return;
     }
-
+    // Check if the widget is still mounted before using the context
+    if (!mounted) return;    
     Navigator.of(context).pop();
 
     debugPrint(selectedTime24Hour.hour.toString());
@@ -67,7 +68,8 @@ class TimerFolderState extends AlarmFolderState {
     );
 
     alarms.add(TimerInstance(
-      name: nameController.text, 
+      name: nameController.text,
+      parentId: widget.id,
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/1000) % 2147483647, 
         dateTime: recurTime,
@@ -83,7 +85,6 @@ class TimerFolderState extends AlarmFolderState {
       ),
 
       recur: getRecurObject(recurTime),
-      parentId: widget.id,
     ),);
 
     nameController.text = "";

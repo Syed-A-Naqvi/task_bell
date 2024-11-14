@@ -42,7 +42,6 @@ class WeekRecur implements Recur {
   }
 
   bool _isDayActive(int dayBit) => activeDays & dayBit != 0;
-
   bool _isWeekdayActive(int weekday) => _isDayActive(1 << (weekday - 1));
 
   @override
@@ -91,13 +90,13 @@ class WeekRecur implements Recur {
         "activedays": activeDays,
         "skipweeks": skipWeeks,
         "repeatweeks": repeatWeeks,
-        "time": recurTime.millisecondsSinceEpoch,
+        "recurtime": recurTime.millisecondsSinceEpoch,
       };
 
   static WeekRecur fromMap(Map<String, dynamic> map) {
     return WeekRecur(
       activeDays: map["activedays"],
-      recurTime: DateTime.fromMillisecondsSinceEpoch(map["time"]),
+      recurTime: DateTime.fromMillisecondsSinceEpoch(map["recurtime"]),
       skipWeeks: map["skipweeks"] ?? 0,
       repeatWeeks: map["repeatweeks"] ?? 0,
     );

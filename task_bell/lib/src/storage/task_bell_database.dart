@@ -34,8 +34,10 @@ class TaskBellDatabase {
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE alarms (
-        id TEXT PRIMARY KEY,
+        name TEXT,
+        isactive
         parentId TEXT,
+        id TEXT PRIMARY KEY,
         datetime INTEGER,
         assetAudioPath TEXT,
         loopAudio INTEGER,
