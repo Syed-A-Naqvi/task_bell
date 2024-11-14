@@ -1,5 +1,8 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'stopwatch.dart';
 
 class StopwatchPage extends StatefulWidget {
@@ -12,6 +15,13 @@ class StopwatchPage extends StatefulWidget {
 class StopwatchPageState extends State<StopwatchPage> {
   final StopwatchService _stopwatchService = StopwatchService();
   bool _isRunning = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadState();
+  }
 
   @override
   void dispose() {
@@ -19,26 +29,99 @@ class StopwatchPageState extends State<StopwatchPage> {
     super.dispose();
   }
 
-  void _toggleStartStop() {
+  Future<void> _loadState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Load current running state and update the UI accordingly
+    final savedState = prefs.getString('currentState') ?? 'stopped';
     setState(() {
-      if (_isRunning) {
-        _stopwatchService.stop();
-      } else {
-        _stopwatchService.start();
+      _isRunning = savedState == 'running';
+    });
+
+    // Load laps and populate _stopwatchService
+    final lapsJson = prefs.getString('laps');
+    if (lapsJson != null) {
+      final List<dynamic> lapsList = jsonDecode(lapsJson);
+      _stopwatchService.laps.clear();
+      for (var lapData in lapsList) {
+        _stopwatchService.laps.add({
+          'start': Duration(milliseconds: lapData['start']),
+          'end': Duration(milliseconds: lapData['end']),
+          'duration': Duration(milliseconds: lapData['duration']),
+        });
       }
-      _isRunning = !_isRunning;
+    }
+
+    // Load start, lap start, and paused durations to calculate elapsed time and lap time
+    final startTimeEpoch = prefs.getInt('startTimeEpoch') ?? 0;
+    final pausedDuration = Duration(milliseconds: prefs.getInt('pausedDuration') ?? 0);
+    final lastStopTimeEpoch = prefs.getInt('lastStopTimeEpoch') ?? DateTime.now().millisecondsSinceEpoch;
+
+    if (!_isRunning && startTimeEpoch != 0) {
+      // Calculate the elapsed time and lap time at the moment it was last paused
+      final elapsedTime = Duration(milliseconds: lastStopTimeEpoch - startTimeEpoch - pausedDuration.inMilliseconds);
+      final lapStartTimeEpoch = prefs.getInt('lapStartTimeEpoch') ?? startTimeEpoch;
+      final lapPausedDuration = Duration(milliseconds: prefs.getInt('lapPausedDuration') ?? 0);
+      final lapTime = Duration(milliseconds: lastStopTimeEpoch - lapStartTimeEpoch - lapPausedDuration.inMilliseconds);
+
+      // Use the new method to update UI with the loaded elapsed and lap times
+      _stopwatchService.updateElapsedAndLapTime(elapsedTime, lapTime);
+    } else if (_isRunning) {
+      // If running, continue ticking to keep updating the time
+      _stopwatchService.start();
+    }
+
+    setState(() {
+      _isLoading = false;
     });
   }
 
-  void _reset() {
+  void _toggleStartStop() async {
+    if (_isRunning) {
+      if (kDebugMode) print("Stop button pressed");
+      _stopwatchService.stop();
+    } else {
+      if (kDebugMode) print("Start button pressed");
+      _stopwatchService.start();
+    }
     setState(() {
-      _stopwatchService.reset();
+      _isRunning = !_isRunning;
+    });
+
+    // Save state to SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('currentState', _isRunning ? 'running' : 'paused');
+  }
+
+  void _reset() async {
+    if (kDebugMode) print("Reset button pressed");
+    _stopwatchService.reset();
+    setState(() {
       _isRunning = false;
     });
+
+    // Save state to SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('currentState', 'stopped');
+  }
+
+  void _recordLap() {
+    _stopwatchService.recordLap();
+    setState(() {}); // Update the UI immediately after recording a lap
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Stopwatch')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    return _buildMainUI(context);
+  }
+
+  Scaffold _buildMainUI(BuildContext context) {
     final theme = Theme.of(context);
     final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     final lapTextColor = theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54;
@@ -53,6 +136,19 @@ class StopwatchPageState extends State<StopwatchPage> {
               Navigator.restorablePushNamed(context, SettingsView.routeName);
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.clean_hands),
+            onPressed: () {
+              _stopwatchService.clearSharedPreferences();
+              if (kDebugMode) print("SharedPreferences cleared");
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.print),
+            onPressed: () {
+              if (kDebugMode) print("_isRunning: $_isRunning");
+            },
+          )
         ],
       ),
       body: Column(
@@ -84,7 +180,7 @@ class StopwatchPageState extends State<StopwatchPage> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
-                  onPressed: _isRunning ? _stopwatchService.recordLap : _reset,
+                  onPressed: _isRunning ? _recordLap : _reset,
                   style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(24),
@@ -118,40 +214,35 @@ class StopwatchPageState extends State<StopwatchPage> {
             ],
           ),
           Expanded(
-            child: StreamBuilder<List<Map<String, Duration>>>(
-              stream: _stopwatchService.lapsStream,
-              builder: (context, snapshot) {
-                final laps = snapshot.data ?? [];
-                if (laps.isEmpty) {
-                  return const Center(child: Text('No laps recorded'));
-                }
+            child: ListView.builder(
+              itemCount: _stopwatchService.laps.length,
+              itemBuilder: (context, index) {
+                final laps = _stopwatchService.laps;
+                final lap = laps[laps.length - 1 - index];
+                final lapDuration = lap['duration']!;
+                final minutes = lapDuration.inMinutes.remainder(60).toString().padLeft(2, '0');
+                final seconds = lapDuration.inSeconds.remainder(60).toString().padLeft(2, '0');
+                final milliseconds = (lapDuration.inMilliseconds.remainder(1000) ~/ 10).toString().padLeft(2, '0');
 
-                Duration? fastestLap;
-                Duration? slowestLap;
+                // Determine the shortest and longest lap
+                Duration? shortestLap;
+                Duration? longestLap;
                 if (laps.length > 1) {
-                  fastestLap = laps.map((lap) => lap['duration']!).reduce((a, b) => a < b ? a : b);
-                  slowestLap = laps.map((lap) => lap['duration']!).reduce((a, b) => a > b ? a : b);
+                  shortestLap = laps.map((lap) => lap['duration']!).reduce((a, b) => a < b ? a : b);
+                  longestLap = laps.map((lap) => lap['duration']!).reduce((a, b) => a > b ? a : b);
                 }
 
-                return ListView.builder(
-                  itemCount: laps.length,
-                  itemBuilder: (context, index) {
-                    final lap = laps[laps.length - 1 - index];
-                    final lapDuration = lap['duration']!;
-                    final minutes = lapDuration.inMinutes.remainder(60).toString().padLeft(2, '0');
-                    final seconds = lapDuration.inSeconds.remainder(60).toString().padLeft(2, '0');
-                    final milliseconds = (lapDuration.inMilliseconds.remainder(1000) ~/ 10).toString().padLeft(2, '0');
-                    Color lapTextColor = textColor;
-                    if (lapDuration == fastestLap) {
-                      lapTextColor = Colors.green;
-                    } else if (lapDuration == slowestLap) {
-                      lapTextColor = Colors.red;
-                    }
-                    return ListTile(
-                      title: Text('Lap ${laps.length - index}', style: TextStyle(color: lapTextColor, fontSize: 16)),
-                      trailing: Text('$minutes:$seconds.$milliseconds', style: TextStyle(color: lapTextColor, fontSize: 16)),
-                    );
-                  },
+                // Apply color for shortest and longest laps
+                Color lapTextColor = textColor;
+                if (lapDuration == shortestLap) {
+                  lapTextColor = Colors.green;
+                } else if (lapDuration == longestLap) {
+                  lapTextColor = Colors.red;
+                }
+
+                return ListTile(
+                  title: Text('Lap ${laps.length - index}', style: TextStyle(color: lapTextColor, fontSize: 16)),
+                  trailing: Text('$minutes:$seconds.$milliseconds', style: TextStyle(color: lapTextColor, fontSize: 16)),
                 );
               },
             ),
