@@ -2,32 +2,37 @@ import 'package:flutter/material.dart';
 import 'recurrence/week_recur.dart';
 
 class WeekdaySelector extends StatefulWidget {
-
-  int activeDays;
+  final int activeDays;
 
   /// activeDays should be a bit vector, the same used by recurrence/WeekRecur
-  WeekdaySelector({
+  const WeekdaySelector({
     required this.activeDays,
     super.key,
   });
-
 
   @override
   State<StatefulWidget> createState() => _WeekdaySelectorState();
 }
 
 class _WeekdaySelectorState extends State<WeekdaySelector> {
+  late int _activeDays;
 
-  /*
-  Default/builtin checkboxes are not well built for our purposes, will need
-  to make our own, which is pretty unfortunate
-  */
+  @override
+  void initState() {
+    super.initState();
+    _activeDays = widget.activeDays;
+  }
+
+  void toggleDay(int day) {
+    setState(() {
+      _activeDays ^= day; // Toggle the bit for the selected day
+    });
+  }
 
   double colWidth = 32.0;
 
   @override
   Widget build(BuildContext context) {
-
     return Wrap(
       children: [
         SizedBox(
@@ -36,10 +41,10 @@ class _WeekdaySelectorState extends State<WeekdaySelector> {
             children: [
               const Text("S"),
               Checkbox(
-                value: widget.activeDays & WeekRecur.sunday == WeekRecur.sunday,
-                onChanged: (bool? value) {setState((){
-                  widget.activeDays = widget.activeDays ^ WeekRecur.sunday;
-                });},
+                value: _activeDays & WeekRecur.sunday == WeekRecur.sunday,
+                onChanged: (bool? value) {
+                  toggleDay(WeekRecur.sunday);
+                },
                 shape: const CircleBorder(),
               )
             ],
@@ -51,10 +56,10 @@ class _WeekdaySelectorState extends State<WeekdaySelector> {
             children: [
               const Text("M"),
               Checkbox(
-                value: widget.activeDays & WeekRecur.monday == WeekRecur.monday,
-                onChanged: (bool? value) {setState((){
-                  widget.activeDays = widget.activeDays ^ WeekRecur.monday;
-                });},
+                value: _activeDays & WeekRecur.monday == WeekRecur.monday,
+                onChanged: (bool? value) {
+                  toggleDay(WeekRecur.monday);
+                },
                 shape: const CircleBorder(),
               )
             ],
@@ -66,10 +71,10 @@ class _WeekdaySelectorState extends State<WeekdaySelector> {
             children: [
               const Text("T"),
               Checkbox(
-                value: widget.activeDays & WeekRecur.tuesday == WeekRecur.tuesday,
-                onChanged: (bool? value) {setState((){
-                  widget.activeDays = widget.activeDays ^ WeekRecur.tuesday;
-                });},
+                value: _activeDays & WeekRecur.tuesday == WeekRecur.tuesday,
+                onChanged: (bool? value) {
+                  toggleDay(WeekRecur.tuesday);
+                },
                 shape: const CircleBorder(),
               )
             ],
@@ -81,10 +86,10 @@ class _WeekdaySelectorState extends State<WeekdaySelector> {
             children: [
               const Text("W"),
               Checkbox(
-                value: widget.activeDays & WeekRecur.wednesday == WeekRecur.wednesday,
-                onChanged: (bool? value) {setState((){
-                  widget.activeDays = widget.activeDays ^ WeekRecur.wednesday;
-                });},
+                value: _activeDays & WeekRecur.wednesday == WeekRecur.wednesday,
+                onChanged: (bool? value) {
+                  toggleDay(WeekRecur.wednesday);
+                },
                 shape: const CircleBorder(),
               )
             ],
@@ -96,10 +101,10 @@ class _WeekdaySelectorState extends State<WeekdaySelector> {
             children: [
               const Text("T"),
               Checkbox(
-                value: widget.activeDays & WeekRecur.thursday == WeekRecur.thursday,
-                onChanged: (bool? value) {setState((){
-                  widget.activeDays = widget.activeDays ^ WeekRecur.thursday;
-                });},
+                value: _activeDays & WeekRecur.thursday == WeekRecur.thursday,
+                onChanged: (bool? value) {
+                  toggleDay(WeekRecur.thursday);
+                },
                 shape: const CircleBorder(),
               )
             ],
@@ -111,10 +116,10 @@ class _WeekdaySelectorState extends State<WeekdaySelector> {
             children: [
               const Text("F"),
               Checkbox(
-                value: widget.activeDays & WeekRecur.friday == WeekRecur.friday,
-                onChanged: (bool? value) {setState((){
-                  widget.activeDays = widget.activeDays ^ WeekRecur.friday;
-                });},
+                value: _activeDays & WeekRecur.friday == WeekRecur.friday,
+                onChanged: (bool? value) {
+                  toggleDay(WeekRecur.friday);
+                },
                 shape: const CircleBorder(),
               )
             ],
@@ -126,17 +131,15 @@ class _WeekdaySelectorState extends State<WeekdaySelector> {
             children: [
               const Text("S"),
               Checkbox(
-                value: widget.activeDays & WeekRecur.saturday == WeekRecur.saturday,
-                onChanged: (bool? value) {setState((){
-                  widget.activeDays = widget.activeDays ^ WeekRecur.saturday;
-                });},
+                value: _activeDays & WeekRecur.saturday == WeekRecur.saturday,
+                onChanged: (bool? value) {
+                  toggleDay(WeekRecur.saturday);
+                },
                 shape: const CircleBorder(),
               )
             ],
           ),
         ),
-        
-        
       ],
     );
   }

@@ -1,9 +1,6 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:task_bell/src/alarm/timer_instance.dart';
 import 'package:task_bell/src/alarm/weekday_selector.dart';
-import '../settings/settings_view.dart';
 import 'package:collection/collection.dart';
 
 import 'alarm_instance.dart';
@@ -13,25 +10,21 @@ import 'recurrence/week_recur.dart';
 class AlarmFolder extends StatefulWidget implements Comparable {
 
   // AlarmFolder info
-  String id;
-  String name;
-  int position;
-  AlarmFolder({
+  final String id;
+  final String parentId;
+  final String name;
+  final int position;
+  const AlarmFolder({
     required this.id,
     required this.name,
     required this.position,
+    this.parentId = '-1',
     super.key,
   });
 
   // Generic settings
-  double containerHeight = 50;
-  double childIndent = 50;
-
-  // Keep track of subfolders, folders should also not be alarms, so keep them separate
-  HeapPriorityQueue<AlarmFolder> subfolders = HeapPriorityQueue<AlarmFolder>();
-  
-  // Keep track of alarms contained within the folder
-  HeapPriorityQueue<dynamic> alarms = HeapPriorityQueue<dynamic>();
+  final double containerHeight = 50;
+  final double childIndent = 30;
   
   @override
   State<StatefulWidget> createState() => AlarmFolderState();
@@ -44,19 +37,30 @@ class AlarmFolder extends StatefulWidget implements Comparable {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'parentId': parentId,
       'name': name,
       'position': position,
     };
   }
 
   static AlarmFolder fromMap(Map<String, dynamic> map) {
-    return AlarmFolder(id: map["id"], name: map["name"], position: map["position"]);
+    return AlarmFolder(
+      id: map["id"],
+      parentId: map['parentId'],
+      name: map["name"],
+      position: map["position"]
+    );
   }
 
 }
 
 class AlarmFolderState extends State<AlarmFolder> {
 
+  // Keep track of subfolders, folders should also not be alarms, so keep them separate
+  HeapPriorityQueue<AlarmFolder> subfolders = HeapPriorityQueue<AlarmFolder>();  
+  // Keep track of alarms contained within the folder
+  HeapPriorityQueue<dynamic> alarms = HeapPriorityQueue<dynamic>();
+  
   bool _expanded = false;
 
   Icon icon = const Icon(Icons.chevron_right);
@@ -87,12 +91,12 @@ class AlarmFolderState extends State<AlarmFolder> {
         );
       },
     );
-
     // user closed dialog, did not select time
     if (selectedTime24Hour == null) {
       return;
     }
-
+    // Check if the widget is still mounted before using the context
+    if (!mounted) return;    
     Navigator.of(context).pop();
 
     debugPrint(selectedTime24Hour.hour.toString());
@@ -105,8 +109,9 @@ class AlarmFolderState extends State<AlarmFolder> {
       selectedTime24Hour.minute,  
     );
 
-    widget.alarms.add(AlarmInstance(
-      name: nameController.text, 
+    alarms.add(AlarmInstance(
+      name: nameController.text,
+      parentId: widget.id,
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/1000) % 2147483647, 
         dateTime: recurTime,
@@ -125,7 +130,6 @@ class AlarmFolderState extends State<AlarmFolder> {
       //   recurTime: recurTime
       // ),
       recur: getRecurObject(recurTime),
-      parentId: widget.id,
     ),);
 
     nameController.text = "";
@@ -152,13 +156,14 @@ class AlarmFolderState extends State<AlarmFolder> {
 
     AlarmFolder subFolder = AlarmFolder(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
+      parentId: widget.id,
       name: nameController.text,
-      position: widget.subfolders.length,
+      position: subfolders.length,
     );
 
     debugPrint("Before ${widget.name}, adding ${nameController.text}");
-    debugPrint(widget.subfolders.toList().toString());
-    widget.subfolders.add(subFolder);
+    debugPrint(subfolders.toList().toString());
+    subfolders.add(subFolder);
 
     setState((){});
 
@@ -175,7 +180,7 @@ class AlarmFolderState extends State<AlarmFolder> {
         child: Dialog(
           child: SizedBox(
             width: 200,
-            height: 250,
+            height: 300,
             child: Column(
               children: [
               _buildTabBar(context),
@@ -186,7 +191,6 @@ class AlarmFolderState extends State<AlarmFolder> {
         ),
       ),
     );
-
   }
 
   Widget _buildTabBar(BuildContext context) {
@@ -277,13 +281,13 @@ class AlarmFolderState extends State<AlarmFolder> {
       ),
     ],
   )));
-}
+  }
 
   List<Widget> indentChildren() {
     List<Widget> indented = [];
 
-    final folders = widget.subfolders.toList();
-    final alarms = widget.alarms.toList();
+    final folders = subfolders.toList();
+    final alarmsList = alarms.toList();
 
     for (AlarmFolder af in folders) {
       indented.add(
@@ -293,11 +297,11 @@ class AlarmFolderState extends State<AlarmFolder> {
         )
       );
     }
-    for (final af in alarms) {
+    for (AlarmInstance al in alarmsList) {
       indented.add(
         Padding(
           padding: EdgeInsets.fromLTRB(widget.childIndent, 0,0,0),
-          child: af,
+          child: al,
         )
       );
     }
@@ -320,6 +324,10 @@ class AlarmFolderState extends State<AlarmFolder> {
                 icon: icon,
                 onPressed: _toggleExpansion,
               ),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0,0,8,0),
+                child: Icon(Icons.folder),
+              ),
               Text(widget.name),
               IconButton(
                 icon: const Icon(Icons.add),
@@ -327,10 +335,6 @@ class AlarmFolderState extends State<AlarmFolder> {
                 // onPressed: () {debugPrint("Test");}
               ),
               Expanded(child: Container()),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(0,0,10,0),
-                child: Icon(Icons.folder),
-              ),
             ]
           ),
           

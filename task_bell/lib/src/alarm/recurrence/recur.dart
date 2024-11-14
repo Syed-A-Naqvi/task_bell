@@ -1,12 +1,7 @@
+abstract class Recur {
+  /// Returns the next occurrence of the recurrence based on the provided [time].
+  DateTime? getNextOccurrence(DateTime time);
 
-abstract interface class Recur {
-
-  /*
-  Method should return a datetime object for the next occurence from
-  time provided
-  */
-  DateTime? getNextOccurence(DateTime time);
-
+  /// Converts the recurrence settings to a [Map<String, dynamic>].
   Map<String, dynamic> toMap();
-  // Recur? fromMap(Map<String, dynamic> map);
 }

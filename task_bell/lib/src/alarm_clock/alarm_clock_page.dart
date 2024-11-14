@@ -1,24 +1,23 @@
-import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
 import '../alarm/alarm_folder.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class AlarmClockPage extends StatefulWidget {
   const AlarmClockPage({super.key});
 
   @override
-  _AlarmClockPageState createState() => _AlarmClockPageState();
+  AlarmClockPageState createState() => AlarmClockPageState();
 }
 
-
-class _AlarmClockPageState extends State<AlarmClockPage> {
-
+class AlarmClockPageState extends State<AlarmClockPage> {
+  
   AlarmFolder defaultFolder = AlarmFolder(
     id: "0",
     name: "Alarms",
     position: 0,
   );
+
+  List<dynamic> items = [];
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +34,17 @@ class _AlarmClockPageState extends State<AlarmClockPage> {
         ],
       ),
       body: defaultFolder,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        mini: true,
+        onPressed: () {
+          // Add your onPressed code here!
+          print("the button was pressed");
+        },
+        foregroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).colorScheme.onSurface,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
