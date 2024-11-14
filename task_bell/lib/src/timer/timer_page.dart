@@ -6,10 +6,10 @@ class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
 
   @override
-  _TimerPageState createState() => _TimerPageState();
+  TimerPageState createState() => TimerPageState();
 }
 
-class _TimerPageState extends State<TimerPage> {
+class TimerPageState extends State<TimerPage> {
 
   TimerFolder defaultFolder = TimerFolder(
     id: "0",

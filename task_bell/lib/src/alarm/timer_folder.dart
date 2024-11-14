@@ -24,7 +24,6 @@ class TimerFolderState extends AlarmFolderState {
     );
   }
 
-
   // Need to split this up into functions because there is a lot of duplicate code
   // but for now this is necessary to make the AlarmInstance objects TimerInstance
   @override

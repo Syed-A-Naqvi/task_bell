@@ -106,8 +106,6 @@ class AlarmInstanceState extends State<AlarmInstance> {
     DateTime now = DateTime.now();
     DateTime? nextOccurrence = widget.recur.getNextOccurrence(now);
 
-    print(" HOW MANY GODDAMN DAYS? ${(widget.recur as WeekRecur).activeDays}");
-
     if (nextOccurrence == null) return "";
 
     if (relative) {

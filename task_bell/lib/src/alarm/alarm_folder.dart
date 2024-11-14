@@ -60,6 +60,7 @@ class AlarmFolderState extends State<AlarmFolder> {
   HeapPriorityQueue<AlarmFolder> subfolders = HeapPriorityQueue<AlarmFolder>();  
   // Keep track of alarms contained within the folder
   HeapPriorityQueue<dynamic> alarms = HeapPriorityQueue<dynamic>();
+ 
   bool _expanded = false;
   Icon icon = const Icon(Icons.chevron_right);
   TextEditingController nameController = TextEditingController();
