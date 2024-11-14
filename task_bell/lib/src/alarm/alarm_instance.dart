@@ -38,7 +38,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     _isActive = !_isActive;
 
     if (_isActive) {
-      DateTime? nextOccur = recur.getNextOccurence(DateTime.now());
+      DateTime? nextOccur = recur.getNextOccurrence(DateTime.now());
 
       // If it fails to grab the next occurence for whatever reason,
       // the alarm should not be set, because there is no time to trigger at
@@ -155,8 +155,8 @@ class _AlarmInstanceState extends State<AlarmInstance> {
   /// This will do custom formatting for display
   String _dateTimeToString(bool relative) {
 
-    DateTime? nextOccur = widget.recur.getNextOccurence(DateTime.now());
     DateTime dt = DateTime.now();
+    DateTime? nextOccur = widget.recur.getNextOccurrence(dt);
     
     if (nextOccur == null) {
       return "";
@@ -198,7 +198,7 @@ class _AlarmInstanceState extends State<AlarmInstance> {
 
     setState((){});
 
-    DateTime? nextOccur = widget.recur.getNextOccurence(DateTime.now());
+    DateTime? nextOccur = widget.recur.getNextOccurrence(DateTime.now());
 
     if (nextOccur == null) {
       return;
@@ -207,8 +207,6 @@ class _AlarmInstanceState extends State<AlarmInstance> {
       SnackBar snackBar = SnackBar(content: Text("Alarm set for ${_dateTimeToString(true)} from now"));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-    
-
     
   }
 
@@ -232,8 +230,6 @@ class _AlarmInstanceState extends State<AlarmInstance> {
             onPressed: (){setState((){_relative = !_relative;});}, 
             icon: const Icon(Icons.swap_horiz),
           ),
-
-
           
         ],
       ),

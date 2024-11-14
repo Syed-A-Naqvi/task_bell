@@ -91,12 +91,12 @@ class AlarmFolderState extends State<AlarmFolder> {
         );
       },
     );
-
     // user closed dialog, did not select time
     if (selectedTime24Hour == null) {
       return;
     }
-
+    // Check if the widget is still mounted before using the context
+    if (!mounted) return;    
     Navigator.of(context).pop();
 
     debugPrint(selectedTime24Hour.hour.toString());
@@ -191,7 +191,6 @@ class AlarmFolderState extends State<AlarmFolder> {
         ),
       ),
     );
-
   }
 
   Widget _buildTabBar(BuildContext context) {

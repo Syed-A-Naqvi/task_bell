@@ -1,57 +1,45 @@
 import 'package:flutter/material.dart';
-
 import 'recur.dart';
 
 class RelativeRecur implements Recur {
+  final DateTime recurTime; // Offset for recurrence
+  final DateTime initTime; // Initial time of setting the alarm
 
-  final DateTime recurTime;
-  final DateTime initTime;
-
-  /// recurTime is expected to be the actual timer offset. All fields matter
-  /// So, if days is > 0, the timer will be over 1 day long. Applies for all fields.
-  /// Note: Using months & years is inaccurate and uses approxiate values (30d, 365d respectively)
-  /// initTime is when the timer/alarm was enabled. next occurence will be calculated relative to this
+  /// [recurTime] specifies the recurrence offset (e.g., hours, minutes, seconds).
+  /// Note: Month and year offsets are approximate (30 days, 365 days).
   RelativeRecur({
     required this.recurTime,
     required this.initTime,
   });
 
   @override
-  DateTime? getNextOccurence(DateTime time) {
-
-    DateTime out = DateTime(
-      initTime.year,
-      initTime.month,
-      initTime.day,
-      initTime.hour + recurTime.hour,
-      initTime.minute + recurTime.minute,
-      initTime.second + recurTime.second + (recurTime.millisecond > 500 ? 1 : 0),
+  DateTime? getNextOccurrence(DateTime time) {
+    final durationOffset = Duration(
+      hours: recurTime.hour,
+      minutes: recurTime.minute,
+      seconds: recurTime.second,
     );
+    final nextOccurrence = initTime.add(durationOffset);
 
-    debugPrint("scheduled for ${out.toString()}, current time: ${DateTime.now()}");
-    debugPrint("recurTime: ${recurTime.toString()}, initTime: ${initTime.toString()}");
-    
-    return out;
+    debugPrint("Next occurrence scheduled for $nextOccurrence "
+               "(InitTime: $initTime, RecurTime: $recurTime)");
+
+    return nextOccurrence;
   }
-  
-  static Recur? fromMap(Map<String, dynamic> map) {
-    if (map["recurtype"] != "relative") {
-      return null;
-    }
+
+  static RelativeRecur? fromMap(Map<String, dynamic> map) {
+    if (map["recurtype"] != "relative") return null;
 
     return RelativeRecur(
       initTime: DateTime.fromMillisecondsSinceEpoch(map["inittime"]),
       recurTime: DateTime.fromMillisecondsSinceEpoch(map["recurtime"]),
     );
   }
-  
-  @override
-  Map<String, dynamic> toMap() {
-    return {
-      "recurtype": "relative",
-      "inittime": initTime.millisecondsSinceEpoch,
-      "recurtime": recurTime.millisecondsSinceEpoch,
-    };
-  }
 
+  @override
+  Map<String, dynamic> toMap() => {
+        "recurtype": "relative",
+        "inittime": initTime.millisecondsSinceEpoch,
+        "recurtime": recurTime.millisecondsSinceEpoch,
+      };
 }
