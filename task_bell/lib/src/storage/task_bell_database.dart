@@ -169,11 +169,11 @@ class TaskBellDatabase {
   }
 
 
-  Future<List<AlarmSettings>> getAllAlarms() async {
+  Future<List<AlarmInstance>> getAllAlarms() async {
     final db = await database;
     final maps = await db.query('alarms');
     return List.generate(maps.length, (i) {
-      return MapConverters.alarmSettingsFromMap(maps[i]);
+      return AlarmInstance.fromMap(maps[i]);
     });
   }
 

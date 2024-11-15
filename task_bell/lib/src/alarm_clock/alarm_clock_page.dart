@@ -4,6 +4,8 @@ import '../alarm/alarm_folder.dart';
 import '../storage/task_bell_database.dart';
 import '../alarm/alarm_instance.dart';
 import '../alarm/helpers/alarm_or_folder.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class AlarmClockPage extends StatefulWidget {
   const AlarmClockPage({super.key});
@@ -49,6 +51,89 @@ class AlarmClockPageState extends State<AlarmClockPage> {
     });
   }
 
+  Future<void> _uploadToCloud() async {
+    try {
+      // Fetch all folders and alarms from the local database
+      List<AlarmFolder> allFolders = await tDB.getAllFolders();
+      List<AlarmInstance> allAlarms = await tDB.getAllAlarms();
+
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      WriteBatch batch = firestore.batch();
+
+      // Upload folders
+      CollectionReference foldersCollection = firestore.collection('folders');
+      for (AlarmFolder folder in allFolders) {
+        Map<String, dynamic> folderMap = folder.toMap();
+        DocumentReference docRef = foldersCollection.doc(folder.id);
+        batch.set(docRef, folderMap);
+      }
+
+      // Upload alarms
+      CollectionReference alarmsCollection = firestore.collection('alarms');
+      for (AlarmInstance alarm in allAlarms) {
+        Map<String, dynamic> alarmMap = alarm.toMap();
+        DocumentReference docRef = alarmsCollection.doc(alarm.alarmSettings.id.toString());
+        batch.set(docRef, alarmMap);
+      }
+
+      // Commit batch
+      await batch.commit();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Upload to cloud successful')),
+      );
+    } catch (e) {
+      debugPrint('Error uploading to cloud: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading to cloud: $e')),
+      );
+    }
+  }
+
+  Future<void> _downloadFromCloud() async {
+  try {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Fetch folders from Firestore
+    QuerySnapshot foldersSnapshot = await firestore.collection('folders').get();
+    List<AlarmFolder> folders = foldersSnapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return AlarmFolder.fromMap(data);
+    }).toList();
+
+    // Fetch alarms from Firestore
+    QuerySnapshot alarmsSnapshot = await firestore.collection('alarms').get();
+    List<AlarmInstance> alarms = alarmsSnapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return AlarmInstance.fromMap(data);
+    }).toList();
+
+    // Insert folders into local database
+    for (AlarmFolder folder in folders) {
+      await tDB.insertFolder(folder);
+    }
+
+    // Insert alarms into local database
+    for (AlarmInstance alarm in alarms) {
+      await tDB.insertAlarm(alarm);
+    }
+
+    // Reload data to update UI
+    _loadData();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Download from cloud successful')),
+    );
+  } catch (e) {
+    debugPrint('Error downloading from cloud: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error downloading from cloud: $e')),
+    );
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +152,14 @@ class AlarmClockPageState extends State<AlarmClockPage> {
               _loadData();
             },
             icon: const Icon(Icons.delete) ),
+          IconButton(
+            icon: const Icon(Icons.cloud_upload),
+            onPressed: _uploadToCloud,
+          ),
+          IconButton(
+            icon: const Icon(Icons.cloud_download),
+            onPressed: _downloadFromCloud,
+          ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
