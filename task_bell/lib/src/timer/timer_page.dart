@@ -164,6 +164,10 @@ class TimerPageState extends AlarmClockPageState {
               Navigator.restorablePushNamed(context, SettingsView.routeName);
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.audiotrack),
+            onPressed: downloadAudio,
+          )
         ],
       ),
       body: ListView(

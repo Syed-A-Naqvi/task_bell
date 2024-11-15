@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_bell/src/services/audio_download.dart';
 import '../settings/settings_view.dart';
 import '../alarm/alarm_folder.dart';
 import '../storage/task_bell_database.dart';
@@ -137,6 +138,31 @@ class AlarmClockPageState extends State<AlarmClockPage> {
   }
 }
 
+  void downloadAudio() {
+    showDialog(context: context, builder: (context) {
+      final TextEditingController urlController = TextEditingController();
+      return AlertDialog(
+        title: const Text("Download audio from YouTube"),
+        content: Wrap(
+          children: [
+            TextFormField(
+              controller: urlController,
+              decoration: const InputDecoration(
+                labelText: 'Enter YouTube Video URL',
+              ),
+            ),
+            TextButton(
+              child: const Text("Download"),
+              onPressed: ()async { 
+                await AudioDownload.downloadAudio(urlController.text);
+                Navigator.of(context).pop();
+              },
+            )
+          ]
+        )
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,6 +196,10 @@ class AlarmClockPageState extends State<AlarmClockPage> {
               Navigator.restorablePushNamed(context, SettingsView.routeName);
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.audiotrack),
+            onPressed: downloadAudio,
+          )
         ],
       ),
       body: ListView(
