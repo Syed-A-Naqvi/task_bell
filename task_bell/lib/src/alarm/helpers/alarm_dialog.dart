@@ -60,9 +60,10 @@ class AlarmDialogState extends State<AlarmDialog> {
       return;
     }
 
-    final alarmInstance = AlarmInstance(
+    AlarmInstance alarmInstance = AlarmInstance(
       name: nameController.text,
       parentId: widget.parentId,
+      key: Key((DateTime.now().millisecondsSinceEpoch.toString())),
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) % 2147483647,
         dateTime: recurTime!,
@@ -84,8 +85,6 @@ class AlarmDialogState extends State<AlarmDialog> {
 
     widget.onCreate(alarmInstance);
 
-    // close the dialog if needed
-    Navigator.of(context).pop();
   }
 
   @override
@@ -99,7 +98,7 @@ class AlarmDialogState extends State<AlarmDialog> {
               labelText: 'Enter Alarm Name',
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 30),
           WeekdaySelector(
             activeDays: activeDays,
             onActiveDaysChanged: _handleActiveDaysChanged,
@@ -111,7 +110,7 @@ class AlarmDialogState extends State<AlarmDialog> {
                 ? 'Select Time'
                 : 'Selected Time: ${recurTime!.hour}:${recurTime!.minute}'),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(

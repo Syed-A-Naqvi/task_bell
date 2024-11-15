@@ -1,19 +1,19 @@
 // create_alarm_or_folder_dialog.dart
 import 'package:flutter/material.dart';
-import 'alarm_dialog.dart';
+import 'timer_dialog.dart';
 import 'folder_dialog.dart';
 import '../alarm_instance.dart';
 import '../alarm_folder.dart';
 
-class AlarmOrFolderDialog extends StatefulWidget {
+class TimerOrFolderDialog extends StatefulWidget {
   
   final String parentId;
   final int folderPos;
-  final ValueChanged<AlarmInstance> onCreateAlarm;
+  final ValueChanged<AlarmInstance> onCreateTimer;
   final ValueChanged<AlarmFolder> onCreateFolder;
 
-  const AlarmOrFolderDialog({
-    required this.onCreateAlarm,
+  const TimerOrFolderDialog({
+    required this.onCreateTimer,
     required this.onCreateFolder,
     this.parentId = '-1',
     this.folderPos = 0,
@@ -21,10 +21,10 @@ class AlarmOrFolderDialog extends StatefulWidget {
   });
 
   @override
-  AlarmOrFolderDialogState createState() => AlarmOrFolderDialogState();
+  TimerOrFolderDialogState createState() => TimerOrFolderDialogState();
 }
 
-class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
+class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -32,9 +32,8 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
     Navigator.of(context).pop();
   }
 
-  void _onCreateAlarm(AlarmInstance alarmInstance) {
-    debugPrint("Does the second _onCreateAlarmCallBack Executre?");
-    widget.onCreateAlarm(alarmInstance);
+  void _onCreateTimer(AlarmInstance alarmInstance) {
+    widget.onCreateTimer(alarmInstance);
     _closeDialog();
   }
 
@@ -73,9 +72,9 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
                   children: [
                     // Wrap each tab content in a SingleChildScrollView
                     SingleChildScrollView(
-                      child: AlarmDialog(
+                      child: TimerDialog(
                         parentId: widget.parentId,
-                        onCreate: _onCreateAlarm,
+                        onCreate: _onCreateTimer,
                       ),
                     ),
                     SingleChildScrollView(

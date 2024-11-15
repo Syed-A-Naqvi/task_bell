@@ -38,8 +38,8 @@ class RelativeRecur implements Recur {
 
   @override
   Map<String, dynamic> toMap() => {
-        "recurtype": "relative",
-        "inittime": initTime.millisecondsSinceEpoch,
-        "recurtime": recurTime.millisecondsSinceEpoch,
-      };
+    "recurtype": "relative",
+    "inittime": initTime.millisecondsSinceEpoch,
+    "recurtime": recurTime.millisecondsSinceEpoch,
+  };
 }

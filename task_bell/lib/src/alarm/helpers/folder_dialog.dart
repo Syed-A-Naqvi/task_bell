@@ -42,8 +42,7 @@ class FolderDialogState extends State<FolderDialog> {
     );
 
     widget.onCreate(folder);
-    // Optionally close the dialog if needed
-    // Navigator.of(context).pop();
+
   }
 
   @override
@@ -52,7 +51,6 @@ class FolderDialogState extends State<FolderDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Create Folder'),
           TextFormField(
             controller: nameController,
             decoration: const InputDecoration(

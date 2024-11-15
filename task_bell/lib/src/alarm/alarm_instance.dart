@@ -40,6 +40,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
       name: map["name"],
       parentId: map["parentId"],
       isActive: map["isactive"],
+      key: Key(map['key']),
       recur: recur,
       alarmSettings: alarmSettings,
     );
@@ -49,6 +50,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
         "name": name,
         "isactive": isActive,
         "parentId": parentId,
+        'key': key.toString(),
         ...recur.toMap(),
         ...MapConverters.alarmSettingsToMap(alarmSettings),
       };
@@ -100,6 +102,9 @@ class AlarmInstanceState extends State<AlarmInstance> {
     } else {
       await Alarm.stop(alarmSettings.id);
     }
+    
+    debugPrint("alarm isactive? : $isActive");
+
   }
 
   String _formatDateTime(bool relative) {
@@ -129,7 +134,6 @@ class AlarmInstanceState extends State<AlarmInstance> {
           IconButton(
             onPressed: () {
               toggleAlarmStatus();
-              if (mounted) setState(() {});
             },
             icon: Icon(isActive ? Icons.toggle_on : Icons.toggle_off_outlined),
           ),
@@ -154,6 +158,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
     "name" String
     "isactive" bool
     "parentId" String
+    "key" String
     "recurtype" String
     "activedays": int,
     "skipweeks": int,

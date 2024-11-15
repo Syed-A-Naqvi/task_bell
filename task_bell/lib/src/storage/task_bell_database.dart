@@ -37,6 +37,7 @@ class TaskBellDatabase {
         name TEXT,
         isactive INTEGER, 
         parentId TEXT,
+        key TEXT,
         recurtype TEXT,
         activedays INTEGER,
         skipweeks INTEGER,
