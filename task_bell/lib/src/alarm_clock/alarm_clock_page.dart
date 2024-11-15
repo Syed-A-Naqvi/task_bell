@@ -46,10 +46,10 @@ class AlarmClockPageState extends State<AlarmClockPage> {
   }
 
   Future<void> loadData() async {
-    topLevelFolders = await tDB.getAllChildFolders('-1');
+    topLevelFolders = await tDB.getAllChildFolders(-1);
     topLevelFolders.sort(compareFolders);
     debugPrint('Fetched ${topLevelFolders.length} folders');
-    topLevelAlarms = await tDB.getAllChildAlarms('-1');
+    topLevelAlarms = await tDB.getAllChildAlarms(-1);
     topLevelAlarms.sort(compareAlarms);
     debugPrint('Fetched ${topLevelAlarms.length} alarms');
     setState(() {
@@ -71,7 +71,7 @@ class AlarmClockPageState extends State<AlarmClockPage> {
       CollectionReference foldersCollection = firestore.collection('folders');
       for (AlarmFolder folder in allFolders) {
         Map<String, dynamic> folderMap = folder.toMap();
-        DocumentReference docRef = foldersCollection.doc(folder.id);
+        DocumentReference docRef = foldersCollection.doc(folder.id.toString());
         batch.set(docRef, folderMap);
       }
 
@@ -158,9 +158,9 @@ class AlarmClockPageState extends State<AlarmClockPage> {
           IconButton(
             onPressed: () async {
               for (var i in items) {
-                if (i is AlarmFolder) {
+                if (i is AlarmFolder && i.parentId == -1) {
                   await tDB.deleteFolder(i.id);
-                } else if (i is AlarmInstance){
+                } else if (i is AlarmInstance && i.parentId == -1){
                   await tDB.deleteAlarm(i.alarmSettings.id);
                 }
               }
@@ -197,7 +197,7 @@ class AlarmClockPageState extends State<AlarmClockPage> {
             context: context,
             builder: (BuildContext context) {
               return AlarmOrFolderDialog(
-                parentId: '-1', // Provide the necessary parentId
+                parentId: -1, // Provide the necessary parentId
                 folderPos: items.length, // Provide the necessary folderPos
                 onCreateAlarm: (alarmInstance) async {
                   await tDB.insertAlarm(alarmInstance);

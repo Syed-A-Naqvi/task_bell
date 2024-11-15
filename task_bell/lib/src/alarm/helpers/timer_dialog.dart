@@ -7,7 +7,7 @@ import '../alarm_instance.dart';
 import '../recurrence/relative_recur.dart';
 
 class TimerDialog extends StatefulWidget {
-  final String parentId;
+  final int parentId;
   final ValueChanged<AlarmInstance> onCreate;
 
   const TimerDialog({

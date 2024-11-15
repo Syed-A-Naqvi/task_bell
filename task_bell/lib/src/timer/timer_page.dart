@@ -27,20 +27,21 @@ class TimerPageState extends AlarmClockPageState {
 
   @override
   Future<void> loadData() async {
-    topLevelFolders = await tDB.getAllChildFolders('-2');
+    topLevelFolders = await tDB.getAllChildFolders(-2);
     topLevelFolders = topLevelFolders.map((alarmFolder) => TimerFolder(
-      id: alarmFolder.id, 
+      id: alarmFolder.id,
+      parentId: alarmFolder.parentId,
       name: alarmFolder.name, 
       position: alarmFolder.position)).toList();
     topLevelFolders.sort(compareFolders);
-
     debugPrint('Fetched ${topLevelFolders.length} folders');
-    topLevelAlarms = await tDB.getAllChildAlarms('-2');
+
+    topLevelAlarms = await tDB.getAllChildAlarms(-2);
     topLevelAlarms = topLevelAlarms.map((alarm) => TimerInstance(
       name: alarm.name,
+      parentId: alarm.parentId,
       alarmSettings: alarm.alarmSettings,
-      recur: alarm.recur,
-      parentId: alarm.parentId)).toList();
+      recur: alarm.recur)).toList();
     topLevelAlarms.sort(compareAlarms);
     
     debugPrint('Fetched ${topLevelAlarms.length} timers');
@@ -63,7 +64,7 @@ class TimerPageState extends AlarmClockPageState {
       CollectionReference foldersCollection = firestore.collection('folders');
       for (AlarmFolder folder in allFolders) {
         Map<String, dynamic> folderMap = folder.toMap();
-        DocumentReference docRef = foldersCollection.doc(folder.id);
+        DocumentReference docRef = foldersCollection.doc(folder.id.toString());
         batch.set(docRef, folderMap);
       }
 
@@ -140,9 +141,9 @@ class TimerPageState extends AlarmClockPageState {
           IconButton(
             onPressed: () async {
               for (var i in items) {
-                if (i is AlarmFolder) {
+                if (i is AlarmFolder && i.parentId == -2) {
                   await tDB.deleteFolder(i.id);
-                } else if (i is AlarmInstance) {
+                } else if (i is AlarmInstance && i.parentId == -2) {
                   await tDB.deleteAlarm(i.alarmSettings.id);
                 }
               }
@@ -176,7 +177,7 @@ class TimerPageState extends AlarmClockPageState {
             context: context,
             builder: (BuildContext context) {
               return TimerOrFolderDialog(
-                parentId: '-2', // Provide the necessary parentId
+                parentId: -2, // Provide the necessary parentId
                 folderPos: items.length, // Provide the necessary folderPos
                 onCreateTimer: (alarmInstance) async {
                   await tDB.insertAlarm(alarmInstance);

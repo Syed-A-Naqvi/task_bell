@@ -7,7 +7,7 @@ import '../alarm_folder.dart';
 
 class AlarmOrFolderDialog extends StatefulWidget {
   
-  final String parentId;
+  final int parentId;
   final int folderPos;
   final ValueChanged<AlarmInstance> onCreateAlarm;
   final ValueChanged<AlarmFolder> onCreateFolder;
@@ -15,7 +15,7 @@ class AlarmOrFolderDialog extends StatefulWidget {
   const AlarmOrFolderDialog({
     required this.onCreateAlarm,
     required this.onCreateFolder,
-    this.parentId = '-1',
+    required this.parentId,
     this.folderPos = 0,
     super.key
   });

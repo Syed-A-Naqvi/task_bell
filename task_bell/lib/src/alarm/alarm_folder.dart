@@ -12,8 +12,8 @@ import '../storage/task_bell_database.dart';
 
 class AlarmFolder extends StatefulWidget implements Comparable {
   // AlarmFolder info
-  final String id;
-  final String parentId;
+  final int id;
+  final int parentId;
   final String name;
   final int position;
 
@@ -21,7 +21,7 @@ class AlarmFolder extends StatefulWidget implements Comparable {
     required this.id,
     required this.name,
     required this.position,
-    this.parentId = '-1',
+    required this.parentId,
     super.key,
   });
 
