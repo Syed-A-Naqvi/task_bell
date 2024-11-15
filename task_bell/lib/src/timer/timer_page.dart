@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_bell/src/alarm_clock/alarm_clock_page.dart';
+import '../alarm/timer_folder.dart';
+import '../alarm/timer_instance.dart';
 import '../settings/settings_view.dart';
 import '../alarm/alarm_folder.dart';
 import '../alarm/helpers/timer_or_folder.dart';
@@ -18,16 +20,29 @@ class TimerPageState extends AlarmClockPageState {
 
   @override
   void initState() {
+    super.shouldLoadData = false;
     super.initState();
-    _loadData();
+    loadData();
   }
 
-  Future<void> _loadData() async {
+  @override
+  Future<void> loadData() async {
     topLevelFolders = await tDB.getAllChildFolders('-2');
+    topLevelFolders = topLevelFolders.map((alarmFolder) => TimerFolder(
+      id: alarmFolder.id, 
+      name: alarmFolder.name, 
+      position: alarmFolder.position)).toList();
     topLevelFolders.sort(compareFolders);
+
     debugPrint('Fetched ${topLevelFolders.length} folders');
     topLevelAlarms = await tDB.getAllChildAlarms('-2');
+    topLevelAlarms = topLevelAlarms.map((alarm) => TimerInstance(
+      name: alarm.name,
+      alarmSettings: alarm.alarmSettings,
+      recur: alarm.recur,
+      parentId: alarm.parentId)).toList();
     topLevelAlarms.sort(compareAlarms);
+    
     debugPrint('Fetched ${topLevelAlarms.length} timers');
     setState(() {
       items = [...topLevelFolders, ...topLevelAlarms];
@@ -103,7 +118,7 @@ class TimerPageState extends AlarmClockPageState {
     }
 
     // Reload data to update UI
-    _loadData();
+    loadData();
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Download from cloud successful')),
@@ -131,7 +146,7 @@ class TimerPageState extends AlarmClockPageState {
                   await tDB.deleteAlarm(i.alarmSettings.id);
                 }
               }
-              _loadData();
+              loadData();
             },
             icon: const Icon(Icons.delete) ),
           IconButton(

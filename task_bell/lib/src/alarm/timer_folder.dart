@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:task_bell/src/alarm/alarm_instance.dart';
 import 'helpers/timer_or_folder.dart';
-import 'package:collection/collection.dart';
 import '../alarm/timer_instance.dart';
 import 'alarm_folder.dart';
 
@@ -14,10 +14,6 @@ class TimerFolder extends AlarmFolder {
 
 class TimerFolderState extends AlarmFolderState {
 
-  // Keep track of subfolders and alarms
-  HeapPriorityQueue<TimerFolder> timerSubfolders = HeapPriorityQueue<TimerFolder>();
-  HeapPriorityQueue<TimerInstance> timers = HeapPriorityQueue<TimerInstance>();
-
   @override
   void initState(){
     super.initState();
@@ -30,9 +26,9 @@ class TimerFolderState extends AlarmFolderState {
     for (var item in subfoldersList) {
       subfolders.add(item as TimerFolder);
     }
-    List<dynamic> timersList = await tDB.getAllChildAlarms(widget.id);
+    List<AlarmInstance> timersList = await tDB.getAllChildAlarms(widget.id);
     for (var item in timersList) {
-      timers.add(item as TimerInstance);
+      alarms.add(item as TimerInstance);
     }
     setState(() {});
   }

@@ -22,24 +22,28 @@ class AlarmClockPageState extends State<AlarmClockPage> {
   List<Widget> items = [];
 
   // maintains list of elements to display
-  List<AlarmFolder> topLevelFolders = [];
-  List<AlarmInstance> topLevelAlarms = [];
+  List<dynamic> topLevelFolders = [];
+  List<dynamic> topLevelAlarms = [];
   // sort folders and items in a custom way
-  int compareFolders(AlarmFolder a, AlarmFolder b) {
-    return a.position.compareTo(b.position);
+  int compareFolders(dynamic a, dynamic b) {
+    return (a as AlarmFolder).position.compareTo((b as AlarmFolder).position);
   }
-  int compareAlarms(AlarmInstance a, AlarmInstance b) {
-    return a.alarmSettings.dateTime.millisecondsSinceEpoch
-    .compareTo(b.alarmSettings.dateTime.millisecondsSinceEpoch);
+  int compareAlarms(dynamic a, dynamic b) {
+    return (a as AlarmInstance).alarmSettings.dateTime.millisecondsSinceEpoch
+    .compareTo((b as AlarmInstance).alarmSettings.dateTime.millisecondsSinceEpoch);
   }
+
+  bool shouldLoadData = true;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    if (shouldLoadData) {
+      loadData();
+    }
   }
 
-  Future<void> _loadData() async {
+  Future<void> loadData() async {
     topLevelFolders = await tDB.getAllChildFolders('-1');
     topLevelFolders.sort(compareFolders);
     debugPrint('Fetched ${topLevelFolders.length} folders');
@@ -120,7 +124,7 @@ class AlarmClockPageState extends State<AlarmClockPage> {
     }
 
     // Reload data to update UI
-    _loadData();
+    loadData();
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Download from cloud successful')),
@@ -149,7 +153,7 @@ class AlarmClockPageState extends State<AlarmClockPage> {
                   await tDB.deleteAlarm(i.alarmSettings.id);
                 }
               }
-              _loadData();
+              loadData();
             },
             icon: const Icon(Icons.delete) ),
           IconButton(

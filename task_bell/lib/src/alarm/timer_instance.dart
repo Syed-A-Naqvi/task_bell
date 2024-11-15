@@ -22,6 +22,8 @@ class TimerInstanceState extends AlarmInstanceState {
     // Update recur with a new RelativeRecur object before toggling the alarm
     (widget.recur as RelativeRecur).initTime = DateTime.now();
 
+    debugPrint("Timer toggled");
+
     await super.toggleAlarmStatus();
   }
 }
