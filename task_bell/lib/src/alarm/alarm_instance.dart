@@ -105,7 +105,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
 
   }
 
-  String _formatDateTime(bool relative) {
+  String formatDateTime(bool relative) {
     DateTime now = DateTime.now();
     DateTime? nextOccurrence = widget.recur.getNextOccurrence(now);
 
@@ -138,7 +138,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
           Text(widget.name),
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Text(_formatDateTime(_showRelativeTime)),
+            child: Text(formatDateTime(_showRelativeTime)),
           ),
           IconButton(
             onPressed: () => setState(() {
