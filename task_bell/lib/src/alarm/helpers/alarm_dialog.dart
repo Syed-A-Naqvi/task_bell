@@ -1,7 +1,9 @@
 // create_alarm_dialog.dart
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
-import 'package:task_bell/src/alarm/helpers/ringtone_service.dart';
 import '../weekday_selector.dart';
 import '../recurrence/week_recur.dart';
 import '../alarm_instance.dart';
@@ -60,8 +62,35 @@ class AlarmDialogState extends State<AlarmDialog> {
       );
       return;
     }
+    String path;
+    // hack together a file picker, this is temporary
+    File? file = await FilePicker.platform.pickFiles().then((FilePickerResult? result) async {
+      if (result == null) {
+        return null;
+      }
 
-    String path = (await RingtoneService().getRingtones())[0];
+      final PlatformFile selectedFile = result.files.single;
+
+      if (selectedFile.path == null) {
+        return null;
+      }
+
+      final File file = File(selectedFile.path!);
+      return file;
+
+    });
+
+    if (file == null) {
+      path = "";
+    } else {
+      path = file.path;
+    }
+
+
+    // String path = (await RingtoneService().getRingtones())[0];
+    // String path = await AudioDownload.downloadAudio("https://www.youtube.com/watch?v=9q_-v8WF0y0");
+
+    debugPrint(path);
 
     AlarmInstance alarmInstance = AlarmInstance(
       name: nameController.text,

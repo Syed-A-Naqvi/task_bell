@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:task_bell/src/alarm/helpers/ringtone_service.dart';
 import '../settings/settings_view.dart';
 import '../alarm/alarm_folder.dart';
 import '../storage/task_bell_database.dart';
@@ -141,9 +140,12 @@ class AlarmClockPageState extends State<AlarmClockPage> {
 }
 
   void getAlarmSounds() async {
-    final ringtoneService = RingtoneService();
-    final ringtones = await ringtoneService.getRingtones();
-    debugPrint(ringtones.toString());
+    // final ringtoneService = RingtoneService();
+    // final ringtones = await ringtoneService.getRingtones();
+    // debugPrint(ringtones.toString());
+
+    final Directory directory = Directory("/storage/emulated/0/Download");
+    debugPrint((await directory.list().toList()).toString());
   }
 
 
