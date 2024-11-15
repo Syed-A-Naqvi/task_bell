@@ -11,7 +11,7 @@ class AlarmDialog extends StatefulWidget {
 
   const AlarmDialog({
     required this.onCreate,
-    this.parentId = '-1',
+    required this.parentId,
     super.key
   });
 
@@ -69,6 +69,11 @@ class AlarmDialogState extends State<AlarmDialog> {
         dateTime: recurTime!,
         assetAudioPath: "", // Specify your asset audio path
         vibrate: true,
+        loopAudio: true,
+        volume: 1.0,
+        volumeEnforced: false,
+        fadeDuration: 3,
+        warningNotificationOnKill: true,
         androidFullScreenIntent: true,
         notificationSettings: NotificationSettings(
           title: nameController.text,

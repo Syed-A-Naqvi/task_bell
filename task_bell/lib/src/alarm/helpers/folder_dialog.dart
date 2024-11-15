@@ -11,8 +11,8 @@ class FolderDialog extends StatefulWidget {
 
   const FolderDialog({
     required this.onCreate,
+    required this.parentId,
     this.position = 0,
-    this.parentId = '-1',
     super.key,
   });
 

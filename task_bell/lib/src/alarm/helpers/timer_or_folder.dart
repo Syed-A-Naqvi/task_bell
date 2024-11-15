@@ -62,7 +62,7 @@ class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
               TabBar(
                 controller: _tabController,
                 tabs: const [
-                  Tab(icon: Icon(Icons.alarm), text: 'Alarm'),
+                  Tab(icon: Icon(Icons.timer), text: 'Timer'),
                   Tab(icon: Icon(Icons.folder), text: 'Folder'),
                 ],
               ),

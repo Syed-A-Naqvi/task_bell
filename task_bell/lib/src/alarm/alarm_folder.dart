@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'helpers/alarm_or_folder.dart';
 import 'alarm_instance.dart';
+import '../storage/task_bell_database.dart';
 
 // Each folder will need to pull all its children from the database upon initialization
 // this should be implemented in the state's initstate logic
@@ -56,6 +57,8 @@ class AlarmFolder extends StatefulWidget implements Comparable {
 }
 
 class AlarmFolderState extends State<AlarmFolder> {
+  // database object
+  TaskBellDatabase tDB = TaskBellDatabase();
   // Keep track of subfolders and alarms
   HeapPriorityQueue<AlarmFolder> subfolders = HeapPriorityQueue<AlarmFolder>();  
   HeapPriorityQueue<dynamic> alarms = HeapPriorityQueue<dynamic>();
@@ -67,6 +70,15 @@ class AlarmFolderState extends State<AlarmFolder> {
   void initState(){
     super.initState();
     // Initialize the folder's children from the database here
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    List<AlarmFolder> subfoldersList = await tDB.getAllChildFolders(widget.id);
+    subfolders.addAll(subfoldersList);
+    List<AlarmInstance> alarmsList = await tDB.getAllChildAlarms(widget.id);
+    alarms.addAll(alarmsList);
+    setState(() {});    
   }
 
   void _toggleExpansion() {
@@ -82,17 +94,17 @@ class AlarmFolderState extends State<AlarmFolder> {
       builder: (context) => AlarmOrFolderDialog(
         parentId: widget.id,
         folderPos: subfolders.length,
-        onCreateAlarm: (alarmInstance) {
+        onCreateAlarm: (alarmInstance) async {
+          await tDB.insertAlarm(alarmInstance);
           setState(() {
             alarms.add(alarmInstance);
           });
-          // Insert alarmInstance into the database here
         },
-        onCreateFolder: (folder) {
+        onCreateFolder: (folder) async {
+          await tDB.insertFolder(folder);
           setState(() {
             subfolders.add(folder);
           });
-          // Insert folder into the database here
         },
       ),
     );
@@ -107,17 +119,16 @@ class AlarmFolderState extends State<AlarmFolder> {
     for (AlarmFolder af in folders) {
       indented.add(
         Padding(
-          padding: EdgeInsets.fromLTRB(widget.childIndent, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB((af.parentId == '-1') ? 0 : widget.childIndent, 0, 0, 0),
           child: af,
         ),
       );
     }
     for (AlarmInstance al in alarmsList) {
-      debugPrint("alarm key == alarim in heap's key: ${al.key == (alarms.first as AlarmInstance).key}");
       debugPrint("alarm isactive? : ${al.isActive}");
       indented.add(
         Padding(
-          padding: EdgeInsets.fromLTRB(widget.childIndent, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB((al.parentId == '-1') ? 0 : widget.childIndent, 0, 0, 0),
           child: al,
         ),
       );

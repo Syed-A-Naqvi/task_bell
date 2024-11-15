@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import '../alarm/helpers/map_converters.dart';
 import 'package:alarm/alarm.dart';
 import '../alarm/alarm_folder.dart';
+import '../alarm/alarm_instance.dart';
 
 class TaskBellDatabase {
 
@@ -34,17 +35,16 @@ class TaskBellDatabase {
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE alarms (
+        id INTEGER PRIMARY KEY,
         name TEXT,
         isactive INTEGER, 
         parentId TEXT,
-        key TEXT,
         recurtype TEXT,
         activedays INTEGER,
         skipweeks INTEGER,
         repeatweeks INTEGER,
         recurtime INTEGER,
         inittime INTEGER,
-        id INTEGER PRIMARY KEY,
         datetime INTEGER,
         assetAudioPath TEXT,
         loopAudio INTEGER,
@@ -63,9 +63,9 @@ class TaskBellDatabase {
     await db.execute('''
       CREATE TABLE folders (
         id TEXT PRIMARY KEY,
-        parentId TEXT
+        parentId TEXT,
         name TEXT,
-        position INTEGER,
+        position INTEGER
       )
     ''');
   }
@@ -101,22 +101,61 @@ class TaskBellDatabase {
       return AlarmFolder.fromMap(maps[i]);
     });
   }
-  
+
+  Future<List<AlarmFolder>> getAllChildFolders(String parentId) async {
+    final db = await database;
+    final maps = await db.query(
+      'folders',
+      where: 'parentId = ?',
+      whereArgs: [parentId],
+    );
+    return List.generate(maps.length, (i) {
+      return AlarmFolder.fromMap(maps[i]);
+    });
+  }
+
+  Future<void> deleteAllFolders() async {
+    final db = await database;
+    await db.delete('folders');
+  }
+
+  Future<void> deleteFolder(String id) async {
+    final db = await database;
+    await db.delete(
+      'folders',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+
   // ------------------------------------- FOLDER CRUD METHODS-------------------------------------
 
 
   // ------------------------------------- ALARM CRUD METHODS-------------------------------------
 
-  Future<void> insertAlarm(AlarmSettings alarmSettings) async {
+  Future<void> insertAlarm(AlarmInstance alarmInstnace) async {
     final db = await database;
     await db.insert(
       'alarms',
-      MapConverters.alarmSettingsToMap(alarmSettings),
+      alarmInstnace.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<AlarmSettings?> getAlarm(String id) async {
+  Future<List<AlarmInstance>> getAllChildAlarms(String parentId) async {
+    final db = await database;
+    final maps = await db.query(
+      'alarms',
+      where: 'parentId = ?',
+      whereArgs: [parentId],
+    );
+    return List.generate(maps.length, (i) {
+      return AlarmInstance.fromMap(maps[i]);
+    });
+  }
+
+  Future<AlarmInstance?> getAlarm(String id) async {
     final db = await database;
     final maps = await db.query(
       'alarms',
@@ -124,10 +163,11 @@ class TaskBellDatabase {
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
-      return MapConverters.alarmSettingsFromMap(maps.first);
+      return AlarmInstance.fromMap(maps.first);
     }
     return null;
   }
+
 
   Future<List<AlarmSettings>> getAllAlarms() async {
     final db = await database;
@@ -147,7 +187,7 @@ class TaskBellDatabase {
     );
   }
 
-  Future<void> deleteAlarm(String id) async {
+  Future<void> deleteAlarm(int id) async {
     final db = await database;
     await db.delete(
       'alarms',

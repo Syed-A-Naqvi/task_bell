@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'alarm_folder.dart';
 import 'helpers/timer_or_folder.dart';
+import 'package:collection/collection.dart';
+import '../alarm/timer_instance.dart';
+import 'alarm_folder.dart';
+import 'alarm_instance.dart';
 
 class TimerFolder extends AlarmFolder {
 
@@ -12,6 +15,29 @@ class TimerFolder extends AlarmFolder {
 
 class TimerFolderState extends AlarmFolderState {
 
+  // Keep track of subfolders and alarms
+  HeapPriorityQueue<TimerFolder> tiemrSubfolders = HeapPriorityQueue<TimerFolder>();
+  HeapPriorityQueue<TimerInstance> timers = HeapPriorityQueue<TimerInstance>();
+
+  @override
+  void initState(){
+    super.initState();
+    // Initialize the folder's children from the database here
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    List<AlarmFolder> subfoldersList = await tDB.getAllChildFolders(widget.id);
+    for (var item in subfoldersList) {
+      subfolders.add(item as TimerFolder);
+    }
+    List<AlarmInstance> timersList = await tDB.getAllChildAlarms(widget.id);
+    for (var item in timersList) {
+      timers.add(item as TimerInstance);
+    }
+    setState(() {});
+  }
+
   @override
   void addNewAlarmFolder() {
     showDialog(
@@ -19,17 +45,17 @@ class TimerFolderState extends AlarmFolderState {
       builder: (context) => TimerOrFolderDialog(
         parentId: widget.id,
         folderPos: subfolders.length,
-        onCreateTimer: (alarmInstance) {
+        onCreateTimer: (alarmInstance) async {
+          await tDB.insertAlarm(alarmInstance);
           setState(() {
             alarms.add(alarmInstance);
           });
-          // Insert alarmInstance into the database here
         },
-        onCreateFolder: (folder) {
+        onCreateFolder: (folder) async {
+          await tDB.insertFolder(folder);
           setState(() {
             subfolders.add(folder);
           });
-          // Insert folder into the database here
         },
       ),
     );

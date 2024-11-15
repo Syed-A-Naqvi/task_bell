@@ -39,8 +39,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     return AlarmInstance(
       name: map["name"],
       parentId: map["parentId"],
-      isActive: map["isactive"],
-      key: Key(map['key']),
+      isActive: MapConverters.intToBool(map["isactive"]),
       recur: recur,
       alarmSettings: alarmSettings,
     );
@@ -50,7 +49,6 @@ class AlarmInstance extends StatefulWidget implements Comparable {
         "name": name,
         "isactive": isActive,
         "parentId": parentId,
-        'key': key.toString(),
         ...recur.toMap(),
         ...MapConverters.alarmSettingsToMap(alarmSettings),
       };

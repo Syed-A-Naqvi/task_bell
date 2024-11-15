@@ -11,7 +11,7 @@ class TimerDialog extends StatefulWidget {
 
   const TimerDialog({
     required this.onCreate,
-    this.parentId = '-1',
+    required this.parentId,
     super.key,
   });
 
@@ -39,7 +39,7 @@ class TimerDialogState extends State<TimerDialog> {
     final Duration duration = Duration(hours: hours, minutes: minutes);
     final DateTime recurTime = DateTime.now().add(duration);
 
-    final alarmInstance = AlarmInstance(
+    AlarmInstance alarmInstance = AlarmInstance(
       name: nameController.text,
       parentId: widget.parentId,
       key: Key((DateTime.now().millisecondsSinceEpoch.toString())),
@@ -48,6 +48,11 @@ class TimerDialogState extends State<TimerDialog> {
         dateTime: recurTime,
         assetAudioPath: "", // Specify your asset audio path
         vibrate: true,
+        loopAudio: true,
+        volume: 1.0,
+        volumeEnforced: false,
+        fadeDuration: 3,
+        warningNotificationOnKill: true,
         androidFullScreenIntent: true,
         notificationSettings: NotificationSettings(
           title: nameController.text,
