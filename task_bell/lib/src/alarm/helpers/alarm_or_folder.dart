@@ -33,7 +33,6 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
   }
 
   void _onCreateAlarm(AlarmInstance alarmInstance) {
-    debugPrint("Does the second _onCreateAlarmCallBack Executre?");
     widget.onCreateAlarm(alarmInstance);
     _closeDialog();
   }

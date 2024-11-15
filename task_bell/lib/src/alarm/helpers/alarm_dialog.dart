@@ -1,6 +1,7 @@
 // create_alarm_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
+import 'package:task_bell/src/alarm/helpers/ringtone_service.dart';
 import '../weekday_selector.dart';
 import '../recurrence/week_recur.dart';
 import '../alarm_instance.dart';
@@ -49,7 +50,7 @@ class AlarmDialogState extends State<AlarmDialog> {
     }
   }
 
-  void _createAlarm() {
+  void _createAlarm() async {
     if (nameController.text.isEmpty || recurTime == null) {
       showDialog(
         context: context,
@@ -60,6 +61,8 @@ class AlarmDialogState extends State<AlarmDialog> {
       return;
     }
 
+    String path = (await RingtoneService().getRingtones())[0];
+
     AlarmInstance alarmInstance = AlarmInstance(
       name: nameController.text,
       parentId: widget.parentId,
@@ -67,7 +70,8 @@ class AlarmDialogState extends State<AlarmDialog> {
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) % 2147483647,
         dateTime: recurTime!,
-        assetAudioPath: "", // Specify your asset audio path
+        // assetAudioPath: "content://media/internal/audio/media/43", // Specify your asset audio path
+        assetAudioPath: path,
         vibrate: true,
         loopAudio: true,
         volume: 1.0,

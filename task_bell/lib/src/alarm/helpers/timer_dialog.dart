@@ -48,10 +48,10 @@ class TimerDialogState extends State<TimerDialog> {
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) % 2147483647,
         dateTime: recurTime,
-        assetAudioPath: "", // Specify your asset audio path
+        assetAudioPath: "assets/alarm.mp3", // Specify your asset audio path
         vibrate: true,
         loopAudio: true,
-        volume: 1.0,
+        volume: null,
         volumeEnforced: false,
         fadeDuration: 3,
         warningNotificationOnKill: true,
