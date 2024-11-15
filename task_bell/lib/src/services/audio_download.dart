@@ -17,7 +17,6 @@ class AudioDownload {
     }
 
     // check if the file already exists
-    final Directory dir = await getApplicationDocumentsDirectory();
     // prepending with yt: to indicate it is a video from yt, and will be stored separately from default ringtones
     // and also for benefit of downloading when syncing between devices
 

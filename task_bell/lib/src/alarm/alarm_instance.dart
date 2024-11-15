@@ -96,6 +96,8 @@ class AlarmInstanceState extends State<AlarmInstance> {
       alarmSettings = alarmSettings.copyWith(dateTime: nextOccurrence);
       await Alarm.set(alarmSettings: alarmSettings);
 
+      displaySnackBar();
+
       debugPrint("Alarm set for $nextOccurrence");
     } else {
       await Alarm.stop(alarmSettings.id);
@@ -103,6 +105,14 @@ class AlarmInstanceState extends State<AlarmInstance> {
     
     debugPrint("alarm isactive? : $isActive");
 
+  }
+
+  void displaySnackBar() {
+    var snackBar = SnackBar(
+      content: Text("Scheduled for ${formatDateTime(true)} from now")
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   String formatDateTime(bool relative) {
