@@ -60,7 +60,7 @@ class AlarmFolderState extends State<AlarmFolder> {
   // database object
   TaskBellDatabase tDB = TaskBellDatabase();
   // Keep track of subfolders and alarms
-  HeapPriorityQueue<AlarmFolder> subfolders = HeapPriorityQueue<AlarmFolder>();  
+  HeapPriorityQueue<dynamic> subfolders = HeapPriorityQueue<dynamic>();  
   HeapPriorityQueue<dynamic> alarms = HeapPriorityQueue<dynamic>();
  
   bool _expanded = false;

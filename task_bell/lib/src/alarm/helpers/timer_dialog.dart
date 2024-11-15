@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:task_bell/src/alarm/timer_instance.dart';
 import '../alarm_instance.dart';
 import '../recurrence/relative_recur.dart';
 
@@ -37,9 +38,10 @@ class TimerDialogState extends State<TimerDialog> {
     }
 
     final Duration duration = Duration(hours: hours, minutes: minutes);
-    final DateTime recurTime = DateTime.now().add(duration);
+    // final DateTime recurTime = DateTime.now().add(duration);
+    final DateTime recurTime = DateTime(0).add(duration);
 
-    AlarmInstance alarmInstance = AlarmInstance(
+    TimerInstance alarmInstance = TimerInstance(
       name: nameController.text,
       parentId: widget.parentId,
       key: Key((DateTime.now().millisecondsSinceEpoch.toString())),

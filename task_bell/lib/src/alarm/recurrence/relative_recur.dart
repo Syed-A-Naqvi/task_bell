@@ -3,7 +3,7 @@ import 'recur.dart';
 
 class RelativeRecur implements Recur {
   final DateTime recurTime; // Offset for recurrence
-  final DateTime initTime; // Initial time of setting the alarm
+  DateTime initTime; // Initial time of setting the alarm
 
   /// [recurTime] specifies the recurrence offset (e.g., hours, minutes, seconds).
   /// Note: Month and year offsets are approximate (30 days, 365 days).
