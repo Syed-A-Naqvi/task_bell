@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
 import '../alarm/alarm_folder.dart';
@@ -139,15 +137,6 @@ class AlarmClockPageState extends State<AlarmClockPage> {
   }
 }
 
-  void getAlarmSounds() async {
-    // final ringtoneService = RingtoneService();
-    // final ringtones = await ringtoneService.getRingtones();
-    // debugPrint(ringtones.toString());
-
-    final Directory directory = Directory("/storage/emulated/0/Download");
-    debugPrint((await directory.list().toList()).toString());
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -190,8 +179,6 @@ class AlarmClockPageState extends State<AlarmClockPage> {
       floatingActionButton: FloatingActionButton(
         mini: true,
         onPressed: () {
-
-          getAlarmSounds();
 
           showDialog(
             context: context,

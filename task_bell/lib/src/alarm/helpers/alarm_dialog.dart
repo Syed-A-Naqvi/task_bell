@@ -62,8 +62,10 @@ class AlarmDialogState extends State<AlarmDialog> {
       );
       return;
     }
+    
     String path;
-    // hack together a file picker, this is temporary
+
+    // hack together a file picker, this is temporary; I guess this isn't temporary
     File? file = await FilePicker.platform.pickFiles().then((FilePickerResult? result) async {
       if (result == null) {
         return null;
@@ -86,12 +88,6 @@ class AlarmDialogState extends State<AlarmDialog> {
       path = file.path;
     }
 
-
-    // String path = (await RingtoneService().getRingtones())[0];
-    // String path = await AudioDownload.downloadAudio("https://www.youtube.com/watch?v=9q_-v8WF0y0");
-
-    debugPrint(path);
-
     AlarmInstance alarmInstance = AlarmInstance(
       name: nameController.text,
       parentId: widget.parentId,
@@ -99,11 +95,10 @@ class AlarmDialogState extends State<AlarmDialog> {
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) % 2147483647,
         dateTime: recurTime!,
-        // assetAudioPath: "content://media/internal/audio/media/43", // Specify your asset audio path
         assetAudioPath: path,
         vibrate: true,
         loopAudio: true,
-        volume: 1.0,
+        volume: null,
         volumeEnforced: false,
         fadeDuration: 3,
         warningNotificationOnKill: true,

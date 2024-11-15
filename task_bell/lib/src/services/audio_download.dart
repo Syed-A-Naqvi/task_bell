@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -18,10 +20,15 @@ class AudioDownload {
     final Directory dir = await getApplicationDocumentsDirectory();
     // prepending with yt: to indicate it is a video from yt, and will be stored separately from default ringtones
     // and also for benefit of downloading when syncing between devices
-    final filePath = "${dir.path}/yt:$videoId";
+
+    // final filePath = "${dir.path}/yt:$videoId.mp3";
+    final filePath = "/data/user/0/com.example.task_bell/files/yt:$videoId";
     final file = File(filePath);
 
+    
+
     if (await file.exists()) {
+      debugPrint("File already exists, not downloading");
       return filePath;
     }
 
@@ -42,7 +49,13 @@ class AudioDownload {
     await fileStream.flush();
     await fileStream.close();
 
+    String? path = await FilePicker.platform.saveFile(
+      bytes: await file.readAsBytes(),
+      fileName: 'yt:$videoId',
+      allowedExtensions: ['txt', 'csv'],
+    );
+
     yt.close();
-    return filePath;
+    return path?? "";
   }
 }
