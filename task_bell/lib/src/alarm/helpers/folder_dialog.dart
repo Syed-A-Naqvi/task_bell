@@ -5,7 +5,7 @@ import '../alarm_folder.dart';
 
 class FolderDialog extends StatefulWidget {
  
-  final String parentId;
+  final int parentId;
   final ValueChanged<AlarmFolder> onCreate;
   final int position;
 
@@ -35,7 +35,7 @@ class FolderDialogState extends State<FolderDialog> {
     }
 
     AlarmFolder folder = AlarmFolder(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: DateTime.now().millisecondsSinceEpoch,
       parentId: widget.parentId,
       name: nameController.text,
       position: widget.position, // Adjust position as needed

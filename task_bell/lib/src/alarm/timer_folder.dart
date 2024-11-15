@@ -6,7 +6,13 @@ import 'alarm_folder.dart';
 
 class TimerFolder extends AlarmFolder {
 
-  const TimerFolder({super.key, required super.id, required super.name, required super.position});
+  const TimerFolder({
+    required super.id,
+    required super.parentId,
+    required super.name,
+    required super.position,
+    super.key
+  });
 
   @override
   State<StatefulWidget> createState() => TimerFolderState();

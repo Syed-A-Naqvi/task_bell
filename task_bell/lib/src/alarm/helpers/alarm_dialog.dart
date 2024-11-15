@@ -9,7 +9,7 @@ import '../recurrence/week_recur.dart';
 import '../alarm_instance.dart';
 
 class AlarmDialog extends StatefulWidget {
-  final String parentId;
+  final int parentId;
   final ValueChanged<AlarmInstance> onCreate;
 
   const AlarmDialog({

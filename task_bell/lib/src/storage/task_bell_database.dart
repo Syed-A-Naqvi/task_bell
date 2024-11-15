@@ -38,7 +38,7 @@ class TaskBellDatabase {
         id INTEGER PRIMARY KEY,
         name TEXT,
         isactive INTEGER, 
-        parentId TEXT,
+        parentId INTEGER,
         recurtype TEXT,
         activedays INTEGER,
         skipweeks INTEGER,
@@ -57,18 +57,38 @@ class TaskBellDatabase {
         title TEXT,
         body TEXT,
         stopButton TEXT,
-        icon TEXT
+        icon TEXT,
+        FOREIGN KEY (parentId) REFERENCES folders(id) ON DELETE CASCADE 
       )
     ''');
     await db.execute('''
       CREATE TABLE folders (
-        id TEXT PRIMARY KEY,
-        parentId TEXT,
+        id INTEGER PRIMARY KEY,
+        parentId INTEGER,
         name TEXT,
-        position INTEGER
+        position INTEGER,
+        FOREIGN KEY (parentId) REFERENCES folders(id) ON DELETE CASCADE
       )
     ''');
   }
+
+//   -- Table to store folders with a self-referencing parent column
+// CREATE TABLE folders (
+//     folder_id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     folder_name TEXT NOT NULL,
+//     parent_folder_id INTEGER NULL, -- Self-referencing column for parent folder
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     FOREIGN KEY (parent_folder_id) REFERENCES folders(folder_id) ON DELETE CASCADE
+// );
+
+// -- Table to store files with a reference to the parent folder
+// CREATE TABLE files (
+//     file_id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     file_name TEXT NOT NULL,
+//     parent_folder_id INTEGER NULL, -- Reference to the parent folder
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     FOREIGN KEY (parent_folder_id) REFERENCES folders(folder_id) ON DELETE CASCADE
+// );
 
   // ------------------------------------- FOLDER CRUD METHODS-------------------------------------
 
@@ -81,7 +101,7 @@ class TaskBellDatabase {
     );
   }
 
-  Future<AlarmFolder?> getFolder(String id) async {
+  Future<AlarmFolder?> getFolder(int id) async {
     final db = await database;
     final maps = await db.query(
       'folders',
@@ -102,7 +122,7 @@ class TaskBellDatabase {
     });
   }
 
-  Future<List<AlarmFolder>> getAllChildFolders(String parentId) async {
+  Future<List<AlarmFolder>> getAllChildFolders(int parentId) async {
     final db = await database;
     final maps = await db.query(
       'folders',
@@ -119,7 +139,7 @@ class TaskBellDatabase {
     await db.delete('folders');
   }
 
-  Future<void> deleteFolder(String id) async {
+  Future<void> deleteFolder(int id) async {
     final db = await database;
     await db.delete(
       'folders',
@@ -143,7 +163,7 @@ class TaskBellDatabase {
     );
   }
 
-  Future<List<AlarmInstance>> getAllChildAlarms(String parentId) async {
+  Future<List<AlarmInstance>> getAllChildAlarms(int parentId) async {
     final db = await database;
     final maps = await db.query(
       'alarms',
@@ -155,7 +175,7 @@ class TaskBellDatabase {
     });
   }
 
-  Future<AlarmInstance?> getAlarm(String id) async {
+  Future<AlarmInstance?> getAlarm(int id) async {
     final db = await database;
     final maps = await db.query(
       'alarms',
