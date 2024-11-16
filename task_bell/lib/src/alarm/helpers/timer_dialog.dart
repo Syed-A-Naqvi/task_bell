@@ -1,4 +1,7 @@
 // create_timer_dialog.dart
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -26,7 +29,7 @@ class TimerDialogState extends State<TimerDialog> {
   int hours = 0;
   int minutes = 0;
 
-  void _createTimer() {
+  void _createTimer() async {
     if (nameController.text.isEmpty || (hours == 0 && minutes == 0)) {
       showDialog(
         context: context,
@@ -35,6 +38,31 @@ class TimerDialogState extends State<TimerDialog> {
         ),
       );
       return;
+    }
+
+    String path;
+
+    // hack together a file picker, this is temporary; I guess this isn't temporary
+    File? file = await FilePicker.platform.pickFiles().then((FilePickerResult? result) async {
+      if (result == null) {
+        return null;
+      }
+
+      final PlatformFile selectedFile = result.files.single;
+
+      if (selectedFile.path == null) {
+        return null;
+      }
+
+      final File file = File(selectedFile.path!);
+      return file;
+
+    });
+
+    if (file == null) {
+      path = "";
+    } else {
+      path = file.path;
     }
 
     final Duration duration = Duration(hours: hours, minutes: minutes);
@@ -47,7 +75,7 @@ class TimerDialogState extends State<TimerDialog> {
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) % 2147483647,
         dateTime: recurTime,
-        assetAudioPath: "assets/alarm.mp3", // Specify your asset audio path
+        assetAudioPath: path, // Specify your asset audio path
         vibrate: true,
         loopAudio: true,
         volume: null,
