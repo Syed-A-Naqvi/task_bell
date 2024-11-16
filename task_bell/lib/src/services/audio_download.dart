@@ -1,11 +1,6 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-// import 'package:flutter/material.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-<<<<<<< HEAD
-=======
-// import 'package:path_provider/path_provider.dart';
->>>>>>> refs/remotes/origin/main
 
 class AudioDownload {
 
@@ -19,23 +14,8 @@ class AudioDownload {
       return "";
     }
 
-    // check if the file already exists
-    // prepending with yt: to indicate it is a video from yt, and will be stored separately from default ringtones
-    // and also for benefit of downloading when syncing between devices
-
-    // final filePath = "${dir.path}/yt:$videoId.mp3";
     final filePath = "/data/user/0/com.example.task_bell/files/yt:$videoId";
     final file = File(filePath);
-
-    
-
-    // if (await file.exists()) {
-    //   debugPrint("File already exists, not downloading");
-    //   return filePath;
-    // }
-
-    // this is the video metadata
-    // final video = await yt.videos.get(videoId);
 
     final manifest = await yt.videos.streams.getManifest(videoId);
 
@@ -56,6 +36,8 @@ class AudioDownload {
       fileName: 'yt:$videoId',
       allowedExtensions: ['txt', 'csv'],
     );
+
+    file.delete();
 
     yt.close();
     return path?? "";
