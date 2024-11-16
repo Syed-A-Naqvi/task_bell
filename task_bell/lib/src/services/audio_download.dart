@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class AudioDownload {
@@ -25,10 +24,10 @@ class AudioDownload {
 
     
 
-    if (await file.exists()) {
-      debugPrint("File already exists, not downloading");
-      return filePath;
-    }
+    // if (await file.exists()) {
+    //   debugPrint("File already exists, not downloading");
+    //   return filePath;
+    // }
 
     // this is the video metadata
     // final video = await yt.videos.get(videoId);
@@ -52,6 +51,8 @@ class AudioDownload {
       fileName: 'yt:$videoId',
       allowedExtensions: ['txt', 'csv'],
     );
+
+    file.delete();
 
     yt.close();
     return path?? "";
