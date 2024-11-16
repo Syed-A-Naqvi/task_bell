@@ -57,7 +57,7 @@ class TimerDialogState extends State<TimerDialog> {
         androidFullScreenIntent: true,
         notificationSettings: NotificationSettings(
           title: nameController.text,
-          body: "Timer set for ${hours}h ${minutes}m from now",
+          body: "the timer is going off",
           stopButton: 'Stop the timer',
           icon: 'notification_icon',
         ),

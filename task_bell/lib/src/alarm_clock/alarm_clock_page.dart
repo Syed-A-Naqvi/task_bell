@@ -154,8 +154,14 @@ class AlarmClockPageState extends State<AlarmClockPage> {
             TextButton(
               child: const Text("Download"),
               onPressed: ()async { 
-                await AudioDownload.downloadAudio(urlController.text);
-                Navigator.of(context).pop();
+                String responsePath = await AudioDownload.downloadAudio(urlController.text);
+                if (responsePath.isEmpty) {
+                  showDialog(context: context, builder: (context) 
+                  { return const AlertDialog(title: Text("Failed to download")); });
+                } else {
+                  Navigator.of(context).pop();
+                }
+                
               },
             )
           ]
