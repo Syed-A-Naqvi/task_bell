@@ -190,7 +190,7 @@ class StopwatchPageState extends State<StopwatchPage> {
                   ),
                   child: Text(
                     _isRunning ? 'Lap' : 'Reset',
-                    style: const TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 18),
                   ),
                 ),
               ),
@@ -207,7 +207,7 @@ class StopwatchPageState extends State<StopwatchPage> {
                   ),
                   child: Text(
                     _isRunning ? 'Stop' : 'Start',
-                    style: const TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 18),
                   ),
                 ),
               ),

@@ -100,21 +100,22 @@ class AlarmInstanceState extends State<AlarmInstance> {
 
 
   Future<void> toggleAlarmStatus() async {
-    
     bool newIsActive = !isActive;
 
     if (newIsActive) {
+      // Activate the alarm
       DateTime? nextOccurrence = widget.recur.getNextOccurrence(DateTime.now());
       if (nextOccurrence == null) {
         // Can't activate the alarm
         newIsActive = false;
-        displaySnackBar("No new occurrence, can't activate alarm.");      
-      }
-      else {
+        displaySnackBar("No new occurrence, can't activate alarm.");
+      } else {
         alarmSettings = alarmSettings.copyWith(dateTime: nextOccurrence);
         try {
+          // Update alarm settings in the database
           await tDB.updateAlarm(widget.alarmSettings.id, {
             ...MapConverters.alarmSettingsToMap(alarmSettings),
+            'isactive': MapConverters.boolToInt(newIsActive),
           });
           await Alarm.set(alarmSettings: alarmSettings);
           debugPrint("Alarm set for $nextOccurrence");
@@ -123,32 +124,30 @@ class AlarmInstanceState extends State<AlarmInstance> {
           debugPrint("Failed to set the alarm or update the database: $e");
           displaySnackBar("Failed to set the alarm or update the database: $e");
           newIsActive = false;
-          // Optionally display an error message to the user
         }
       }
-    }
-    else {
+    } else {
+      // Deactivate the alarm
       try {
         await Alarm.stop(alarmSettings.id);
         debugPrint("Alarm stopped.");
+        // Update `isactive` in the database
+        await tDB.updateAlarm(widget.alarmSettings.id, {'isactive': MapConverters.boolToInt(false)});
+        displaySnackBar("Alarm deactivated.");
       } catch (e) {
         debugPrint("Failed to stop the alarm: $e");
+        displaySnackBar("Failed to stop the alarm: $e");
       }
     }
 
-    try {
-      await tDB.updateAlarm(widget.alarmSettings.id, {'isactive': MapConverters.boolToInt(newIsActive)});
-      debugPrint("Updated database with alarm state.");
-    } catch (e) {
-      debugPrint("Failed to update databse: $e");
-    }
-    
+    // Update the UI state
     if (mounted) {
       setState(() {
         isActive = newIsActive;
       });
     }
   }
+
 
   void displaySnackBar(String message) {
     var snackBar = SnackBar(
