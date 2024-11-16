@@ -119,7 +119,7 @@ class AlarmFolderState extends State<AlarmFolder> {
     for (AlarmFolder af in folders) {
       indented.add(
         Padding(
-          padding: EdgeInsets.fromLTRB((af.parentId == '-1') ? 0 : widget.childIndent, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB((af.parentId == -1) ? 0 : widget.childIndent, 0, 0, 0),
           child: af,
         ),
       );
@@ -128,7 +128,7 @@ class AlarmFolderState extends State<AlarmFolder> {
       debugPrint("alarm isactive? : ${al.isActive}");
       indented.add(
         Padding(
-          padding: EdgeInsets.fromLTRB((al.parentId == '-1') ? 0 : widget.childIndent, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB((al.parentId == -1) ? 0 : widget.childIndent, 0, 0, 0),
           child: al,
         ),
       );

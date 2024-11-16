@@ -4,6 +4,8 @@ import 'timer_dialog.dart';
 import 'folder_dialog.dart';
 import '../alarm_instance.dart';
 import '../alarm_folder.dart';
+import '../timer_folder.dart';
+import '../timer_instance.dart';
 
 class TimerOrFolderDialog extends StatefulWidget {
   
@@ -33,12 +35,19 @@ class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
   }
 
   void _onCreateTimer(AlarmInstance alarmInstance) {
-    widget.onCreateTimer(alarmInstance);
+    TimerInstance timerInstance = TimerInstance(
+      name: alarmInstance.name,
+      alarmSettings: alarmInstance.alarmSettings,
+      recur: alarmInstance.recur,
+      parentId: alarmInstance.parentId);
+
+    widget.onCreateTimer(timerInstance);
     _closeDialog();
   }
 
   void _onCreateFolder(AlarmFolder folder) {
-    widget.onCreateFolder(folder);
+    TimerFolder timerFolder = TimerFolder.fromMap(folder.toMap());
+    widget.onCreateFolder(timerFolder);
     _closeDialog();
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
 import 'package:task_bell/src/alarm/helpers/map_converters.dart';
+import 'package:task_bell/src/storage/task_bell_database.dart';
 import 'recurrence/recur.dart';
 import 'recurrence/relative_recur.dart';
 import 'recurrence/week_recur.dart';
@@ -47,7 +48,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
 
   Map<String, dynamic> toMap() => {
         "name": name,
-        "isactive": isActive,
+        "isactive": MapConverters.boolToInt(isActive),
         "parentId": parentId,
         ...recur.toMap(),
         ...MapConverters.alarmSettingsToMap(alarmSettings),
@@ -66,50 +67,92 @@ class AlarmInstance extends StatefulWidget implements Comparable {
 class AlarmInstanceState extends State<AlarmInstance> {
   
   bool _showRelativeTime = false;
-  late bool isActive;
-  late AlarmSettings alarmSettings;
+  TaskBellDatabase tDB = TaskBellDatabase();
+  late bool isActive = false;
+  late AlarmSettings alarmSettings = widget.alarmSettings;
 
   @override
   void initState() {
     super.initState();
-    isActive = widget.isActive;
-    alarmSettings = widget.alarmSettings;
-    if (isActive) {
-      Alarm.set(alarmSettings: alarmSettings);
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    try {
+      AlarmInstance? currentAlarm = await tDB.getAlarm(widget.alarmSettings.id);
+      if (currentAlarm != null) {
+        isActive = currentAlarm.isActive;
+        alarmSettings = currentAlarm.alarmSettings;
+        if (isActive) {
+          await Alarm.set(alarmSettings: alarmSettings);
+        }
+      } else {
+        isActive = false;
+      }
+    } catch (e) {
+      debugPrint("Failed to initialize alarm: $e");
+    }
+
+    if (mounted) {
+      setState(() {});
     }
   }
+
 
   Future<void> toggleAlarmStatus() async {
-    setState(() {
-      isActive = !isActive;
-    });
+    
+    bool newIsActive = !isActive;
 
-    if (isActive) {
+    if (newIsActive) {
       DateTime? nextOccurrence = widget.recur.getNextOccurrence(DateTime.now());
       if (nextOccurrence == null) {
-        setState(() {
-          isActive = false;
-        });
-        return;
+        // Can't activate the alarm
+        newIsActive = false;
+        displaySnackBar("No new occurrence, can't activate alarm.");      
       }
+      else {
+        alarmSettings = alarmSettings.copyWith(dateTime: nextOccurrence);
+        try {
+          await tDB.updateAlarm(widget.alarmSettings.id, {
+            ...MapConverters.alarmSettingsToMap(alarmSettings),
+          });
+          await Alarm.set(alarmSettings: alarmSettings);
+          debugPrint("Alarm set for $nextOccurrence");
+          displaySnackBar("Scheduled for ${formatDateTime(true)} from now");
+        } catch (e) {
+          debugPrint("Failed to set the alarm or update the database: $e");
+          displaySnackBar("Failed to set the alarm or update the database: $e");
+          newIsActive = false;
+          // Optionally display an error message to the user
+        }
+      }
+    }
+    else {
+      try {
+        await Alarm.stop(alarmSettings.id);
+        debugPrint("Alarm stopped.");
+      } catch (e) {
+        debugPrint("Failed to stop the alarm: $e");
+      }
+    }
 
-      alarmSettings = alarmSettings.copyWith(dateTime: nextOccurrence);
-      await Alarm.set(alarmSettings: alarmSettings);
-
-      displaySnackBar();
-
-      debugPrint("Alarm set for $nextOccurrence");
-    } else {
-      await Alarm.stop(alarmSettings.id);
+    try {
+      await tDB.updateAlarm(widget.alarmSettings.id, {'isactive': MapConverters.boolToInt(newIsActive)});
+      debugPrint("Updated database with alarm state.");
+    } catch (e) {
+      debugPrint("Failed to update databse: $e");
     }
     
-    debugPrint("alarm isactive? : $isActive");
-
+    if (mounted) {
+      setState(() {
+        isActive = newIsActive;
+      });
+    }
   }
 
-  void displaySnackBar() {
+  void displaySnackBar(String message) {
     var snackBar = SnackBar(
-      content: Text("Scheduled for ${formatDateTime(true)} from now")
+      content: Text(message)
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);

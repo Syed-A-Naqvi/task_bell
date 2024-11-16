@@ -44,7 +44,6 @@ class TimerDialogState extends State<TimerDialog> {
     TimerInstance alarmInstance = TimerInstance(
       name: nameController.text,
       parentId: widget.parentId,
-      key: Key((DateTime.now().millisecondsSinceEpoch.toString())),
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) % 2147483647,
         dateTime: recurTime,

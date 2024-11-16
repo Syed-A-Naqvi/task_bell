@@ -16,6 +16,16 @@ class TimerFolder extends AlarmFolder {
 
   @override
   State<StatefulWidget> createState() => TimerFolderState();
+
+  static TimerFolder fromMap(Map<String, dynamic> map) {
+    return TimerFolder(
+      id: map["id"],
+      parentId: map['parentId'],
+      name: map["name"],
+      position: map["position"],
+    );
+  }
+
 }
 
 class TimerFolderState extends AlarmFolderState {
@@ -30,11 +40,18 @@ class TimerFolderState extends AlarmFolderState {
   Future<void> _loadData() async {
     List<AlarmFolder> subfoldersList = await tDB.getAllChildFolders(widget.id);
     for (var item in subfoldersList) {
-      subfolders.add(item as TimerFolder);
+      item = TimerFolder.fromMap(item.toMap());
+      subfolders.add(item);
     }
     List<AlarmInstance> timersList = await tDB.getAllChildAlarms(widget.id);
     for (var item in timersList) {
-      alarms.add(item as TimerInstance);
+      item = TimerInstance(
+        name: item.name,
+        alarmSettings: item.alarmSettings,
+        recur: item.recur,
+        parentId: item.parentId
+      );
+      alarms.add(item);
     }
     setState(() {});
   }

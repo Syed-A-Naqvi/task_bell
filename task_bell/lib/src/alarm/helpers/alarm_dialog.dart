@@ -91,7 +91,7 @@ class AlarmDialogState extends State<AlarmDialog> {
     AlarmInstance alarmInstance = AlarmInstance(
       name: nameController.text,
       parentId: widget.parentId,
-      key: Key((DateTime.now().millisecondsSinceEpoch.toString())),
+      isActive: true,
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) % 2147483647,
         dateTime: recurTime!,

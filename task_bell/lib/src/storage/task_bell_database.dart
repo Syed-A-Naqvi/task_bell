@@ -1,7 +1,5 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../alarm/helpers/map_converters.dart';
-import 'package:alarm/alarm.dart';
 import '../alarm/alarm_folder.dart';
 import '../alarm/alarm_instance.dart';
 
@@ -71,24 +69,6 @@ class TaskBellDatabase {
       )
     ''');
   }
-
-//   -- Table to store folders with a self-referencing parent column
-// CREATE TABLE folders (
-//     folder_id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     folder_name TEXT NOT NULL,
-//     parent_folder_id INTEGER NULL, -- Self-referencing column for parent folder
-//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-//     FOREIGN KEY (parent_folder_id) REFERENCES folders(folder_id) ON DELETE CASCADE
-// );
-
-// -- Table to store files with a reference to the parent folder
-// CREATE TABLE files (
-//     file_id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     file_name TEXT NOT NULL,
-//     parent_folder_id INTEGER NULL, -- Reference to the parent folder
-//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-//     FOREIGN KEY (parent_folder_id) REFERENCES folders(folder_id) ON DELETE CASCADE
-// );
 
   // ------------------------------------- FOLDER CRUD METHODS-------------------------------------
 
@@ -163,6 +143,31 @@ class TaskBellDatabase {
     );
   }
 
+  Future<void> updateAlarm(int id, Map<String, dynamic> field) async {
+    final db = await database;
+    await db.update(
+      'alarms',
+      field,
+      where: 'id = ?',
+      whereArgs: [id],
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+  
+  Future<Map<String, dynamic>?> getAlarmProperty(int id, String property) async {
+    final db = await database;
+    final maps = await db.query(
+      'alarms',
+      columns: [property],
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return {property: maps.first[property]};
+    }
+    return null;
+  }
+
   Future<List<AlarmInstance>> getAllChildAlarms(int parentId) async {
     final db = await database;
     final maps = await db.query(
@@ -195,16 +200,6 @@ class TaskBellDatabase {
     return List.generate(maps.length, (i) {
       return AlarmInstance.fromMap(maps[i]);
     });
-  }
-
-  Future<void> updateAlarm(AlarmSettings alarmSettings) async {
-    final db = await database;
-    await db.update(
-      'alarms',
-      MapConverters.alarmSettingsToMap(alarmSettings),
-      where: 'id = ?',
-      whereArgs: [alarmSettings.id],
-    );
   }
 
   Future<void> deleteAlarm(int id) async {
