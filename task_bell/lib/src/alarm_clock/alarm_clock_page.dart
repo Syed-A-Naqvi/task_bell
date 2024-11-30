@@ -139,36 +139,69 @@ class AlarmClockPageState extends State<AlarmClockPage> {
 }
 
   void downloadAudio() {
-    showDialog(context: context, builder: (context) {
-      final TextEditingController urlController = TextEditingController();
-      return AlertDialog(
-        title: const Text("Download audio from YouTube"),
-        content: Wrap(
-          children: [
-            TextFormField(
-              controller: urlController,
-              decoration: const InputDecoration(
-                labelText: 'Enter YouTube Video URL',
+    showDialog(
+      context: context,
+      builder: (context) {
+        final TextEditingController urlController = TextEditingController();
+        String? selectedTitle; // Track the selected title
+        Map<String, String> videoOptions = {
+          'America - A Horse With No Name': 'https://www.youtube.com/watch?v=na47wMFfQCo',
+          'David Bowie - Starman': 'https://www.youtube.com/watch?v=tRcPA7Fzebw',
+          'Mongolian Throat Music': 'https://www.youtube.com/watch?v=p_5yt5IX38I',
+        }; // Map of titles to URLs
+
+        return AlertDialog(
+          title: const Text("Download audio from YouTube"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: urlController,
+                decoration: const InputDecoration(
+                  labelText: 'Enter YouTube Video URL',
+                ),
               ),
-            ),
-            TextButton(
-              child: const Text("Download"),
-              onPressed: ()async { 
-                String responsePath = await AudioDownload.downloadAudio(urlController.text);
-                if (responsePath.isEmpty) {
-                  showDialog(context: context, builder: (context) 
-                  { return const AlertDialog(title: Text("Failed to download")); });
-                } else {
-                  Navigator.of(context).pop();
-                }
-                
-              },
-            )
-          ]
-        )
-      );
-    });
+              const SizedBox(height: 10),
+              DropdownButton<String>(
+                value: selectedTitle,
+                hint: const Text("Select a YouTube video"),
+                isExpanded: true,
+                items: videoOptions.keys.map((title) {
+                  return DropdownMenuItem<String>(
+                    value: title,
+                    child: Text(title),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  selectedTitle = value;
+                  urlController.text = videoOptions[selectedTitle]!; // Populate the text field with the URL
+                },
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                child: const Text("Download"),
+                onPressed: () async {
+                  String responsePath = await AudioDownload.downloadAudio(urlController.text);
+                  if (responsePath.isEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const AlertDialog(title: Text("Failed to download"));
+                      },
+                    );
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
+
+
 
   @override
   Widget build(BuildContext context) {
