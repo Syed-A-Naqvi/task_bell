@@ -94,6 +94,17 @@ class TaskBellDatabase {
     return null;
   }
   
+  Future<void> updateFolder(int id, Map<String, dynamic> field) async {
+    final db = await database;
+    await db.update(
+      'folders',
+      field,
+      where: 'id = ?',
+      whereArgs: [id],
+      conflictAlgorithm: ConflictAlgorithm.replace
+    );
+  }
+
   Future<List<AlarmFolder>> getAllFolders() async {
     final db = await database;
     final maps = await db.query('folders');

@@ -11,11 +11,15 @@ class AlarmOrFolderDialog extends StatefulWidget {
   final int folderPos;
   final ValueChanged<AlarmInstance> onCreateAlarm;
   final ValueChanged<AlarmFolder> onCreateFolder;
+  final bool disableAlarmTab;
+  final bool disableFolderTab;
 
   const AlarmOrFolderDialog({
     required this.onCreateAlarm,
     required this.onCreateFolder,
     required this.parentId,
+    this.disableAlarmTab = false,
+    this.disableFolderTab = false,
     this.folderPos = 0,
     super.key
   });
@@ -27,6 +31,8 @@ class AlarmOrFolderDialog extends StatefulWidget {
 class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  List<Tab> tabList = [];
+  List<Widget> tabViewList = [];
 
   void _closeDialog() {
     Navigator.of(context).pop();
@@ -45,11 +51,48 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+
+    int length = 0;
+
+    if (!widget.disableAlarmTab) {
+      tabList.add(const Tab(icon: Icon(Icons.alarm), text: 'Alarm'));
+      tabViewList.add(
+        SingleChildScrollView(
+          child: AlarmDialog(
+            parentId: widget.parentId,
+            onCreate: _onCreateAlarm,
+          ),
+        ),
+      );
+
+      length++;
+    }
+
+    if (!widget.disableFolderTab) {
+      tabList.add(const Tab(icon: Icon(Icons.folder), text: 'Folder'));
+      tabViewList.add(
+        SingleChildScrollView(
+          child: FolderDialog(
+            parentId: widget.parentId,
+            position: widget.folderPos,
+            onCreate: _onCreateFolder,
+          ),
+        ),
+      );
+
+      length++;
+    }
+
+
+    _tabController = TabController(length: length, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
+    
+    
+    
+
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(16.0), // Adjust the padding as needed
@@ -61,30 +104,16 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
             children: [
               TabBar(
                 controller: _tabController,
-                tabs: const [
-                  Tab(icon: Icon(Icons.alarm), text: 'Alarm'),
-                  Tab(icon: Icon(Icons.folder), text: 'Folder'),
-                ],
+                // tabs: const [
+                //   Tab(icon: Icon(Icons.alarm), text: 'Alarm'),
+                //   Tab(icon: Icon(Icons.folder), text: 'Folder'),
+                // ],
+                tabs: tabList,
               ),
               Flexible(
                 child: TabBarView(
                   controller: _tabController,
-                  children: [
-                    // Wrap each tab content in a SingleChildScrollView
-                    SingleChildScrollView(
-                      child: AlarmDialog(
-                        parentId: widget.parentId,
-                        onCreate: _onCreateAlarm,
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      child: FolderDialog(
-                        parentId: widget.parentId,
-                        position: widget.folderPos,
-                        onCreate: _onCreateFolder,
-                      ),
-                    ),
-                  ],
+                  children: tabViewList,
                 ),
               ),
             ],

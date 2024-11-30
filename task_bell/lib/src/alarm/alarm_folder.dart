@@ -65,12 +65,14 @@ class AlarmFolderState extends State<AlarmFolder> {
  
   bool _expanded = false;
   Icon icon = const Icon(Icons.chevron_right);
+  late String fakeName;
 
   @override
   void initState(){
     super.initState();
     // Initialize the folder's children from the database here
     _loadData();
+    fakeName = widget.name;
   }
 
   Future<void> _loadData() async {
@@ -142,6 +144,24 @@ class AlarmFolderState extends State<AlarmFolder> {
     return GestureDetector(
       onLongPress: () {
         debugPrint("pressed ${widget.name}");
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlarmOrFolderDialog(
+              parentId: -1, // Provide the necessary parentId
+              folderPos: widget.position, // Provide the necessary folderPos
+              disableAlarmTab: true,
+              onCreateAlarm: (alarmInstance){}, // do nothing. alarm tab is disabled
+              onCreateFolder: (folder) async {
+                // update folder name. Since its final, use fakeName to store changes until reload
+                await tDB.updateFolder(widget.id, {"name": folder.name});
+                fakeName = folder.name;
+                setState((){});
+              },
+            );
+          }
+        );
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +176,7 @@ class AlarmFolderState extends State<AlarmFolder> {
                 padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
                 child: Icon(Icons.folder),
               ),
-              Text(widget.name),
+              Text(fakeName),
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: addNewAlarmFolder,
