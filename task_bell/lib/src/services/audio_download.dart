@@ -49,7 +49,7 @@ class AudioDownload {
     String? path = await FilePicker.platform.saveFile(
       bytes: await file.readAsBytes(),
       fileName: 'yt:$videoId',
-      allowedExtensions: ['txt', 'csv'],
+      allowedExtensions: [],
     );
 
     file.delete();
