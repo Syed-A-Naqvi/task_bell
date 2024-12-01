@@ -75,6 +75,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
   late String fakeName;
   late Recur fakeRecur;
   bool deleted = false;
+  bool edited = false;
 
   @override
   void initState() {
@@ -212,6 +213,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
 
             fakeName = alarmInstance.name;
             fakeRecur = alarmInstance.recur;
+            edited = true;
 
             setState((){});
           },
@@ -271,7 +273,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
                   },
                   icon: Icon(isActive ? Icons.toggle_on : Icons.toggle_off_outlined),
                 ),
-                Text(fakeName),
+                Text(edited ? fakeName : widget.name), // no idea why this is necessary
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Text(formatDateTime(_showRelativeTime)),

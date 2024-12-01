@@ -87,6 +87,7 @@ class TimerInstanceState extends AlarmInstanceState {
 
             fakeName = alarmInstance.name;
             fakeRecur = alarmInstance.recur;
+            edited = true;
 
             setState((){});
           },
