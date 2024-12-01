@@ -75,7 +75,7 @@ class TimerDialogState extends State<TimerDialog> {
       name: nameController.text,
       parentId: widget.parentId,
       alarmSettings: AlarmSettings(
-        id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) % 2147483647,
+        id: (DateTime.now().millisecondsSinceEpoch ~/ 100) % 2147483647,
         dateTime: recurTime,
         assetAudioPath: path, // Specify your asset audio path
         vibrate: true,

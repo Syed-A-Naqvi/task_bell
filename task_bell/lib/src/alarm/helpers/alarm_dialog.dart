@@ -110,7 +110,7 @@ class AlarmDialogState extends State<AlarmDialog> {
       parentId: widget.parentId,
       isActive: true,
       alarmSettings: AlarmSettings(
-        id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) % 2147483647,
+        id: (DateTime.now().millisecondsSinceEpoch ~/ 100) % 2147483647,
         // dateTime: recurTime!,
         dateTime: recur.getNextOccurrence(DateTime.now())!,
         assetAudioPath: path,

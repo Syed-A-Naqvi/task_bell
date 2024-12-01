@@ -36,7 +36,7 @@ void main() async {
     // make sure the alarm id is good
     AlarmInstance? alarmInstance = await tDB.getAlarm(id);
     if (alarmInstance == null) {
-      debugPrint("alarm instance is null for some reason. Probably quite bad");
+      debugPrint("alarm instance is null; this is bad unless an alarm was just deleted");
       return;
     }
 
@@ -57,7 +57,7 @@ void main() async {
       DateTime? nextOccur = alarmInstance.recur.getNextOccurrence(DateTime.now());
 
       if (nextOccur == null) {
-        debugPrint("Next occur was null when attempting to reschedule alarm ${id}");
+        debugPrint("Next occur was null when attempting to reschedule alarm $id");
         return;
       }
 

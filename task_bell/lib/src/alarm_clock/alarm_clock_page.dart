@@ -209,18 +209,18 @@ class AlarmClockPageState extends State<AlarmClockPage> {
       appBar: AppBar(
         title: const Text('Alarm Clock'),
         actions: [
-          IconButton(
-            onPressed: () async {
-              for (var i in items) {
-                if (i is AlarmFolder && i.parentId == -1) {
-                  await tDB.deleteFolder(i.id);
-                } else if (i is AlarmInstance && i.parentId == -1){
-                  await tDB.deleteAlarm(i.alarmSettings.id);
-                }
-              }
-              loadData();
-            },
-            icon: const Icon(Icons.delete) ),
+          // IconButton(
+          //   onPressed: () async {
+          //     for (var i in items) {
+          //       if (i is AlarmFolder && i.parentId == -1) {
+          //         await tDB.deleteFolder(i.id);
+          //       } else if (i is AlarmInstance && i.parentId == -1){
+          //         await tDB.deleteAlarm(i.alarmSettings.id);
+          //       }
+          //     }
+          //     loadData();
+          //   },
+          //   icon: const Icon(Icons.delete) ),
           IconButton(
             icon: const Icon(Icons.cloud_upload),
             onPressed: _uploadToCloud,

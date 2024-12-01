@@ -168,7 +168,13 @@ class AlarmInstanceState extends State<AlarmInstance> {
   String formatDateTime(bool relative) {
     DateTime now = DateTime.now();
     // DateTime? nextOccurrence = widget.recur.getNextOccurrence(now);
-    DateTime? nextOccurrence = fakeRecur.getNextOccurrence(now);
+    DateTime? nextOccurrence;
+    if (edited) {
+      nextOccurrence = fakeRecur.getNextOccurrence(now);
+    } else {
+      nextOccurrence = widget.recur.getNextOccurrence(now);
+    }
+      
 
     if (nextOccurrence == null) return "";
 
@@ -187,7 +193,6 @@ class AlarmInstanceState extends State<AlarmInstance> {
 
   void openEditMenu() {
     HapticFeedback.mediumImpact();
-    debugPrint("${(fakeRecur as WeekRecur).activeDays}");
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -253,7 +258,11 @@ class AlarmInstanceState extends State<AlarmInstance> {
           if (details.globalPosition.dx - dragStartX > maxOffset) {
             // delete the alarm
             deleted = true;
+            // remove from db
             tDB.deleteAlarm(widget.alarmSettings.id);
+            // unschedule the alarm
+            Alarm.stop(widget.alarmSettings.id);
+
             setState((){});
             HapticFeedback.heavyImpact(); // haptic feedback when deleting
           }

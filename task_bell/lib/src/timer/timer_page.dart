@@ -138,18 +138,18 @@ class TimerPageState extends AlarmClockPageState {
       appBar: AppBar(
         title: const Text('Timer'),
         actions: [
-          IconButton(
-            onPressed: () async {
-              for (var i in items) {
-                if (i is AlarmFolder && i.parentId == -2) {
-                  await tDB.deleteFolder(i.id);
-                } else if (i is AlarmInstance && i.parentId == -2) {
-                  await tDB.deleteAlarm(i.alarmSettings.id);
-                }
-              }
-              loadData();
-            },
-            icon: const Icon(Icons.delete) ),
+          // IconButton(
+          //   onPressed: () async {
+          //     for (var i in items) {
+          //       if (i is AlarmFolder && i.parentId == -2) {
+          //         await tDB.deleteFolder(i.id);
+          //       } else if (i is AlarmInstance && i.parentId == -2) {
+          //         await tDB.deleteAlarm(i.alarmSettings.id);
+          //       }
+          //     }
+          //     loadData();
+          //   },
+          //   icon: const Icon(Icons.delete) ),
           IconButton(
             icon: const Icon(Icons.cloud_upload),
             onPressed: _uploadToCloud,
