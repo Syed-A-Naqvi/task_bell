@@ -89,14 +89,16 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
     final response = await http.get(Uri.parse('http://worldtimeapi.org/api/timezone'));
     if (response.statusCode == 200) {
       final List<dynamic> timezones = jsonDecode(response.body);
+      final sanitizedCity = city.toLowerCase().replaceAll(' ', '_');
       for (String timezone in timezones) {
-        if (timezone.toLowerCase().contains(city.toLowerCase())) {
+        if (timezone.toLowerCase().contains(sanitizedCity)) {
           return timezone;
         }
       }
     }
     return '';
   }
+
 
   Future<DateTime> _fetchWorldTime(String timezone) async {
     final url = 'http://worldtimeapi.org/api/timezone/$timezone';
@@ -204,6 +206,18 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
     }
   }
 
+  // New method to extract country from timezone
+  String _getCountryFromTimezone(String timezone) {
+    // Here we can use a predefined mapping or a package for accurate country names
+    // For simplicity, we'll extract the continent as the country
+    final parts = timezone.split('/');
+    if (parts.length >= 2) {
+      final continent = parts[0].replaceAll('_', ' ');
+      return continent;
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -256,12 +270,37 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
               itemBuilder: (context, index) {
                 final cityInfo = _worldTimes[index];
                 final formattedTime = _formatDateTime(cityInfo);
+                final country = _getCountryFromTimezone(cityInfo['timezone']);
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   child: ListTile(
-                    leading: const Icon(Icons.access_time),
-                    title: Text(cityInfo['city']),
-                    subtitle: Text(formattedTime),
+                    // Removed the leading icon
+                    title: Text(
+                      cityInfo['city'],
+                      style: const TextStyle(
+                        fontSize: 24, // Increased font size
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          formattedTime,
+                          style: const TextStyle(
+                            fontSize: 20, // Made time display larger
+                          ),
+                        ),
+                        if (country.isNotEmpty)
+                          Text(
+                            country,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                          ),
+                      ],
+                    ),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () => _removeCity(index),
