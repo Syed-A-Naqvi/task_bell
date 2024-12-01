@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
 import 'package:flutter/services.dart';
@@ -69,7 +71,7 @@ class AlarmInstance extends StatefulWidget implements Comparable {
 
 class AlarmInstanceState extends State<AlarmInstance> {
   
-  bool _showRelativeTime = false;
+  bool showRelativeTime = false;
   TaskBellDatabase tDB = TaskBellDatabase();
   late bool isActive = false;
   late AlarmSettings alarmSettings = widget.alarmSettings;
@@ -77,6 +79,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
   late Recur fakeRecur;
   bool deleted = false;
   bool edited = false;
+  bool periodicTimerEnabled = false;
 
   @override
   void initState() {
@@ -186,6 +189,20 @@ class AlarmInstanceState extends State<AlarmInstance> {
       final hours = diff.inHours % 24;
       final minutes = diff.inMinutes % 60;
       final seconds = diff.inSeconds % 60;
+
+
+      if (!periodicTimerEnabled) { //  && isActive // doesn't make sense to exist for alarms
+        periodicTimerEnabled = true;
+        Timer.periodic(const Duration(seconds: 1), (timer) {
+          if (!showRelativeTime) { // !isActive
+            periodicTimerEnabled = false;
+            timer.cancel();
+            return;
+          }
+          setState((){});  
+        });
+      }
+      
 
       return "${days}d, ${hours}h, ${minutes}m, ${seconds}s";
     }
@@ -303,11 +320,11 @@ class AlarmInstanceState extends State<AlarmInstance> {
                     Text(edited ? fakeName : widget.name), // no idea why this is necessary
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: Text(formatDateTime(_showRelativeTime)),
+                      child: Text(formatDateTime(showRelativeTime)),
                     ),
                     IconButton(
                       onPressed: () => setState(() {
-                        _showRelativeTime = !_showRelativeTime;
+                        showRelativeTime = !showRelativeTime;
                       }),
                       icon: const Icon(Icons.swap_horiz),
                     ),

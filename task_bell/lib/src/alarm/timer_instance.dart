@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:alarm/alarm.dart';
 import 'package:flutter/services.dart';
 import 'package:task_bell/src/alarm/recurrence/relative_recur.dart';
@@ -38,6 +40,17 @@ class TimerInstanceState extends AlarmInstanceState {
         diff = nextOccurrence.difference((widget.recur as RelativeRecur).initTime);
       }
 
+      if (!periodicTimerEnabled && isActive) {
+        periodicTimerEnabled = true;
+        Timer.periodic(const Duration(seconds: 1), (timer) {
+          if (!showRelativeTime || !isActive) {
+            periodicTimerEnabled = false;
+            timer.cancel();
+            return;
+          }
+          setState((){});  
+        });
+      }
       
       final days = diff.inDays;
       final hours = diff.inHours % 24;
