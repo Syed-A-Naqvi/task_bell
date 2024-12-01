@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:task_bell/src/alarm/recurrence/relative_recur.dart';
 import 'alarm_instance.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'helpers/timer_or_folder.dart';
 
@@ -24,13 +25,20 @@ class TimerInstance extends AlarmInstance {
 class TimerInstanceState extends AlarmInstanceState {
 
   @override
+  void initState(){
+    super.initState();
+    showRelativeTime = true;
+    showSwapTimeModes = false;
+  }
+
+  @override
   String formatDateTime(bool relative) {
     DateTime now = DateTime.now();
     DateTime? nextOccurrence = widget.recur.getNextOccurrence(now);
 
     if (nextOccurrence == null) return "";
 
-    if (relative) {
+    if (relative || !super.isActive) { // only show relative time unless the timer is active
 
       late final Duration diff;
 
@@ -52,15 +60,47 @@ class TimerInstanceState extends AlarmInstanceState {
         });
       }
       
-      final days = diff.inDays;
+      // final days = diff.inDays;
       final hours = diff.inHours % 24;
       final minutes = diff.inMinutes % 60;
       final seconds = diff.inSeconds % 60;
 
-      return "${days}d, ${hours}h, ${minutes}m, ${seconds}s";
+      // return "$days${
+      //   AppLocalizations.of(context)!.dayLetter}, $hours${
+      //   AppLocalizations.of(context)!.hourLetter}, $minutes${
+      //   AppLocalizations.of(context)!.minuteLetter}, $seconds${
+      //   AppLocalizations.of(context)!.secondLetter}";
+
+      // not including days because the longest the timer can be is 23h 59m
+      return "$hours${
+        AppLocalizations.of(context)!.hourLetter}, $minutes${
+        AppLocalizations.of(context)!.minuteLetter}, $seconds${
+        AppLocalizations.of(context)!.secondLetter}";
     }
 
-    return nextOccurrence.toString();
+    // return nextOccurrence.toString();
+    String month = "";
+    switch(nextOccurrence.month){
+      case  1: month = AppLocalizations.of(context)!.jan; break;
+      case  2: month = AppLocalizations.of(context)!.feb; break;
+      case  3: month = AppLocalizations.of(context)!.mar; break;
+      case  4: month = AppLocalizations.of(context)!.apr; break;
+      case  5: month = AppLocalizations.of(context)!.may; break;
+      case  6: month = AppLocalizations.of(context)!.jun; break;
+      case  7: month = AppLocalizations.of(context)!.jul; break;
+      case  8: month = AppLocalizations.of(context)!.aug; break;
+      case  9: month = AppLocalizations.of(context)!.sep; break;
+      case 10: month = AppLocalizations.of(context)!.oct; break;
+      case 11: month = AppLocalizations.of(context)!.nov; break;
+      case 12: month = AppLocalizations.of(context)!.dec; break;
+      default: "";
+    }
+
+    // theoretically should base this on the locale, but day month year is standard most places
+    // not sure if time should go before or after date; not sure what should be considered more important
+    return "${nextOccurrence.day} $month ${nextOccurrence.hour}${AppLocalizations.of(context)!.hourLetter}${
+      nextOccurrence.minute}${AppLocalizations.of(context)!.minuteLetter}${
+      nextOccurrence.second}${AppLocalizations.of(context)!.secondLetter}";
   }
 
   @override
@@ -71,6 +111,8 @@ class TimerInstanceState extends AlarmInstanceState {
     debugPrint("Timer toggled");
 
     await super.toggleAlarmStatus();
+
+    showSwapTimeModes = true;
   }
 
   @override

@@ -80,6 +80,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
   bool deleted = false;
   bool edited = false;
   bool periodicTimerEnabled = false;
+  bool showSwapTimeModes = true;
 
   @override
   void initState() {
@@ -207,7 +208,30 @@ class AlarmInstanceState extends State<AlarmInstance> {
       return "${days}d, ${hours}h, ${minutes}m, ${seconds}s";
     }
 
-    return nextOccurrence.toString();
+    String month = "";
+    switch(nextOccurrence.month){
+      case  1: month = AppLocalizations.of(context)!.jan; break;
+      case  2: month = AppLocalizations.of(context)!.feb; break;
+      case  3: month = AppLocalizations.of(context)!.mar; break;
+      case  4: month = AppLocalizations.of(context)!.apr; break;
+      case  5: month = AppLocalizations.of(context)!.may; break;
+      case  6: month = AppLocalizations.of(context)!.jun; break;
+      case  7: month = AppLocalizations.of(context)!.jul; break;
+      case  8: month = AppLocalizations.of(context)!.aug; break;
+      case  9: month = AppLocalizations.of(context)!.sep; break;
+      case 10: month = AppLocalizations.of(context)!.oct; break;
+      case 11: month = AppLocalizations.of(context)!.nov; break;
+      case 12: month = AppLocalizations.of(context)!.dec; break;
+      default: "";
+    }
+
+    // theoretically should base this on the locale, but day month year is standard most places
+    // not sure if time should go before or after date; not sure what should be considered more important
+    // don't display seconds, alarms are not that precise
+    return "${nextOccurrence.day} $month ${nextOccurrence.hour}${AppLocalizations.of(context)!.hourLetter}${
+      nextOccurrence.minute}";
+
+    // return nextOccurrence.toString();
   }
 
   void openEditMenu() {
@@ -322,12 +346,16 @@ class AlarmInstanceState extends State<AlarmInstance> {
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: Text(formatDateTime(showRelativeTime)),
                     ),
-                    IconButton(
-                      onPressed: () => setState(() {
-                        showRelativeTime = !showRelativeTime;
-                      }),
-                      icon: const Icon(Icons.swap_horiz),
+                    Visibility(
+                      visible: showSwapTimeModes,
+                      child: IconButton(
+                        onPressed: () => setState(() {
+                          showRelativeTime = !showRelativeTime;
+                        }),
+                        icon: const Icon(Icons.swap_horiz),
+                      ),
                     ),
+                    
                   ],
                 ),
               )

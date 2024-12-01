@@ -112,7 +112,7 @@ class MyAppState extends State<MyApp> {
                   icon: const Icon(Icons.alarm),
                   // quaternary is necessary because AppLocalization is not initialized yet
                   // For more language support, this would become super messy
-                  label: Platform.localeName.contains('fr') ? 'Réveil' : 'Alarm Clock',
+                  label: Platform.localeName.contains('fr') ? 'Alarme' : 'Alarm Clock',
                 ),
                 BottomNavigationBarItem(
                   icon: const Icon(Icons.timer),
