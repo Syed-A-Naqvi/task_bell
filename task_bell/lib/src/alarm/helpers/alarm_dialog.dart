@@ -11,10 +11,16 @@ import '../alarm_instance.dart';
 class AlarmDialog extends StatefulWidget {
   final int parentId;
   final ValueChanged<AlarmInstance> onCreate;
+  final String namePrefill;
+  final int activeDays;
+  final TimeOfDay initialTime;
 
   const AlarmDialog({
     required this.onCreate,
     required this.parentId,
+    this.namePrefill = "",
+    this.activeDays = 0,
+    this.initialTime = const TimeOfDay(hour: -1, minute: -1),
     super.key
   });
 
@@ -23,9 +29,16 @@ class AlarmDialog extends StatefulWidget {
 }
 
 class AlarmDialogState extends State<AlarmDialog> {
-  final TextEditingController nameController = TextEditingController();
-  int activeDays = 0;
-  DateTime? recurTime;
+  late final TextEditingController nameController = TextEditingController(text: widget.namePrefill);
+  late int activeDays = widget.activeDays;
+  late DateTime? recurTime = widget.initialTime.hour < 0 ? null : DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          widget.initialTime.hour,
+          widget.initialTime.minute,
+        );
+  late TimeOfDay initialTime = widget.initialTime.hour < 0 ? TimeOfDay.now() : widget.initialTime;
 
   void _handleActiveDaysChanged(int newActiveDays) {
     setState(() {
@@ -34,9 +47,10 @@ class AlarmDialogState extends State<AlarmDialog> {
   }
 
   Future<void> _selectTime() async {
+
     TimeOfDay? selectedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: widget.initialTime,
     );
 
     if (selectedTime != null) {
@@ -54,6 +68,7 @@ class AlarmDialogState extends State<AlarmDialog> {
 
   void _createAlarm() async {
     if (nameController.text.isEmpty || recurTime == null) {
+      debugPrint(recurTime.toString());
       showDialog(
         context: context,
         builder: (context) => const AlertDialog(
@@ -122,6 +137,7 @@ class AlarmDialogState extends State<AlarmDialog> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("active days $activeDays");
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -148,7 +164,7 @@ class AlarmDialogState extends State<AlarmDialog> {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: _createAlarm,
-              child: const Text('Create'),
+              child: widget.namePrefill.isEmpty ? const Text('Create') : const Text("Update"), 
             ),
           ),
         ],

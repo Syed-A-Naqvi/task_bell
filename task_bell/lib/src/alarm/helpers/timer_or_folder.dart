@@ -15,6 +15,7 @@ class TimerOrFolderDialog extends StatefulWidget {
   final ValueChanged<AlarmFolder> onCreateFolder;
   final bool disableTimerTab;
   final bool disableFolderTab;
+  final String namePrefill;
 
   const TimerOrFolderDialog({
     required this.onCreateTimer,
@@ -23,6 +24,7 @@ class TimerOrFolderDialog extends StatefulWidget {
     this.disableTimerTab = false,
     this.disableFolderTab = false,
     this.folderPos = 0,
+    this.namePrefill = "",
     super.key
   });
 
@@ -68,6 +70,7 @@ class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
       tabViewList.add(SingleChildScrollView(
           child: TimerDialog(
             parentId: widget.parentId,
+            namePrefill: widget.namePrefill,
             onCreate: _onCreateTimer,
           ),
         ),

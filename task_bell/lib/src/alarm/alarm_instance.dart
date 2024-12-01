@@ -185,12 +185,19 @@ class AlarmInstanceState extends State<AlarmInstance> {
   }
 
   void openEditMenu() {
+    HapticFeedback.mediumImpact();
+    debugPrint("${(fakeRecur as WeekRecur).activeDays}");
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        DateTime? nextOccur = fakeRecur.getNextOccurrence(DateTime.now());
         return AlarmOrFolderDialog(
           parentId: -1, // Provide the necessary parentId
           disableFolderTab: true,
+          namePrefill: widget.name,
+          activeDays: (fakeRecur as WeekRecur).activeDays,
+          initialTime: nextOccur == null ? const TimeOfDay(hour: -1, minute: -1) :
+                                                 TimeOfDay.fromDateTime(nextOccur),
           onCreateAlarm: (alarmInstance) async {
 
             // update time and next occurrence and name in the database

@@ -57,26 +57,6 @@ class TimerFolderState extends AlarmFolderState {
     setState(() {});
   }
 
-  // @override
-  // void openEditMenu() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return TimerOrFolderDialog(
-  //         parentId: -2, // Provide the necessary parentId
-  //         folderPos: widget.position, // Provide the necessary folderPos
-  //         disableTimerTab: true,
-  //         onCreateTimer: (alarmInstance){},
-  //         onCreateFolder: (folder) async {
-  //           await tDB.updateFolder(widget.id, {"name":folder.name});
-  //           fakeName = folder.name;
-  //           setState((){});
-  //         },
-  //       );
-  //     }
-  //   );
-  // }
-
   @override
   void addNewAlarmFolder() {
     showDialog(

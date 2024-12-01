@@ -146,6 +146,7 @@ class AlarmFolderState extends State<AlarmFolder> {
   final double maxOffset = 40;
 
   void openEditMenu() {
+    HapticFeedback.mediumImpact();
     debugPrint("pressed ${widget.name}");
 
     showDialog(
@@ -155,6 +156,7 @@ class AlarmFolderState extends State<AlarmFolder> {
           parentId: -1, // Provide the necessary parentId
           folderPos: widget.position, // Provide the necessary folderPos
           disableAlarmTab: true,
+          namePrefill: widget.name,
           onCreateAlarm: (alarmInstance){}, // do nothing. alarm tab is disabled
           onCreateFolder: (folder) async {
             // update folder name. Since its final, use fakeName to store changes until reload

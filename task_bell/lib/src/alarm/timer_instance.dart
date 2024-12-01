@@ -1,4 +1,5 @@
 import 'package:alarm/alarm.dart';
+import 'package:flutter/services.dart';
 import 'package:task_bell/src/alarm/recurrence/relative_recur.dart';
 import 'alarm_instance.dart';
 import 'package:flutter/material.dart';
@@ -61,12 +62,14 @@ class TimerInstanceState extends AlarmInstanceState {
 
   @override
   void openEditMenu() {
+    HapticFeedback.mediumImpact();
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return TimerOrFolderDialog(
           parentId: -2, // Provide the necessary parentId
           disableFolderTab: true,
+          namePrefill: widget.name,
           onCreateTimer: (alarmInstance) async {
             // I don't think there should be any real changes here other than
             // the type of dialog

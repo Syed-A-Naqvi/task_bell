@@ -12,10 +12,12 @@ import '../recurrence/relative_recur.dart';
 class TimerDialog extends StatefulWidget {
   final int parentId;
   final ValueChanged<AlarmInstance> onCreate;
+  final String namePrefill;
 
   const TimerDialog({
     required this.onCreate,
     required this.parentId,
+    this.namePrefill = "",
     super.key,
   });
 
@@ -25,7 +27,7 @@ class TimerDialog extends StatefulWidget {
 
 class TimerDialogState extends State<TimerDialog> {
 
-  final TextEditingController nameController = TextEditingController();
+  late final TextEditingController nameController = TextEditingController(text: widget.namePrefill);
   int hours = 0;
   int minutes = 0;
 
@@ -154,7 +156,7 @@ class TimerDialogState extends State<TimerDialog> {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: _createTimer,
-              child: const Text('Create'),
+              child: widget.namePrefill.isEmpty ? const Text('Create') : const Text("Update"), 
             ),
           ),
         ],
