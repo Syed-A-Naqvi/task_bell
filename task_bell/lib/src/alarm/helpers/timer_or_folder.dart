@@ -13,12 +13,18 @@ class TimerOrFolderDialog extends StatefulWidget {
   final int folderPos;
   final ValueChanged<AlarmInstance> onCreateTimer;
   final ValueChanged<AlarmFolder> onCreateFolder;
+  final bool disableTimerTab;
+  final bool disableFolderTab;
+  final String namePrefill;
 
   const TimerOrFolderDialog({
     required this.onCreateTimer,
     required this.onCreateFolder,
     required this.parentId,
+    this.disableTimerTab = false,
+    this.disableFolderTab = false,
     this.folderPos = 0,
+    this.namePrefill = "",
     super.key
   });
 
@@ -29,6 +35,8 @@ class TimerOrFolderDialog extends StatefulWidget {
 class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  List<Tab> tabList = [];
+  List<Widget> tabViewList = [];
 
   void _closeDialog() {
     Navigator.of(context).pop();
@@ -54,7 +62,37 @@ class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+
+    int length = 0;
+
+    if (!widget.disableTimerTab) {
+      tabList.add(const Tab(icon: Icon(Icons.timer), text: 'Timer'));
+      tabViewList.add(SingleChildScrollView(
+          child: TimerDialog(
+            parentId: widget.parentId,
+            namePrefill: widget.namePrefill,
+            onCreate: _onCreateTimer,
+          ),
+        ),
+      );
+
+      length++;
+    }
+
+    if (!widget.disableFolderTab) {
+      tabList.add(const Tab(icon: Icon(Icons.folder), text: 'Folder'));
+      tabViewList.add(
+        SingleChildScrollView(
+          child: FolderDialog(
+            parentId: widget.parentId,
+            position: widget.folderPos,
+            onCreate: _onCreateFolder,
+          ),
+        ),
+      );
+    }
+
+    _tabController = TabController(length: length, vsync: this);
   }
 
   @override
@@ -70,30 +108,12 @@ class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
             children: [
               TabBar(
                 controller: _tabController,
-                tabs: const [
-                  Tab(icon: Icon(Icons.timer), text: 'Timer'),
-                  Tab(icon: Icon(Icons.folder), text: 'Folder'),
-                ],
+                tabs: tabList,
               ),
               Flexible(
                 child: TabBarView(
                   controller: _tabController,
-                  children: [
-                    // Wrap each tab content in a SingleChildScrollView
-                    SingleChildScrollView(
-                      child: TimerDialog(
-                        parentId: widget.parentId,
-                        onCreate: _onCreateTimer,
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      child: FolderDialog(
-                        parentId: widget.parentId,
-                        position: widget.folderPos,
-                        onCreate: _onCreateFolder,
-                      ),
-                    ),
-                  ],
+                  children: tabViewList,
                 ),
               ),
             ],

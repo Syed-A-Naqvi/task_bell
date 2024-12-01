@@ -1,6 +1,10 @@
+import 'package:alarm/alarm.dart';
+import 'package:flutter/services.dart';
 import 'package:task_bell/src/alarm/recurrence/relative_recur.dart';
 import 'alarm_instance.dart';
 import 'package:flutter/material.dart';
+
+import 'helpers/timer_or_folder.dart';
 
 class TimerInstance extends AlarmInstance {
   const TimerInstance({
@@ -54,5 +58,41 @@ class TimerInstanceState extends AlarmInstanceState {
     debugPrint("Timer toggled");
 
     await super.toggleAlarmStatus();
+  }
+
+  @override
+  void openEditMenu() {
+    HapticFeedback.mediumImpact();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return TimerOrFolderDialog(
+          parentId: -2, // Provide the necessary parentId
+          disableFolderTab: true,
+          namePrefill: widget.name,
+          onCreateTimer: (alarmInstance) async {
+            // I don't think there should be any real changes here other than
+            // the type of dialog
+            // update time and next occurrence and name in the database
+            await tDB.updateAlarm(widget.alarmSettings.id, alarmInstance.recur.toMap());
+            await tDB.updateAlarm(widget.alarmSettings.id, {"name":alarmInstance.name});
+
+            // if the alarm is toggled on, remove from queue, update time and re-add to queue
+            // I'm honestly not sure how this should be handled for timers. So for
+            // the time being, behaviour of alarms will be copied
+            if (widget.isActive) {
+              Alarm.stop(widget.alarmSettings.id); // remove from queue, may be unnecessary
+              Alarm.set(alarmSettings: alarmInstance.alarmSettings); // add to queue with updated time
+            }
+
+            fakeName = alarmInstance.name;
+            fakeRecur = alarmInstance.recur;
+
+            setState((){});
+          },
+          onCreateFolder: (folder){},
+        );
+      }
+    );
   }
 }

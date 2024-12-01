@@ -13,6 +13,9 @@ class AlarmOrFolderDialog extends StatefulWidget {
   final ValueChanged<AlarmFolder> onCreateFolder;
   final bool disableAlarmTab;
   final bool disableFolderTab;
+  final String namePrefill;
+  final int activeDays;
+  final TimeOfDay initialTime;
 
   const AlarmOrFolderDialog({
     required this.onCreateAlarm,
@@ -21,6 +24,9 @@ class AlarmOrFolderDialog extends StatefulWidget {
     this.disableAlarmTab = false,
     this.disableFolderTab = false,
     this.folderPos = 0,
+    this.namePrefill = "",
+    this.activeDays = 0,
+    this.initialTime = const TimeOfDay(hour: -1, minute: -1),
     super.key
   });
 
@@ -61,6 +67,9 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
           child: AlarmDialog(
             parentId: widget.parentId,
             onCreate: _onCreateAlarm,
+            namePrefill: widget.namePrefill,
+            activeDays: widget.activeDays,
+            initialTime: widget.initialTime,
           ),
         ),
       );
@@ -75,6 +84,7 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
           child: FolderDialog(
             parentId: widget.parentId,
             position: widget.folderPos,
+            namePrefill: widget.namePrefill,
             onCreate: _onCreateFolder,
           ),
         ),
@@ -89,9 +99,6 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
 
   @override
   Widget build(BuildContext context) {
-    
-    
-    
 
     return Dialog(
       child: Padding(
@@ -104,10 +111,6 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
             children: [
               TabBar(
                 controller: _tabController,
-                // tabs: const [
-                //   Tab(icon: Icon(Icons.alarm), text: 'Alarm'),
-                //   Tab(icon: Icon(Icons.folder), text: 'Folder'),
-                // ],
                 tabs: tabList,
               ),
               Flexible(

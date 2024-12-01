@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'recur.dart';
 
 class RelativeRecur implements Recur {
@@ -21,8 +20,8 @@ class RelativeRecur implements Recur {
     );
     final nextOccurrence = initTime.add(durationOffset);
 
-    debugPrint("Next occurrence scheduled for $nextOccurrence "
-               "(InitTime: $initTime, RecurTime: $recurTime)");
+    // debugPrint("Next occurrence scheduled for $nextOccurrence "
+    //            "(InitTime: $initTime, RecurTime: $recurTime)");
 
     return nextOccurrence;
   }

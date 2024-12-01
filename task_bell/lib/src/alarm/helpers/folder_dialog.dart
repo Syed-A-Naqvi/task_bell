@@ -8,11 +8,13 @@ class FolderDialog extends StatefulWidget {
   final int parentId;
   final ValueChanged<AlarmFolder> onCreate;
   final int position;
+  final String namePrefill;
 
   const FolderDialog({
     required this.onCreate,
     required this.parentId,
     this.position = 0,
+    this.namePrefill = "",
     super.key,
   });
 
@@ -21,7 +23,7 @@ class FolderDialog extends StatefulWidget {
 }
 
 class FolderDialogState extends State<FolderDialog> {
- final TextEditingController nameController = TextEditingController();
+ late final TextEditingController nameController = TextEditingController(text: widget.namePrefill);
 
   void _createFolder() {
     if (nameController.text.isEmpty) {
@@ -62,7 +64,7 @@ class FolderDialogState extends State<FolderDialog> {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: _createFolder,
-              child: const Text('Create'),
+              child: widget.namePrefill.isEmpty ? const Text('Create') : const Text("Update"), 
             ),
           ),
         ],
