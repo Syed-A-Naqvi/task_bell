@@ -255,6 +255,7 @@ class AlarmClockPageState extends State<AlarmClockPage> {
               return AlarmOrFolderDialog(
                 parentId: -1, // Provide the necessary parentId
                 folderPos: items.length, // Provide the necessary folderPos
+                // initialTime: TimeOfDay.now(),
                 onCreateAlarm: (alarmInstance) async {
                   await tDB.insertAlarm(alarmInstance);
                   topLevelAlarms.add(alarmInstance);

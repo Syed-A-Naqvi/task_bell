@@ -50,7 +50,7 @@ class AlarmDialogState extends State<AlarmDialog> {
 
     TimeOfDay? selectedTime = await showTimePicker(
       context: context,
-      initialTime: widget.initialTime,
+      initialTime: initialTime,
     );
 
     if (selectedTime != null) {
@@ -103,13 +103,16 @@ class AlarmDialogState extends State<AlarmDialog> {
       path = file.path;
     }
 
+    WeekRecur recur = WeekRecur(activeDays: activeDays, recurTime: recurTime!);
+
     AlarmInstance alarmInstance = AlarmInstance(
       name: nameController.text,
       parentId: widget.parentId,
       isActive: true,
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/ 1000) % 2147483647,
-        dateTime: recurTime!,
+        // dateTime: recurTime!,
+        dateTime: recur.getNextOccurrence(DateTime.now())!,
         assetAudioPath: path,
         vibrate: true,
         loopAudio: true,
@@ -125,10 +128,7 @@ class AlarmDialogState extends State<AlarmDialog> {
           icon: 'notification_icon',
         ),
       ),
-      recur: WeekRecur(
-        activeDays: activeDays,
-        recurTime: recurTime!,
-      ),
+      recur: recur
     );
 
     widget.onCreate(alarmInstance);
