@@ -156,9 +156,22 @@ class TaskBellDatabase {
 
   Future<void> updateAlarm(int id, Map<String, dynamic> field) async {
     final db = await database;
+
     await db.update(
       'alarms',
       field,
+      where: 'id = ?',
+      whereArgs: [id],
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> activateAlarm(int id) async {
+    final db = await database;
+
+    await db.update(
+      'alarms',
+      {"isactive": 1},
       where: 'id = ?',
       whereArgs: [id],
       conflictAlgorithm: ConflictAlgorithm.replace,

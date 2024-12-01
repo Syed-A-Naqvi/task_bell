@@ -45,7 +45,8 @@ class AlarmInstance extends StatefulWidget implements Comparable {
     return AlarmInstance(
       name: map["name"],
       parentId: map["parentId"],
-      isActive: (map['isactive'] is bool)? map['isactive'] : MapConverters.intToBool(map["isactive"]),
+      isActive: map["isactive"] == 0 ? false : true,
+      // isActive: (map['isactive'] is bool)? map['isactive'] : MapConverters.intToBool(map["isactive"]),
       recur: recur,
       alarmSettings: alarmSettings,
     );
@@ -93,6 +94,8 @@ class AlarmInstanceState extends State<AlarmInstance> {
   Future<void> _initialize() async {
     try {
       AlarmInstance? currentAlarm = await tDB.getAlarm(widget.alarmSettings.id);
+      // AlarmSettings? alarmSettings2 = Alarm.getAlarm(widget.alarmSettings.id);
+
       if (currentAlarm != null) {
         isActive = currentAlarm.isActive;
         alarmSettings = currentAlarm.alarmSettings;
@@ -114,51 +117,64 @@ class AlarmInstanceState extends State<AlarmInstance> {
 
   Future<void> toggleAlarmStatus() async {
     bool newIsActive = !isActive;
-
+    // newIsActive = true;
     if (newIsActive) {
       // Activate the alarm
       DateTime? nextOccurrence = widget.recur.getNextOccurrence(DateTime.now());
       if (nextOccurrence == null) {
         // Can't activate the alarm
-        newIsActive = false;
-        displaySnackBar("No new occurrence, can't activate alarm.");
-      } else {
-        alarmSettings = alarmSettings.copyWith(dateTime: nextOccurrence);
-        try {
-          // Update alarm settings in the database
-          await tDB.updateAlarm(widget.alarmSettings.id, {
-            ...MapConverters.alarmSettingsToMap(alarmSettings),
-            'isactive': MapConverters.boolToInt(newIsActive),
-          });
-          await Alarm.set(alarmSettings: alarmSettings);
-          debugPrint("Alarm set for $nextOccurrence");
-          // displaySnackBar("Scheduled for ${formatDateTime(true)} from now");
-          displaySnackBar(AppLocalizations.of(context)!.alarmScheduled(formatDateTime(true)));
-        } catch (e) {
-          debugPrint("Failed to set the alarm or update the database: $e");
-          displaySnackBar("Failed to set the alarm or update the database: $e");
-          newIsActive = false;
-        }
+        isActive = false;
+        // displaySnackBar("No new occurrence, can't activate alarm.");
+        setState((){});
+        return; 
       }
-    } else {
-      // Deactivate the alarm
+
+      alarmSettings = alarmSettings.copyWith(dateTime: nextOccurrence);
       try {
-        await Alarm.stop(alarmSettings.id);
-        debugPrint("Alarm stopped.");
-        // Update `isactive` in the database
-        await tDB.updateAlarm(widget.alarmSettings.id, {'isactive': MapConverters.boolToInt(false)});
-        // displaySnackBar(AppLocalizations.of(context)!.alarmDisable);
+        // Update alarm settings in the database
+        // Map<String, dynamic> map = MapConverters.alarmSettingsToMap(alarmSettings);
+        // map["isactive"] = 1;
+
+        // await tDB.updateAlarm(alarmSettings.id, map);
+        await tDB.activateAlarm(alarmSettings.id);
+        // await tDB.updateAlarm(widget.alarmSettings.id, {
+        //   ...MapConverters.alarmSettingsToMap(alarmSettings),
+        //   'isactive': MapConverters.boolToInt(newIsActive),
+        // });
+        
+        await Alarm.set(alarmSettings: alarmSettings);
+        debugPrint("Alarm set for $nextOccurrence");
+        // displaySnackBar("Scheduled for ${formatDateTime(true)} from now");
+        // displaySnackBar(AppLocalizations.of(context)!.alarmScheduled(formatDateTime(true)));
       } catch (e) {
-        debugPrint("Failed to stop the alarm: $e");
-        displaySnackBar("Failed to stop the alarm: $e");
+        debugPrint("Failed to set the alarm or update the database: $e");
+        // displaySnackBar("Failed to set the alarm or update the database: $e");
+        newIsActive = false;
       }
+
+      isActive = newIsActive;
+      setState((){});
+      return;
     }
 
+    // Deactivate the alarm
+    try {
+      
+      // Update `isactive` in the database
+      await tDB.updateAlarm(widget.alarmSettings.id, {'isactive': MapConverters.boolToInt(false)});
+      // displaySnackBar(AppLocalizations.of(context)!.alarmDisable);
+      // do this last
+      await Alarm.stop(widget.alarmSettings.id);
+      debugPrint("Alarm stopped.");
+    } catch (e) {
+      debugPrint("Failed to stop the alarm: $e");
+      displaySnackBar("Failed to stop the alarm: $e");
+    }
+
+    isActive = newIsActive;
     // Update the UI state
     if (mounted) {
-      setState(() {
-        isActive = newIsActive;
-      });
+      setState(() {});
     }
   }
 
@@ -250,11 +266,16 @@ class AlarmInstanceState extends State<AlarmInstance> {
           onCreateAlarm: (alarmInstance) async {
 
             // update time and next occurrence and name in the database
-            await tDB.updateAlarm(widget.alarmSettings.id, alarmInstance.recur.toMap());
-            await tDB.updateAlarm(widget.alarmSettings.id, {"name":alarmInstance.name});
+            Map<String, dynamic> map = alarmInstance.recur.toMap();
+            map["name"] = alarmInstance.name;
+            map["isactive"] = isActive ? 1 : 0;
+            await tDB.updateAlarm(widget.alarmSettings.id, map);
+            
+            // await tDB.updateAlarm(widget.alarmSettings.id, alarmInstance.recur.toMap());
+            // await tDB.updateAlarm(widget.alarmSettings.id, {"name":alarmInstance.name, "isactive": isActive ? 1 : 0});
 
             // if the alarm is toggled on, remove from queue, update time and re-add to queue
-            if (widget.isActive) {
+            if (isActive) {
               Alarm.stop(widget.alarmSettings.id); // remove from queue, may be unnecessary
               Alarm.set(alarmSettings: alarmInstance.alarmSettings); // add to queue with updated time
             }

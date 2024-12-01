@@ -129,13 +129,18 @@ class TimerInstanceState extends AlarmInstanceState {
             // I don't think there should be any real changes here other than
             // the type of dialog
             // update time and next occurrence and name in the database
-            await tDB.updateAlarm(widget.alarmSettings.id, alarmInstance.recur.toMap());
-            await tDB.updateAlarm(widget.alarmSettings.id, {"name":alarmInstance.name});
+            Map<String, dynamic> map = alarmInstance.recur.toMap();
+            map["name"] = alarmInstance.name;
+            map["isactive"] = isActive ? 1 : 0;
+            await tDB.updateAlarm(widget.alarmSettings.id, map);
+
+            // await tDB.updateAlarm(widget.alarmSettings.id, alarmInstance.recur.toMap());
+            // await tDB.updateAlarm(widget.alarmSettings.id, {"name":alarmInstance.name, "isactive": isActive ? 1 : 0});
 
             // if the alarm is toggled on, remove from queue, update time and re-add to queue
             // I'm honestly not sure how this should be handled for timers. So for
             // the time being, behaviour of alarms will be copied
-            if (widget.isActive) {
+            if (isActive) {
               Alarm.stop(widget.alarmSettings.id); // remove from queue, may be unnecessary
               Alarm.set(alarmSettings: alarmInstance.alarmSettings); // add to queue with updated time
             }

@@ -61,6 +61,13 @@ void main() async {
         return;
       }
 
+
+      // if isActive is false, assume it was toggled off and stop
+      if (!alarmInstance.isActive) {
+        debugPrint("is active was false; assuming alarm was toggled off; cancelling rescheduling");
+        return;
+      }
+
       AlarmSettings newAlarmSettings = alarmInstance.alarmSettings.copyWith(dateTime: nextOccur);
 
       AlarmInstance newAlarmInstance = AlarmInstance(
@@ -68,6 +75,7 @@ void main() async {
         alarmSettings: newAlarmSettings,
         recur: alarmInstance.recur,
         parentId: alarmInstance.parentId,
+        isActive: alarmInstance.isActive,
       );
 
       tDB.updateAlarm(id, newAlarmInstance.toMap());
@@ -81,47 +89,6 @@ void main() async {
       
     }
   });
-
-  // Alarm.ringStream.stream.listen((_) async {
-  //   debugPrint("LISTENER: ${_.toString()}");
-  //   debugPrint("WENT OFF AT ${DateTime.now()}");
-
-  //   AlarmInstance? alarmInstance = await tDB.getAlarm(_.id);
-
-  //   if (alarmInstance == null) {
-  //     debugPrint("current ringing alarm doesn't exist in the database");
-  //   } else if (alarmInstance.recur is RelativeRecur) {
-  //     // This is a timer going off, so toggle it off
-  //     tDB.updateAlarm(_.id, {"isactive": 0});
-  //     debugPrint("Non recurring alarm went off, not rescheduling and updating DB");
-  //   } else {
-  //     // this is a recurring alarm, so toggle it back on
-  //     // get next occurence from current time
-  //     DateTime? nextOccur = alarmInstance.recur.getNextOccurrence(DateTime.now());
-  //     if (nextOccur != null) {
-  //       // need to make a new alarmInstance because everything is final
-  //       // also means we need to make a new alarmSettings
-  //       // then update value in the DB 
-  //       // AlarmSettings newAlarmSettings = alarmInstance.alarmSettings.copyWith(dateTime: nextOccur);
-  //       // AlarmInstance newAlarmInstance = AlarmInstance(
-  //       //   name: alarmInstance.name, 
-  //       //   alarmSettings: newAlarmSettings, 
-  //       //   recur: alarmInstance.recur, 
-  //       //   parentId: alarmInstance.parentId
-  //       // );
-        
-  //       // Alarm.set(alarmSettings: newAlarmInstance.alarmSettings);
-  //       // tDB.updateAlarm(_.id, newAlarmInstance.toMap());
-
-  //       debugPrint("rescheduled recurring alarm for ${nextOccur.toString()}");
-  //     } else {
-  //       debugPrint("next occur was null for some reason, unable to reschedule alarm");
-  //     }
-        
-  //     debugPrint("Is this not being reached ???");
-  //   }
-
-  // });
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
