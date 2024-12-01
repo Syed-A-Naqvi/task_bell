@@ -89,9 +89,6 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
 
   @override
   Widget build(BuildContext context) {
-    
-    
-    
 
     return Dialog(
       child: Padding(
@@ -104,10 +101,6 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
             children: [
               TabBar(
                 controller: _tabController,
-                // tabs: const [
-                //   Tab(icon: Icon(Icons.alarm), text: 'Alarm'),
-                //   Tab(icon: Icon(Icons.folder), text: 'Folder'),
-                // ],
                 tabs: tabList,
               ),
               Flexible(

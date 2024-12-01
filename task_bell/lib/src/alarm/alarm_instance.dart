@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
+import 'package:flutter/services.dart';
 import 'package:task_bell/src/alarm/helpers/alarm_or_folder.dart';
 import 'package:task_bell/src/alarm/helpers/map_converters.dart';
 import 'package:task_bell/src/storage/task_bell_database.dart';
@@ -183,6 +184,36 @@ class AlarmInstanceState extends State<AlarmInstance> {
     return nextOccurrence.toString();
   }
 
+  void openEditMenu() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlarmOrFolderDialog(
+          parentId: -1, // Provide the necessary parentId
+          disableFolderTab: true,
+          onCreateAlarm: (alarmInstance) async {
+
+            // update time and next occurrence and name in the database
+            await tDB.updateAlarm(widget.alarmSettings.id, alarmInstance.recur.toMap());
+            await tDB.updateAlarm(widget.alarmSettings.id, {"name":alarmInstance.name});
+
+            // if the alarm is toggled on, remove from queue, update time and re-add to queue
+            if (widget.isActive) {
+              Alarm.stop(widget.alarmSettings.id); // remove from queue, may be unnecessary
+              Alarm.set(alarmSettings: alarmInstance.alarmSettings); // add to queue with updated time
+            }
+
+            fakeName = alarmInstance.name;
+            fakeRecur = alarmInstance.recur;
+
+            setState((){});
+          },
+          onCreateFolder: (folder) {}, // do nothing. folder tab is disabled
+        );
+      }
+    );
+  }
+
   double dragStartX = 0;
   double xOffset = 0;
   final double maxOffset = 40;
@@ -192,35 +223,8 @@ class AlarmInstanceState extends State<AlarmInstance> {
     return Visibility(
       visible: !deleted,
       child: GestureDetector(
-        onLongPress: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlarmOrFolderDialog(
-                parentId: -1, // Provide the necessary parentId
-                disableFolderTab: true,
-                onCreateAlarm: (alarmInstance) async {
-
-                  // update time and next occurrence and name in the database
-                  await tDB.updateAlarm(widget.alarmSettings.id, alarmInstance.recur.toMap());
-                  await tDB.updateAlarm(widget.alarmSettings.id, {"name":alarmInstance.name});
-
-                  // if the alarm is toggled on, remove from queue, update time and re-add to queue
-                  if (widget.isActive) {
-                    Alarm.stop(widget.alarmSettings.id); // remove from queue, may be unnecessary
-                    Alarm.set(alarmSettings: alarmInstance.alarmSettings); // add to queue with updated time
-                  }
-
-                  fakeName = alarmInstance.name;
-                  fakeRecur = alarmInstance.recur;
-
-                  setState((){});
-                },
-                onCreateFolder: (folder) {}, // do nothing. folder tab is disabled
-              );
-            }
-          );
-        },
+        onLongPress: openEditMenu, 
+          
         // onDoubleTap: () {setState((){deleted = true;});},
         onHorizontalDragStart: (details) {
           xOffset = 0;
@@ -242,6 +246,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
             deleted = true;
             tDB.deleteAlarm(widget.alarmSettings.id);
             setState((){});
+            HapticFeedback.heavyImpact(); // haptic feedback when deleting
           }
           // do this regardless so undo delete isn't messed up
           xOffset = 0;
@@ -255,6 +260,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
                 IconButton(
                   onPressed: () {
                     toggleAlarmStatus();
+                    HapticFeedback.lightImpact();
                   },
                   icon: Icon(isActive ? Icons.toggle_on : Icons.toggle_off_outlined),
                 ),

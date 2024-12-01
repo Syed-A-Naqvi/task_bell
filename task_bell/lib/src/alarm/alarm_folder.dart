@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/services.dart';
 import 'helpers/alarm_or_folder.dart';
 import 'alarm_instance.dart';
 import '../storage/task_bell_database.dart';
@@ -144,6 +145,28 @@ class AlarmFolderState extends State<AlarmFolder> {
   double xOffset = 0;
   final double maxOffset = 40;
 
+  void openEditMenu() {
+    debugPrint("pressed ${widget.name}");
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlarmOrFolderDialog(
+          parentId: -1, // Provide the necessary parentId
+          folderPos: widget.position, // Provide the necessary folderPos
+          disableAlarmTab: true,
+          onCreateAlarm: (alarmInstance){}, // do nothing. alarm tab is disabled
+          onCreateFolder: (folder) async {
+            // update folder name. Since its final, use fakeName to store changes until reload
+            await tDB.updateFolder(widget.id, {"name": folder.name});
+            fakeName = folder.name;
+            setState((){});
+          },
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Visibility(
@@ -151,27 +174,7 @@ class AlarmFolderState extends State<AlarmFolder> {
       child: Padding(
         padding: EdgeInsets.fromLTRB(xOffset,0,0,0),
         child: GestureDetector(
-          onLongPress: () {
-            debugPrint("pressed ${widget.name}");
-
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlarmOrFolderDialog(
-                  parentId: -1, // Provide the necessary parentId
-                  folderPos: widget.position, // Provide the necessary folderPos
-                  disableAlarmTab: true,
-                  onCreateAlarm: (alarmInstance){}, // do nothing. alarm tab is disabled
-                  onCreateFolder: (folder) async {
-                    // update folder name. Since its final, use fakeName to store changes until reload
-                    await tDB.updateFolder(widget.id, {"name": folder.name});
-                    fakeName = folder.name;
-                    setState((){});
-                  },
-                );
-              }
-            );
-          },
+          onLongPress: openEditMenu,
           onHorizontalDragStart: (details) {
             xOffset = 0;
             dragStartX = details.globalPosition.dx;
@@ -192,6 +195,7 @@ class AlarmFolderState extends State<AlarmFolder> {
               deleted = true;
               tDB.deleteFolder(widget.id);
               setState((){});
+              HapticFeedback.heavyImpact(); // haptic feedback when deleting
             }
             // do this regardless so undo delete isn't messed up
             xOffset = 0;
