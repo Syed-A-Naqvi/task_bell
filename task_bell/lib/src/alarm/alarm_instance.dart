@@ -73,6 +73,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
   late AlarmSettings alarmSettings = widget.alarmSettings;
   late String fakeName;
   late Recur fakeRecur;
+  bool deleted = false;
 
   @override
   void initState() {
@@ -182,60 +183,97 @@ class AlarmInstanceState extends State<AlarmInstance> {
     return nextOccurrence.toString();
   }
 
+  double dragStartX = 0;
+  double xOffset = 0;
+  final double maxOffset = 40;
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onLongPress: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlarmOrFolderDialog(
-              parentId: -1, // Provide the necessary parentId
-              disableFolderTab: true,
-              onCreateAlarm: (alarmInstance) async {
+    return Visibility(
+      visible: !deleted,
+      child: GestureDetector(
+        onLongPress: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlarmOrFolderDialog(
+                parentId: -1, // Provide the necessary parentId
+                disableFolderTab: true,
+                onCreateAlarm: (alarmInstance) async {
 
-                // update time and next occurrence and name in the database
-                await tDB.updateAlarm(widget.alarmSettings.id, alarmInstance.recur.toMap());
-                await tDB.updateAlarm(widget.alarmSettings.id, {"name":alarmInstance.name});
+                  // update time and next occurrence and name in the database
+                  await tDB.updateAlarm(widget.alarmSettings.id, alarmInstance.recur.toMap());
+                  await tDB.updateAlarm(widget.alarmSettings.id, {"name":alarmInstance.name});
 
-                // if the alarm is toggled on, remove from queue, update time and re-add to queue
-                if (widget.isActive) {
-                  Alarm.stop(widget.alarmSettings.id); // remove from queue, may be unnecessary
-                  Alarm.set(alarmSettings: alarmInstance.alarmSettings); // add to queue with updated time
-                }
+                  // if the alarm is toggled on, remove from queue, update time and re-add to queue
+                  if (widget.isActive) {
+                    Alarm.stop(widget.alarmSettings.id); // remove from queue, may be unnecessary
+                    Alarm.set(alarmSettings: alarmInstance.alarmSettings); // add to queue with updated time
+                  }
 
-                fakeName = alarmInstance.name;
-                fakeRecur = alarmInstance.recur;
+                  fakeName = alarmInstance.name;
+                  fakeRecur = alarmInstance.recur;
 
-                setState((){});
-              },
-              onCreateFolder: (folder) {}, // do nothing. folder tab is disabled
-            );
+                  setState((){});
+                },
+                onCreateFolder: (folder) {}, // do nothing. folder tab is disabled
+              );
+            }
+          );
+        },
+        // onDoubleTap: () {setState((){deleted = true;});},
+        onHorizontalDragStart: (details) {
+          xOffset = 0;
+          dragStartX = details.globalPosition.dx;
+        },
+        onHorizontalDragUpdate: (details) {
+          xOffset = details.globalPosition.dx - dragStartX;
+          if (xOffset < 0) {
+            xOffset = 0;
+          } else if (xOffset > maxOffset) {
+            xOffset = maxOffset;
           }
-        );
-      },
-      child: SizedBox(
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                toggleAlarmStatus();
-              },
-              icon: Icon(isActive ? Icons.toggle_on : Icons.toggle_off_outlined),
+          setState((){});
+        },
+        onHorizontalDragEnd: (details) {
+          
+          if (details.globalPosition.dx - dragStartX > maxOffset) {
+            // delete the alarm
+            deleted = true;
+            tDB.deleteAlarm(widget.alarmSettings.id);
+            setState((){});
+          }
+          // do this regardless so undo delete isn't messed up
+          xOffset = 0;
+          dragStartX = 0;
+        },
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(xOffset,0,0,0),
+          child: SizedBox(
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    toggleAlarmStatus();
+                  },
+                  icon: Icon(isActive ? Icons.toggle_on : Icons.toggle_off_outlined),
+                ),
+                Text(fakeName),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: Text(formatDateTime(_showRelativeTime)),
+                ),
+                IconButton(
+                  onPressed: () => setState(() {
+                    _showRelativeTime = !_showRelativeTime;
+                  }),
+                  icon: const Icon(Icons.swap_horiz),
+                ),
+              ],
             ),
-            Text(fakeName),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: Text(formatDateTime(_showRelativeTime)),
-            ),
-            IconButton(
-              onPressed: () => setState(() {
-                _showRelativeTime = !_showRelativeTime;
-              }),
-              icon: const Icon(Icons.swap_horiz),
-            ),
-          ],
-        ),
+          )
+        )
+        
       )
     );
   }

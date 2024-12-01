@@ -66,6 +66,7 @@ class AlarmFolderState extends State<AlarmFolder> {
   bool _expanded = false;
   Icon icon = const Icon(Icons.chevron_right);
   late String fakeName;
+  bool deleted = false;
 
   @override
   void initState(){
@@ -139,53 +140,88 @@ class AlarmFolderState extends State<AlarmFolder> {
     return indented;
   }
 
+  double dragStartX = 0;
+  double xOffset = 0;
+  final double maxOffset = 40;
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onLongPress: () {
-        debugPrint("pressed ${widget.name}");
+    return Visibility(
+      visible: !deleted,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(xOffset,0,0,0),
+        child: GestureDetector(
+          onLongPress: () {
+            debugPrint("pressed ${widget.name}");
 
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlarmOrFolderDialog(
-              parentId: -1, // Provide the necessary parentId
-              folderPos: widget.position, // Provide the necessary folderPos
-              disableAlarmTab: true,
-              onCreateAlarm: (alarmInstance){}, // do nothing. alarm tab is disabled
-              onCreateFolder: (folder) async {
-                // update folder name. Since its final, use fakeName to store changes until reload
-                await tDB.updateFolder(widget.id, {"name": folder.name});
-                fakeName = folder.name;
-                setState((){});
-              },
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlarmOrFolderDialog(
+                  parentId: -1, // Provide the necessary parentId
+                  folderPos: widget.position, // Provide the necessary folderPos
+                  disableAlarmTab: true,
+                  onCreateAlarm: (alarmInstance){}, // do nothing. alarm tab is disabled
+                  onCreateFolder: (folder) async {
+                    // update folder name. Since its final, use fakeName to store changes until reload
+                    await tDB.updateFolder(widget.id, {"name": folder.name});
+                    fakeName = folder.name;
+                    setState((){});
+                  },
+                );
+              }
             );
-          }
-        );
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: [
-              IconButton(
-                icon: icon,
-                onPressed: _toggleExpansion,
+          },
+          onHorizontalDragStart: (details) {
+            xOffset = 0;
+            dragStartX = details.globalPosition.dx;
+          },
+          onHorizontalDragUpdate: (details) {
+            xOffset = details.globalPosition.dx - dragStartX;
+            if (xOffset < 0) {
+              xOffset = 0;
+            } else if (xOffset > maxOffset) {
+              xOffset = maxOffset;
+            }
+            setState((){});
+          },
+          onHorizontalDragEnd: (details) {
+            
+            if (details.globalPosition.dx - dragStartX > maxOffset) {
+              // delete the alarm
+              deleted = true;
+              tDB.deleteFolder(widget.id);
+              setState((){});
+            }
+            // do this regardless so undo delete isn't messed up
+            xOffset = 0;
+            dragStartX = 0;
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: [
+                  IconButton(
+                    icon: icon,
+                    onPressed: _toggleExpansion,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                    child: Icon(Icons.folder),
+                  ),
+                  Text(fakeName),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: addNewAlarmFolder,
+                  ),
+                  Expanded(child: Container()),
+                ],
               ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                child: Icon(Icons.folder),
-              ),
-              Text(fakeName),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: addNewAlarmFolder,
-              ),
-              Expanded(child: Container()),
-            ],
+            ] + (_expanded ? indentChildren() : []),
           ),
-        ] + (_expanded ? indentChildren() : []),
-      ),
+        )
+      )
     );
   }
 }
