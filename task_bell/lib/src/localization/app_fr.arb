@@ -47,7 +47,7 @@
   "notificationBody": "",
   "notificationDismiss": "Rejeter",
 
-  "missingInformation": "putain",
+  "missingInformation": "informations manquantes",
   "cityNotFound": "Erreur : Impossible de récupérer l'heure pour ",
   "failFetchTime": "Erreur : Impossible d'actualiser les heures",
 

@@ -7,6 +7,7 @@ import 'package:task_bell/src/storage/task_bell_database.dart';
 import 'recurrence/recur.dart';
 import 'recurrence/relative_recur.dart';
 import 'recurrence/week_recur.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlarmInstance extends StatefulWidget implements Comparable {
   
@@ -127,7 +128,8 @@ class AlarmInstanceState extends State<AlarmInstance> {
           });
           await Alarm.set(alarmSettings: alarmSettings);
           debugPrint("Alarm set for $nextOccurrence");
-          displaySnackBar("Scheduled for ${formatDateTime(true)} from now");
+          // displaySnackBar("Scheduled for ${formatDateTime(true)} from now");
+          displaySnackBar(AppLocalizations.of(context)!.alarmScheduled(formatDateTime(true)));
         } catch (e) {
           debugPrint("Failed to set the alarm or update the database: $e");
           displaySnackBar("Failed to set the alarm or update the database: $e");
@@ -141,7 +143,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
         debugPrint("Alarm stopped.");
         // Update `isactive` in the database
         await tDB.updateAlarm(widget.alarmSettings.id, {'isactive': MapConverters.boolToInt(false)});
-        displaySnackBar("Alarm deactivated.");
+        // displaySnackBar(AppLocalizations.of(context)!.alarmDisable);
       } catch (e) {
         debugPrint("Failed to stop the alarm: $e");
         displaySnackBar("Failed to stop the alarm: $e");
