@@ -12,7 +12,7 @@ class WorldTimesPage extends StatefulWidget {
   State<WorldTimesPage> createState() => _WorldTimesPageState();
 }
 
-class _WorldTimesPageState extends State<WorldTimesPage> {
+class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObserver {
   final List<Map<String, dynamic>> _worldTimes = [];
   final TextEditingController _searchController = TextEditingController();
   bool _isLoading = false;
@@ -21,29 +21,32 @@ class _WorldTimesPageState extends State<WorldTimesPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this); // To detect app lifecycle changes
     _loadCities();
     _startAutoUpdate();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _updateTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
+  // This method is called when the app's lifecycle state changes
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // When the app is resumed, refresh the UI
+      setState(() {});
+    }
+  }
+
   void _startAutoUpdate() {
     _updateTimer?.cancel();
     _updateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _updateDisplayedTimes();
-    });
-  }
-
-  void _updateDisplayedTimes() {
-    setState(() {
-      for (var cityInfo in _worldTimes) {
-        cityInfo['datetime'] = cityInfo['datetime'].add(const Duration(seconds: 1));
-      }
+      setState(() {}); // Update the UI every second
     });
   }
 
@@ -58,13 +61,15 @@ class _WorldTimesPageState extends State<WorldTimesPage> {
         throw Exception('Timezone not found');
       }
 
-      final DateTime dateTime = await _fetchWorldTime(timezone);
+      final DateTime initialDatetime = await _fetchWorldTime(timezone);
+      final DateTime referenceTimestamp = DateTime.now();
 
       setState(() {
         _worldTimes.add({
           'city': city,
           'timezone': timezone,
-          'datetime': dateTime,
+          'initialDatetime': initialDatetime.toIso8601String(),
+          'referenceTimestamp': referenceTimestamp.toIso8601String(),
         });
       });
 
@@ -134,8 +139,11 @@ class _WorldTimesPageState extends State<WorldTimesPage> {
     try {
       for (int i = 0; i < _worldTimes.length; i++) {
         final timezone = _worldTimes[i]['timezone'];
-        final dateTime = await _fetchWorldTime(timezone);
-        _worldTimes[i]['datetime'] = dateTime;
+        final initialDatetime = await _fetchWorldTime(timezone);
+        final referenceTimestamp = DateTime.now();
+
+        _worldTimes[i]['initialDatetime'] = initialDatetime.toIso8601String();
+        _worldTimes[i]['referenceTimestamp'] = referenceTimestamp.toIso8601String();
       }
       _saveCities(); // Save updated times
     } catch (e) {
@@ -156,8 +164,13 @@ class _WorldTimesPageState extends State<WorldTimesPage> {
     _saveCities(); // Save the updated list
   }
 
-  String _formatDateTime(DateTime dateTime) {
-    return DateFormat('yyyy-MM-dd hh:mm:ss a').format(dateTime);
+  String _formatDateTime(Map<String, dynamic> cityInfo) {
+    final initialDatetime = DateTime.parse(cityInfo['initialDatetime']);
+    final referenceTimestamp = DateTime.parse(cityInfo['referenceTimestamp']);
+    final elapsed = DateTime.now().difference(referenceTimestamp);
+    final currentTime = initialDatetime.add(elapsed);
+
+    return DateFormat('yyyy-MM-dd hh:mm:ss a').format(currentTime);
   }
 
   Future<void> _saveCities() async {
@@ -166,7 +179,8 @@ class _WorldTimesPageState extends State<WorldTimesPage> {
       return jsonEncode({
         'city': cityInfo['city'],
         'timezone': cityInfo['timezone'],
-        'datetime': cityInfo['datetime'].toIso8601String(),
+        'initialDatetime': cityInfo['initialDatetime'],
+        'referenceTimestamp': cityInfo['referenceTimestamp'],
       });
     }).toList();
     await prefs.setStringList('savedCities', cityDataList);
@@ -182,7 +196,8 @@ class _WorldTimesPageState extends State<WorldTimesPage> {
           _worldTimes.add({
             'city': cityInfo['city'],
             'timezone': cityInfo['timezone'],
-            'datetime': DateTime.parse(cityInfo['datetime']),
+            'initialDatetime': cityInfo['initialDatetime'],
+            'referenceTimestamp': cityInfo['referenceTimestamp'],
           });
         });
       }
@@ -204,8 +219,7 @@ class _WorldTimesPageState extends State<WorldTimesPage> {
       ),
       body: Column(
         children: [
-          if (_isLoading)
-            const LinearProgressIndicator(),
+          if (_isLoading) const LinearProgressIndicator(),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -241,7 +255,7 @@ class _WorldTimesPageState extends State<WorldTimesPage> {
               itemCount: _worldTimes.length,
               itemBuilder: (context, index) {
                 final cityInfo = _worldTimes[index];
-                final formattedTime = _formatDateTime(cityInfo['datetime']);
+                final formattedTime = _formatDateTime(cityInfo);
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   child: ListTile(
