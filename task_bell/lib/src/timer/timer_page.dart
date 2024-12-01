@@ -7,6 +7,7 @@ import '../alarm/alarm_folder.dart';
 import '../alarm/helpers/timer_or_folder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../alarm/alarm_instance.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TimerPage extends AlarmClockPage {
   const TimerPage({super.key});
@@ -136,7 +137,7 @@ class TimerPageState extends AlarmClockPageState {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Timer'),
+        title: Text(AppLocalizations.of(context)!.timer),
         actions: [
           // IconButton(
           //   onPressed: () async {

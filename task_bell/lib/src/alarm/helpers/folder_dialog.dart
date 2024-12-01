@@ -1,7 +1,7 @@
 // create_alarm_dialog.dart
 import 'package:flutter/material.dart';
 import '../alarm_folder.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FolderDialog extends StatefulWidget {
  
@@ -55,8 +55,8 @@ class FolderDialogState extends State<FolderDialog> {
         children: [
           TextFormField(
             controller: nameController,
-            decoration: const InputDecoration(
-              labelText: 'Enter Folder Name',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.enterFolderName,
             ),
           ),
           const SizedBox(height: 10),
@@ -64,7 +64,9 @@ class FolderDialogState extends State<FolderDialog> {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: _createFolder,
-              child: widget.namePrefill.isEmpty ? const Text('Create') : const Text("Update"), 
+              child: widget.namePrefill.isEmpty ? 
+                Text(AppLocalizations.of(context)!.create) : 
+                Text(AppLocalizations.of(context)!.update), 
             ),
           ),
         ],

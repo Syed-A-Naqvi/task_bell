@@ -4,6 +4,7 @@ import 'alarm_dialog.dart';
 import 'folder_dialog.dart';
 import '../alarm_instance.dart';
 import '../alarm_folder.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlarmOrFolderDialog extends StatefulWidget {
   
@@ -61,7 +62,6 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
     int length = 0;
 
     if (!widget.disableAlarmTab) {
-      tabList.add(const Tab(icon: Icon(Icons.alarm), text: 'Alarm'));
       tabViewList.add(
         SingleChildScrollView(
           child: AlarmDialog(
@@ -78,7 +78,7 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
     }
 
     if (!widget.disableFolderTab) {
-      tabList.add(const Tab(icon: Icon(Icons.folder), text: 'Folder'));
+      
       tabViewList.add(
         SingleChildScrollView(
           child: FolderDialog(
@@ -100,6 +100,13 @@ class AlarmOrFolderDialogState extends State<AlarmOrFolderDialog>
   @override
   Widget build(BuildContext context) {
 
+    // Needed to move this out of InitState. Cannot get localizations before initState completes.
+    if (!widget.disableAlarmTab) {
+      tabList.add(Tab(icon: const Icon(Icons.alarm), text: AppLocalizations.of(context)!.alarm));
+    }
+    if (!widget.disableFolderTab) {
+      tabList.add(Tab(icon: const Icon(Icons.folder), text: AppLocalizations.of(context)!.folder));
+    }
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(16.0), // Adjust the padding as needed

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'dart:async'; // For Timer
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WorldTimesPage extends StatefulWidget {
   const WorldTimesPage({super.key});
@@ -76,7 +77,7 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
       _saveCities(); // Save the updated list
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: Could not fetch time for $city')),
+        SnackBar(content: Text('${AppLocalizations.of(context)!.cityNotFound} $city')),
       );
     } finally {
       setState(() {
@@ -150,7 +151,7 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
       _saveCities(); // Save updated times
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error: Could not refresh times')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.failFetchTime)),
       );
     } finally {
       setState(() {
@@ -222,12 +223,12 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('World Times'),
+        title: Text(AppLocalizations.of(context)!.worldTimes),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _isLoading ? null : _refreshTimes,
-            tooltip: 'Refresh Times',
+            tooltip: AppLocalizations.of(context)!.refreshTimes,
           ),
         ],
       ),
@@ -241,9 +242,9 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
                 Expanded(
                   child: TextField(
                     controller: _searchController,
-                    decoration: const InputDecoration(
-                      labelText: 'Enter City (e.g., Toronto)',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: '${AppLocalizations.of(context)!.enterCity} ${AppLocalizations.of(context)!.cityExamplePhrase}',
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ),
@@ -257,14 +258,14 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
                       _searchController.clear();
                     }
                   },
-                  child: const Text('Add'),
+                  child: Text(AppLocalizations.of(context)!.add),
                 ),
               ],
             ),
           ),
           Expanded(
             child: _worldTimes.isEmpty
-                ? const Center(child: Text('No cities added yet.'))
+                ? Center(child: Text(AppLocalizations.of(context)!.noCities))
                 : ListView.builder(
               itemCount: _worldTimes.length,
               itemBuilder: (context, index) {

@@ -6,6 +6,7 @@ import '../alarm_instance.dart';
 import '../alarm_folder.dart';
 import '../timer_folder.dart';
 import '../timer_instance.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TimerOrFolderDialog extends StatefulWidget {
   
@@ -66,7 +67,6 @@ class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
     int length = 0;
 
     if (!widget.disableTimerTab) {
-      tabList.add(const Tab(icon: Icon(Icons.timer), text: 'Timer'));
       tabViewList.add(SingleChildScrollView(
           child: TimerDialog(
             parentId: widget.parentId,
@@ -80,7 +80,6 @@ class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
     }
 
     if (!widget.disableFolderTab) {
-      tabList.add(const Tab(icon: Icon(Icons.folder), text: 'Folder'));
       tabViewList.add(
         SingleChildScrollView(
           child: FolderDialog(
@@ -90,6 +89,8 @@ class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
           ),
         ),
       );
+
+      length++;
     }
 
     _tabController = TabController(length: length, vsync: this);
@@ -97,6 +98,14 @@ class TimerOrFolderDialogState extends State<TimerOrFolderDialog>
 
   @override
   Widget build(BuildContext context) {
+
+    if (!widget.disableTimerTab) {
+      tabList.add(Tab(icon: const Icon(Icons.timer), text: AppLocalizations.of(context)!.timer));
+    }
+
+    if (!widget.disableFolderTab) {
+      tabList.add(Tab(icon: const Icon(Icons.folder), text: AppLocalizations.of(context)!.folder));
+    }
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(16.0), // Adjust the padding as needed

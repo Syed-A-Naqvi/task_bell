@@ -6,7 +6,7 @@ import '../storage/task_bell_database.dart';
 import '../alarm/alarm_instance.dart';
 import '../alarm/helpers/alarm_or_folder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlarmClockPage extends StatefulWidget {
   const AlarmClockPage({super.key});
@@ -207,20 +207,9 @@ class AlarmClockPageState extends State<AlarmClockPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Alarm Clock'),
+        // title: const Text('Alarm Clock'),
+        title: Text(AppLocalizations.of(context)!.alarmClock),
         actions: [
-          // IconButton(
-          //   onPressed: () async {
-          //     for (var i in items) {
-          //       if (i is AlarmFolder && i.parentId == -1) {
-          //         await tDB.deleteFolder(i.id);
-          //       } else if (i is AlarmInstance && i.parentId == -1){
-          //         await tDB.deleteAlarm(i.alarmSettings.id);
-          //       }
-          //     }
-          //     loadData();
-          //   },
-          //   icon: const Icon(Icons.delete) ),
           IconButton(
             icon: const Icon(Icons.cloud_upload),
             onPressed: _uploadToCloud,

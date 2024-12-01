@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
 import 'stopwatch.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class StopwatchPage extends StatefulWidget {
   const StopwatchPage({super.key});
@@ -56,7 +57,7 @@ class StopwatchPageState extends State<StopwatchPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Stopwatch'),
+        title: Text(AppLocalizations.of(context)!.stopwatch),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -117,7 +118,7 @@ class StopwatchPageState extends State<StopwatchPage> {
                         foregroundColor: textColor,
                       ),
                       child: Text(
-                        isRunning ? 'Lap' : 'Reset',
+                        isRunning ? AppLocalizations.of(context)!.lap : AppLocalizations.of(context)!.reset,
                         style: const TextStyle(fontSize: 18),
                       ),
                     ),
@@ -135,7 +136,7 @@ class StopwatchPageState extends State<StopwatchPage> {
                         foregroundColor: textColor,
                       ),
                       child: Text(
-                        isRunning ? 'Stop' : 'Start',
+                        isRunning ? AppLocalizations.of(context)!.stop : AppLocalizations.of(context)!.start,
                         style: const TextStyle(fontSize: 18),
                       ),
                     ),
@@ -177,7 +178,8 @@ class StopwatchPageState extends State<StopwatchPage> {
                     }
 
                     return ListTile(
-                      title: Text('Lap ${laps.length - index}', style: TextStyle(color: lapTextColor, fontSize: 16)),
+                      title: Text('${AppLocalizations.of(context)!.lap
+                      } ${laps.length - index}', style: TextStyle(color: lapTextColor, fontSize: 16)),
                       trailing: Text('$minutes:$seconds.$milliseconds', style: TextStyle(color: lapTextColor, fontSize: 16)),
                     );
                   },

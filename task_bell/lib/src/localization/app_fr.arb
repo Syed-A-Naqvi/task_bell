@@ -1,0 +1,57 @@
+{
+  "appTitle": "task_bell",
+  "alarmClock": "Réveil",
+  "alarm": "Alarme",
+  "folder": "Dossier",
+  "enterAlarmName": "Entrez le nom de l'alarme",
+  "enterFolderName": "Entrez le nom du dossier",
+  "sundayLetter": "D",
+  "mondayLetter": "L",
+  "tuesdayLetter": "M",
+  "wednesdayLetter": "M",
+  "thursdayLetter": "J",
+  "fridayLetter": "V",
+  "saturdayLetter": "S",
+  "selectTime": "Sélectionnez l'heure",
+  "selectedTime": "Heure sélectionnée: ",
+
+  "timer": "Minuteur",
+  "enterTimerName": "Entrez le nom du minuteur",
+  "hours": "Heures",
+  "minutes": "Minutes",
+  "hourLetter": "H",
+  "minuteLetter": "M",
+  
+  "stopwatch": "Chronomètre",
+  "start": "Commencer",
+  "lap": "Tour",
+  "reset": "Réinitialiser",
+  "stop": "Arrêt",
+
+  "worldTimes": "Temps du Monde",
+  "enterCity": "Entrez nom de ville",
+  "cityExamplePhrase": "(p.ex. Toronto)", 
+  "refreshTimes": "Rafraîchir l'heure",
+  "noCities": "Aucune ville ajoutée pour le moment.",
+
+  "downloadAudio": "Télécharger l'audio à partir de YouTube",
+  "enterYTVideoURL": "Entrez l'URL de la vidéo YouTube",
+  "selectYoutubeURL": "Sélectionnez une vidéo YouTube",
+  "download": "Télécharger",
+
+  "alarmDisable": "Alarme désactivée",
+
+  "alarmScheduled": "Prévu pour ({timephrase}) à partir de maintenant",
+  
+  "notificationTitle": "",
+  "notificationBody": "",
+  "notificationDismiss": "Rejeter",
+
+  "missingInformation": "putain",
+  "cityNotFound": "Erreur : Impossible de récupérer l'heure pour ",
+  "failFetchTime": "Erreur : Impossible d'actualiser les heures",
+
+  "create": "Créer",
+  "update": "Mise à jour",
+  "add": "Ajouter"
+}

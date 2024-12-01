@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,7 +13,6 @@ import 'settings/settings_view.dart';
 import 'alarm_clock/alarm_clock_page.dart';
 import 'timer/timer_page.dart';
 import 'stopwatch/stopwatch_page.dart';
-import 'world_times/world_times_page.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({
@@ -85,6 +86,7 @@ class MyAppState extends State<MyApp> {
           ],
           supportedLocales: const [
             Locale('en', ''), // English, no country code
+            Locale('fr'),
           ],
 
           // Use AppLocalizations to configure the correct application title
@@ -105,22 +107,25 @@ class MyAppState extends State<MyApp> {
           home: Scaffold(
             body: _pages[_selectedIndex],
             bottomNavigationBar: BottomNavigationBar(
-              items: const <BottomNavigationBarItem>[
+              items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.alarm),
-                  label: 'Alarm Clock',
+                  icon: const Icon(Icons.alarm),
+                  // quaternary is necessary because AppLocalization is not initialized yet
+                  // For more language support, this would become super messy
+                  label: Platform.localeName.contains('fr') ? 'Réveil' : 'Alarm Clock',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.timer),
-                  label: 'Timer',
+                  icon: const Icon(Icons.timer),
+                  label: Platform.localeName.contains('fr') ? 'Minuteur' : 'Timer',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.timer),
-                  label: 'Stopwatch',
+                  icon: const Icon(Icons.timer),
+                  label: Platform.localeName.contains('fr') ? 'Chronomètre' : 'Stopwatch',
+                  // label: AppLocalizations.of(context)!.stopwatch,
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.public),
-                  label: 'World Times',
+                  icon: const Icon(Icons.public),
+                  label: Platform.localeName.contains('fr') ? 'Temps du Monde' : 'World Times',
                 )
               ],
               currentIndex: _selectedIndex,

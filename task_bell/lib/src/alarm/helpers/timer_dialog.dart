@@ -8,6 +8,7 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:task_bell/src/alarm/timer_instance.dart';
 import '../alarm_instance.dart';
 import '../recurrence/relative_recur.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TimerDialog extends StatefulWidget {
   final int parentId;
@@ -35,8 +36,9 @@ class TimerDialogState extends State<TimerDialog> {
     if (nameController.text.isEmpty || (hours == 0 && minutes == 0)) {
       showDialog(
         context: context,
-        builder: (context) => const AlertDialog(
-          title: Text("Please provide all details"),
+        builder: (context) => AlertDialog(
+          // title: Text("Please provide all details"),
+          title: Text(AppLocalizations.of(context)!.missingInformation),
         ),
       );
       return;
@@ -86,9 +88,12 @@ class TimerDialogState extends State<TimerDialog> {
         warningNotificationOnKill: true,
         androidFullScreenIntent: true,
         notificationSettings: NotificationSettings(
-          title: nameController.text,
-          body: "the timer is going off",
-          stopButton: 'Stop the timer',
+          // title: nameController.text,
+          // body: "the timer is going off",
+          // stopButton: 'Stop the timer',
+          title: "${AppLocalizations.of(context)!.notificationTitle}${nameController.text}",
+          body: AppLocalizations.of(context)!.notificationBody,
+          stopButton: AppLocalizations.of(context)!.notificationDismiss,
           icon: 'notification_icon',
         ),
       ),
@@ -108,8 +113,8 @@ class TimerDialogState extends State<TimerDialog> {
         children: [
           TextFormField(
             controller: nameController,
-            decoration: const InputDecoration(
-              labelText: 'Enter Timer Name',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.enterTimerName,
             ),
           ),
           const SizedBox(height: 20),
@@ -119,7 +124,7 @@ class TimerDialogState extends State<TimerDialog> {
               // Hour Picker
               Column(
                 children: [
-                  const Text('Hours'),
+                  Text(AppLocalizations.of(context)!.hours),
                   NumberPicker(
                     value: hours,
                     minValue: 0,
@@ -136,7 +141,7 @@ class TimerDialogState extends State<TimerDialog> {
               // Minute Picker
               Column(
                 children: [
-                  const Text('Minutes'),
+                  Text(AppLocalizations.of(context)!.minutes),
                   NumberPicker(
                     value: minutes,
                     minValue: 0,
@@ -156,7 +161,9 @@ class TimerDialogState extends State<TimerDialog> {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: _createTimer,
-              child: widget.namePrefill.isEmpty ? const Text('Create') : const Text("Update"), 
+              child: widget.namePrefill.isEmpty ? 
+                Text(AppLocalizations.of(context)!.create) : 
+                Text(AppLocalizations.of(context)!.update), 
             ),
           ),
         ],

@@ -7,6 +7,7 @@ import 'package:alarm/alarm.dart';
 import '../weekday_selector.dart';
 import '../recurrence/week_recur.dart';
 import '../alarm_instance.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlarmDialog extends StatefulWidget {
   final int parentId;
@@ -71,8 +72,8 @@ class AlarmDialogState extends State<AlarmDialog> {
       debugPrint(recurTime.toString());
       showDialog(
         context: context,
-        builder: (context) => const AlertDialog(
-          title: Text("Please provide all details"),
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.missingInformation),
         ),
       );
       return;
@@ -122,9 +123,9 @@ class AlarmDialogState extends State<AlarmDialog> {
         warningNotificationOnKill: true,
         androidFullScreenIntent: true,
         notificationSettings: NotificationSettings(
-          title: nameController.text,
-          body: "Alarm at ${recurTime!.hour}:${recurTime!.minute}",
-          stopButton: 'Stop the alarm',
+          title: "${AppLocalizations.of(context)!.notificationTitle}${nameController.text}",
+          body: AppLocalizations.of(context)!.notificationBody,
+          stopButton: AppLocalizations.of(context)!.notificationDismiss,
           icon: 'notification_icon',
         ),
       ),
@@ -137,14 +138,14 @@ class AlarmDialogState extends State<AlarmDialog> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("active days $activeDays");
+    
     return SingleChildScrollView(
       child: Column(
         children: [
           TextFormField(
             controller: nameController,
-            decoration: const InputDecoration(
-              labelText: 'Enter Alarm Name',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.enterAlarmName,
             ),
           ),
           const SizedBox(height: 30),
@@ -156,15 +157,17 @@ class AlarmDialogState extends State<AlarmDialog> {
           TextButton(
             onPressed: _selectTime,
             child: Text(recurTime == null
-                ? 'Select Time'
-                : 'Selected Time: ${recurTime!.hour}:${recurTime!.minute}'),
+                ? AppLocalizations.of(context)!.selectTime
+                : '${AppLocalizations.of(context)!.selectedTime}${recurTime!.hour}:${recurTime!.minute}'),
           ),
           const SizedBox(height: 5),
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: _createAlarm,
-              child: widget.namePrefill.isEmpty ? const Text('Create') : const Text("Update"), 
+              child: widget.namePrefill.isEmpty ? 
+                Text(AppLocalizations.of(context)!.create) : 
+                Text(AppLocalizations.of(context)!.update), 
             ),
           ),
         ],

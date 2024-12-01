@@ -2,5 +2,67 @@
   "appTitle": "task_bell",
   "@appTitle": {
     "description": "The title of the application"
-  }
+  },
+  "alarmClock": "Alarm Clock",
+  "alarm": "Alarm",
+  "folder": "Folder",
+  "enterAlarmName": "Enter Alarm Name",
+  "enterFolderName": "Enter Folder Name",
+  "sundayLetter": "S",
+  "mondayLetter": "M",
+  "tuesdayLetter": "T",
+  "wednesdayLetter": "W",
+  "thursdayLetter": "T",
+  "fridayLetter": "F",
+  "saturdayLetter": "S",
+  "selectTime": "Select Time",
+  "selectedTime": "Selected Time: ",
+
+  "timer": "Timer",
+  "enterTimerName": "Enter Timer Name",
+  "hours": "Hours",
+  "minutes": "Minutes",
+  "hourLetter": "H",
+  "minuteLetter": "M",
+
+  "stopwatch": "Stopwatch",
+  "start": "Start",
+  "lap": "Lap",
+  "reset": "Reset",
+  "stop": "Stop",
+
+  "worldTimes": "World Times",
+  "enterCity": "Enter City",
+  "cityExamplePhrase": "(e.g. Toronto)", 
+  "refreshTimes": "Refresh Times",
+  "noCities": "No cities added yet.",
+
+  "downloadAudio": "Download Audio from YouTube",
+  "enterYTVideoURL": "Enter YouTube Video URL",
+  "selectYoutubeURL": "Select a YouTube video",
+  "download": "Download",
+
+  "alarmDisable": "Alarm Deactivated",
+
+  "alarmScheduled": "Scheduled for ({timephrase}) from now",
+  "@alarmScheduled": {
+    "description": "snackbar notification showing time until alarm goes off",
+    "placeholders": {
+      "timephrase": {
+        "type": "String"
+      }
+    }
+  },
+
+  "notificationTitle": "",
+  "notificationBody": "",
+  "notificationDismiss": "Dismiss",
+
+  "missingInformation": "Please provide all details",
+  "cityNotFound": "Error: Could not fetch time for ",
+  "failFetchTime": "Error: Could not refresh times",
+
+  "create": "Create",
+  "update": "Update",
+  "add": "Add"
 }
