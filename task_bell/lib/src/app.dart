@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:task_bell/src/services/alarm_permissions.dart';
+import 'package:task_bell/src/world_times/world_times_page.dart';
 
 import 'sample_feature/sample_item_details_view.dart';
 import 'sample_feature/sample_item_list_view.dart';
@@ -10,6 +11,7 @@ import 'settings/settings_view.dart';
 import 'alarm_clock/alarm_clock_page.dart';
 import 'timer/timer_page.dart';
 import 'stopwatch/stopwatch_page.dart';
+import 'world_times/world_times_page.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({
@@ -33,6 +35,7 @@ class MyAppState extends State<MyApp> {
     AlarmClockPage(),
     TimerPage(),
     StopwatchPage(),
+    WorldTimesPage()
   ];
 
   void _onItemTapped(int index) {
@@ -115,9 +118,16 @@ class MyAppState extends State<MyApp> {
                   icon: Icon(Icons.timer),
                   label: 'Stopwatch',
                 ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.public),
+                  label: 'World Times',
+                )
               ],
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,
+              selectedItemColor: Colors.blue,
+              unselectedItemColor: Colors.grey,
+              backgroundColor: Colors.white,
             ),
           ),
 

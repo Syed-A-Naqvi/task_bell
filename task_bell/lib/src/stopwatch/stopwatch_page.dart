@@ -63,19 +63,6 @@ class StopwatchPageState extends State<StopwatchPage> {
             onPressed: () {
               Navigator.restorablePushNamed(context, SettingsView.routeName);
             },
-          ),
-          IconButton(
-            icon: const Icon(Icons.clean_hands),
-            onPressed: () {
-              _stopwatchService.clearSharedPreferences();
-              if (kDebugMode) print("SharedPreferences cleared");
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.print),
-            onPressed: () {
-              if (kDebugMode) print("Current state: ${_stopwatchService.currentState}");
-            },
           )
         ],
       ),
