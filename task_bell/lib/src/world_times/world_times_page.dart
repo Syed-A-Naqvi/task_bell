@@ -6,6 +6,8 @@ import 'dart:async'; // For Timer
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../settings/settings_view.dart';
+
 class WorldTimesPage extends StatefulWidget {
   const WorldTimesPage({super.key});
 
@@ -230,6 +232,12 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
             onPressed: _isLoading ? null : _refreshTimes,
             tooltip: AppLocalizations.of(context)!.refreshTimes,
           ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.restorablePushNamed(context, SettingsView.routeName);
+            },
+          )
         ],
       ),
       body: Column(

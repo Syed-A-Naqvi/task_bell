@@ -160,15 +160,15 @@ class TimerPageState extends AlarmClockPageState {
             onPressed: _downloadFromCloud,
           ),
           IconButton(
+            icon: const Icon(Icons.audiotrack),
+            onPressed: downloadAudio,
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.restorablePushNamed(context, SettingsView.routeName);
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.audiotrack),
-            onPressed: downloadAudio,
-          )
         ],
       ),
       body: ListView(

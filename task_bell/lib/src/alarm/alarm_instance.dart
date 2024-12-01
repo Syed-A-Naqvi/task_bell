@@ -233,6 +233,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
   double dragStartX = 0;
   double xOffset = 0;
   final double maxOffset = 40;
+  int vibrate = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -250,8 +251,13 @@ class AlarmInstanceState extends State<AlarmInstance> {
           xOffset = details.globalPosition.dx - dragStartX;
           if (xOffset < 0) {
             xOffset = 0;
+            vibrate = 0;
           } else if (xOffset > maxOffset) {
+            vibrate++;
             xOffset = maxOffset;
+            if (vibrate == 3) {
+              HapticFeedback.heavyImpact();
+            }
           }
           setState((){});
         },
@@ -266,38 +272,50 @@ class AlarmInstanceState extends State<AlarmInstance> {
             Alarm.stop(widget.alarmSettings.id);
 
             setState((){});
-            HapticFeedback.heavyImpact(); // haptic feedback when deleting
+            // HapticFeedback.heavyImpact(); // haptic feedback when deleting
           }
           // do this regardless so undo delete isn't messed up
           xOffset = 0;
           dragStartX = 0;
+          vibrate = 0;
         },
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(xOffset,0,0,0),
-          child: SizedBox(
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    toggleAlarmStatus();
-                    HapticFeedback.lightImpact();
-                  },
-                  icon: Icon(isActive ? Icons.toggle_on : Icons.toggle_off_outlined),
-                ),
-                Text(edited ? fakeName : widget.name), // no idea why this is necessary
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Text(formatDateTime(_showRelativeTime)),
-                ),
-                IconButton(
-                  onPressed: () => setState(() {
-                    _showRelativeTime = !_showRelativeTime;
-                  }),
-                  icon: const Icon(Icons.swap_horiz),
-                ),
-              ],
+        child: Stack(
+          children: [
+            Visibility(
+              visible: xOffset >= maxOffset,
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(20, 10, 10, 0),
+                child: Icon(Icons.delete)
+              ),
             ),
-          )
+            Padding(
+              padding: EdgeInsets.fromLTRB(xOffset,0,0,0),
+              child: SizedBox(
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        toggleAlarmStatus();
+                        HapticFeedback.lightImpact();
+                      },
+                      icon: Icon(isActive ? Icons.toggle_on : Icons.toggle_off_outlined),
+                    ),
+                    Text(edited ? fakeName : widget.name), // no idea why this is necessary
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: Text(formatDateTime(_showRelativeTime)),
+                    ),
+                    IconButton(
+                      onPressed: () => setState(() {
+                        _showRelativeTime = !_showRelativeTime;
+                      }),
+                      icon: const Icon(Icons.swap_horiz),
+                    ),
+                  ],
+                ),
+              )
+            )
+          ] 
         )
         
       )
