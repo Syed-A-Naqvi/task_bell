@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'dart:async'; // For Timer
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../settings/settings_view.dart';
 
 class WorldTimesPage extends StatefulWidget {
@@ -78,9 +77,11 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
 
       _saveCities(); // Save the updated list
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppLocalizations.of(context)!.cityNotFound} $city')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(context)!.cityNotFound} $city')),
+        );
+      }
     } finally {
       setState(() {
         _isLoading = false;
@@ -152,9 +153,11 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
       }
       _saveCities(); // Save updated times
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.failFetchTime)),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.failFetchTime)),
+        );
+      }
     } finally {
       setState(() {
         _isLoading = false;

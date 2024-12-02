@@ -85,14 +85,19 @@ class AlarmClockPageState extends State<AlarmClockPage> {
       // Commit batch
       await batch.commit();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Upload to cloud successful')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Upload to cloud successful')),
+        );
+      }
+
     } catch (e) {
       debugPrint('Error uploading to cloud: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error uploading to cloud: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error uploading to cloud: $e')),
+        );
+      }
     }
   }
 
@@ -127,14 +132,18 @@ class AlarmClockPageState extends State<AlarmClockPage> {
     // Reload data to update UI
     loadData();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Download from cloud successful')),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Download from cloud successful')),
+      );
+    }
   } catch (e) {
     debugPrint('Error downloading from cloud: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error downloading from cloud: $e')),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error downloading from cloud: $e')),
+      );
+    }
   }
 }
 
@@ -183,14 +192,16 @@ class AlarmClockPageState extends State<AlarmClockPage> {
                 onPressed: () async {
                   String responsePath = await AudioDownload.downloadAudio(urlController.text);
                   if (responsePath.isEmpty) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(title: Text(AppLocalizations.of(context)!.failToDownload));
-                      },
-                    );
+                    if (mounted) {
+                      showDialog(
+                        context: this.context,
+                        builder: (context) {
+                          return AlertDialog(title: Text(AppLocalizations.of(context)!.failToDownload));
+                        },
+                      );
+                    }
                   } else {
-                    Navigator.of(context).pop();
+                    if (mounted) Navigator.of(this.context).pop();
                   }
                 },
               ),

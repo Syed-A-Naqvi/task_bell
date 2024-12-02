@@ -229,19 +229,20 @@ class AlarmInstanceState extends State<AlarmInstance> {
 
     // Set the localized shortened month based on the integer month from DateTime
     String month = "";
-    switch(nextOccurrence.month){
-      case  1: month = AppLocalizations.of(context)!.jan; break;
-      case  2: month = AppLocalizations.of(context)!.feb; break;
-      case  3: month = AppLocalizations.of(context)!.mar; break;
-      case  4: month = AppLocalizations.of(context)!.apr; break;
-      case  5: month = AppLocalizations.of(context)!.may; break;
-      case  6: month = AppLocalizations.of(context)!.jun; break;
-      case  7: month = AppLocalizations.of(context)!.jul; break;
-      case  8: month = AppLocalizations.of(context)!.aug; break;
-      case  9: month = AppLocalizations.of(context)!.sep; break;
-      case 10: month = AppLocalizations.of(context)!.oct; break;
-      case 11: month = AppLocalizations.of(context)!.nov; break;
-      case 12: month = AppLocalizations.of(context)!.dec; break;
+    final localization = AppLocalizations.of(context)!;
+    switch(nextOccurrence.month) {
+      case  1: month = localization.jan; break;
+      case  2: month = localization.feb; break;
+      case  3: month = localization.mar; break;
+      case  4: month = localization.apr; break;
+      case  5: month = localization.may; break;
+      case  6: month = localization.jun; break;
+      case  7: month = localization.jul; break;
+      case  8: month = localization.aug; break;
+      case  9: month = localization.sep; break;
+      case 10: month = localization.oct; break;
+      case 11: month = localization.nov; break;
+      case 12: month = localization.dec; break;
       default: "";
     }
 

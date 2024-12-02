@@ -83,14 +83,18 @@ class TimerPageState extends AlarmClockPageState {
       // Commit batch
       await batch.commit();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Upload to cloud successful')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Upload to cloud successful')),
+        );
+      }
     } catch (e) {
       debugPrint('Error uploading to cloud: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error uploading to cloud: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error uploading to cloud: $e')),
+        );
+      }
     }
   }
 
@@ -125,14 +129,18 @@ class TimerPageState extends AlarmClockPageState {
     // Reload data to update UI
     loadData();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Download from cloud successful')),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Download from cloud successful')),
+      );
+    }
   } catch (e) {
     debugPrint('Error downloading from cloud: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error downloading from cloud: $e')),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error downloading from cloud: $e')),
+      );
+    }
   }
 }
 
