@@ -115,7 +115,7 @@ class MyAppState extends State<MyApp> {
                   label: Platform.localeName.contains('fr') ? 'Alarme' : 'Alarm Clock',
                 ),
                 BottomNavigationBarItem(
-                  icon: const Icon(Icons.timer),
+                  icon: const Icon(Icons.hourglass_bottom),
                   label: Platform.localeName.contains('fr') ? 'Minuteur' : 'Timer',
                 ),
                 BottomNavigationBarItem(

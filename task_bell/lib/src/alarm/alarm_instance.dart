@@ -216,7 +216,9 @@ class AlarmInstanceState extends State<AlarmInstance> {
             timer.cancel();
             return;
           }
-          setState((){});  
+          if (mounted) {
+            setState((){});  
+          }
         });
       }
       
@@ -284,7 +286,9 @@ class AlarmInstanceState extends State<AlarmInstance> {
             fakeRecur = alarmInstance.recur;
             edited = true;
 
-            setState((){});
+            if (mounted) {
+              setState((){});
+            }
           },
           onCreateFolder: (folder) {}, // do nothing. folder tab is disabled
         );
@@ -321,7 +325,9 @@ class AlarmInstanceState extends State<AlarmInstance> {
               HapticFeedback.heavyImpact();
             }
           }
-          setState((){});
+          if (mounted) {
+            setState((){});
+          }
         },
         onHorizontalDragEnd: (details) {
           
@@ -333,7 +339,9 @@ class AlarmInstanceState extends State<AlarmInstance> {
             // unschedule the alarm
             Alarm.stop(widget.alarmSettings.id);
 
-            setState((){});
+            if (mounted) {
+              setState((){});
+            }
             // HapticFeedback.heavyImpact(); // haptic feedback when deleting
           }
           // do this regardless so undo delete isn't messed up

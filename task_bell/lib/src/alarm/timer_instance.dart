@@ -107,6 +107,17 @@ class TimerInstanceState extends AlarmInstanceState {
   Future<void> toggleAlarmStatus() async {
     // Update recur with a new RelativeRecur object before toggling the alarm
     (widget.recur as RelativeRecur).initTime = DateTime.now();
+  
+    // Create a timer to toggle the toggle off in case the user stares at the timer until the timer goes off
+    // Timer(Duration(milliseconds: widget.recur.getNextOccurrence(DateTime.now())!.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch), (){
+    Timer(widget.recur.getNextOccurrence(DateTime.now())!.difference(DateTime.now()), (){
+      if (!isActive) {
+        return;
+      }
+      if (mounted) {
+        setState((){isActive = false;});  
+      }
+    });
 
     debugPrint("Timer toggled");
 
