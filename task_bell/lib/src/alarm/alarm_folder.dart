@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
 import 'helpers/alarm_or_folder.dart';
 import 'alarm_instance.dart';
 import '../storage/task_bell_database.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Each folder will need to pull all its children from the database upon initialization
 // this should be implemented in the state's initstate logic
@@ -129,7 +132,6 @@ class AlarmFolderState extends State<AlarmFolder> {
       );
     }
     for (AlarmInstance al in alarmsList) {
-      debugPrint("alarm isactive? : ${al.isActive}");
       indented.add(
         Padding(
           padding: EdgeInsets.fromLTRB((al.parentId == -1) ? 0 : widget.childIndent, 0, 0, 0),
@@ -140,10 +142,6 @@ class AlarmFolderState extends State<AlarmFolder> {
 
     return indented;
   }
-
-  double dragStartX = 0;
-  double xOffset = 0;
-  final double maxOffset = 40;
 
   void openEditMenu() {
     HapticFeedback.mediumImpact();
@@ -170,63 +168,116 @@ class AlarmFolderState extends State<AlarmFolder> {
   }
 
   @override
+  void dispose() {
+    if (deleted) {
+      // can't do this unfortunately, throws huge error
+      // don't think there is a way to get it to hide the snackbar when this widget is deleted
+      // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      tDB.deleteFolder(widget.id);
+      
+    }
+
+    super.dispose();
+  }
+
+  double dragStartX = 0;
+  double xOffset = 0;
+  final double maxOffset = 40;
+
+  @override
   Widget build(BuildContext context) {
     return Visibility(
       visible: !deleted,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(xOffset,0,0,0),
-        child: GestureDetector(
-          onLongPress: openEditMenu,
-          onHorizontalDragStart: (details) {
-            xOffset = 0;
-            dragStartX = details.globalPosition.dx;
-          },
-          onHorizontalDragUpdate: (details) {
-            xOffset = details.globalPosition.dx - dragStartX;
-            if (xOffset < 0) {
-              xOffset = 0;
-            } else if (xOffset > maxOffset) {
-              xOffset = maxOffset;
-            }
-            setState((){});
-          },
-          onHorizontalDragEnd: (details) {
-            
-            if (details.globalPosition.dx - dragStartX > maxOffset) {
-              // delete the alarm
-              deleted = true;
-              tDB.deleteFolder(widget.id);
-              setState((){});
-              HapticFeedback.heavyImpact(); // haptic feedback when deleting
-            }
-            // do this regardless so undo delete isn't messed up
-            xOffset = 0;
-            dragStartX = 0;
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: [
-                  IconButton(
-                    icon: icon,
-                    onPressed: _toggleExpansion,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                    child: Icon(Icons.folder),
-                  ),
-                  Text(fakeName),
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: addNewAlarmFolder,
-                  ),
-                  Expanded(child: Container()),
-                ],
-              ),
-            ] + (_expanded ? indentChildren() : []),
+      child: Stack(
+        children: [
+          Visibility(
+            visible: xOffset >= maxOffset,
+            child: const Padding(
+              padding: EdgeInsets.fromLTRB(20, 10, 10, 0),
+              child: Icon(Icons.delete)
+            ),
           ),
-        )
+          Padding(
+            padding: EdgeInsets.fromLTRB(xOffset,0,0,0),
+            child: GestureDetector(
+              onLongPress: openEditMenu,
+              onHorizontalDragStart: (details) {
+                xOffset = 0;
+                dragStartX = details.globalPosition.dx;
+              },
+              onHorizontalDragUpdate: (details) {
+                xOffset = details.globalPosition.dx - dragStartX;
+                if (xOffset < 0) {
+                  xOffset = 0;
+                } else if (xOffset > maxOffset) {
+                  xOffset = maxOffset;
+                }
+                setState((){});
+              },
+              onHorizontalDragEnd: (details) {
+                
+                if (details.globalPosition.dx - dragStartX > maxOffset) {
+                  // there isn't really a good way to undo deleting the folder
+                  // - cannot access the subfolders of its children
+                  // so just hide this until snackbar disappears
+                  // if snackbar disappears without undo being pressed, delete everything from db
+                  // has issues but we can just ignore those
+                  deleted = true;
+
+                  Timer(const Duration(milliseconds: 4000), () {
+                    if (!deleted) {
+                      return;
+                    }
+                    // if it was deleted by the end of the duration, delete the folder
+                    tDB.deleteFolder(widget.id);
+                  });
+                  
+                  setState((){});
+                  HapticFeedback.heavyImpact(); // haptic feedback when deleting
+
+                  var snackBar = SnackBar(
+                    content: Text("${AppLocalizations.of(context)!.deleted} ${
+                      AppLocalizations.of(context)!.quoteLeft}$fakeName${
+                      AppLocalizations.of(context)!.quoteRight}"),
+                    action: SnackBarAction(label: AppLocalizations.of(context)!.undo, onPressed: (){
+                      deleted = false;
+
+                      setState((){});
+                    }),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+                // do this regardless so undo delete isn't messed up
+                xOffset = 0;
+                dragStartX = 0;
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: icon,
+                        onPressed: _toggleExpansion,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                        child: Icon(Icons.folder),
+                      ),
+                      Text(fakeName),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: addNewAlarmFolder,
+                      ),
+                      Expanded(child: Container()),
+                    ],
+                  ),
+                ] + (_expanded ? indentChildren() : []),
+              ),
+            ),
+          )
+        ]
       )
     );
   }

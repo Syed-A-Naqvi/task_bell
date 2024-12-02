@@ -223,6 +223,7 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
 
   @override
   Widget build(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.worldTimes),

@@ -100,6 +100,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
         isActive = currentAlarm.isActive;
         alarmSettings = currentAlarm.alarmSettings;
         if (isActive) {
+          debugPrint("Scheduling alarm to go off at ${alarmSettings.dateTime.toString()}");
           await Alarm.set(alarmSettings: alarmSettings);
         }
       } else {
@@ -354,15 +355,40 @@ class AlarmInstanceState extends State<AlarmInstance> {
             // unschedule the alarm
             Alarm.stop(widget.alarmSettings.id);
 
-            if (mounted) {
-              setState((){});
-            }
-            // HapticFeedback.heavyImpact(); // haptic feedback when deleting
+            var snackBar = SnackBar(
+              // content: Text("Deleted Alarm"),
+              content: Text("${AppLocalizations.of(context)!.deleted} ${
+                AppLocalizations.of(context)!.quoteLeft}${
+                edited ? fakeName : widget.name}${
+                AppLocalizations.of(context)!.quoteRight}"),
+              action: SnackBarAction(label: AppLocalizations.of(context)!.undo, onPressed: (){
+                deleted = false;
+                tDB.insertAlarm(AlarmInstance(
+                  alarmSettings: alarmSettings,
+                  name: edited ? fakeName : widget.name,
+                  recur: edited ? fakeRecur : widget.recur,
+                  parentId: widget.parentId,
+                  isActive: isActive,
+                ));
+                if (isActive) {
+                  Alarm.set(alarmSettings: alarmSettings);
+                }
+                setState((){});
+              }),
+            );
+
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
           }
           // do this regardless so undo delete isn't messed up
           xOffset = 0;
           dragStartX = 0;
           vibrate = 0;
+          setState((){});
+
+          // if (mounted) {
+          //   setState((){});
+          // }
         },
         child: Stack(
           children: [

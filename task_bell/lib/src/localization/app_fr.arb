@@ -69,5 +69,9 @@
 
   "create": "Créer",
   "update": "Mise à jour",
-  "add": "Ajouter"
+  "add": "Ajouter",
+  "undo": "Annuler",
+  "deleted": "Supprimé",
+  "quoteLeft": "« ",
+  "quoteRight": " »"
 }

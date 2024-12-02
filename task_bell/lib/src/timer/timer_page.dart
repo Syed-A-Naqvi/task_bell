@@ -135,6 +135,7 @@ class TimerPageState extends AlarmClockPageState {
 
   @override
   Widget build(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.timer),

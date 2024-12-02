@@ -47,6 +47,7 @@ class StopwatchPageState extends State<StopwatchPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     return _buildMainUI(context);
   }
 

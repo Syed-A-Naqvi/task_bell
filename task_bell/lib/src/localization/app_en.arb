@@ -80,5 +80,9 @@
 
   "create": "Create",
   "update": "Update",
-  "add": "Add"
+  "add": "Add",
+  "undo": "Undo",
+  "deleted": "Deleted",
+  "quoteLeft": "\"",
+  "quoteRight":"\""
 }
