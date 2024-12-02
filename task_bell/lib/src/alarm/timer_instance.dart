@@ -32,6 +32,37 @@ class TimerInstanceState extends AlarmInstanceState {
   }
 
   @override
+  Future<void> initialize() async {
+    try {
+      AlarmInstance? currentAlarm = await tDB.getAlarm(widget.alarmSettings.id);
+      AlarmSettings? alarmSettings2 = Alarm.getAlarm(widget.alarmSettings.id);
+
+      if (currentAlarm != null) {
+        debugPrint("recur init: ${(currentAlarm.recur as RelativeRecur).initTime}");
+        isActive = currentAlarm.isActive;
+        showSwapTimeModes = isActive;
+        // (currentAlarm.recur as RelativeRecur).initTime = 
+        alarmSettings = currentAlarm.alarmSettings;
+        if (isActive && alarmSettings2 == null) {
+          debugPrint("Scheduling alarm to go off at ${alarmSettings.dateTime.toString()}");
+          await Alarm.set(alarmSettings: alarmSettings);
+        }
+        else if (isActive) {
+          debugPrint("its active");
+        }
+      } else {
+        isActive = false;
+      }
+    } catch (e) {
+      debugPrint("Failed to initialize alarm: $e");
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
   String formatDateTime(bool relative) {
     DateTime now = DateTime.now();
     DateTime? nextOccurrence = widget.recur.getNextOccurrence(now);
@@ -56,7 +87,9 @@ class TimerInstanceState extends AlarmInstanceState {
             timer.cancel();
             return;
           }
-          setState((){});  
+          if (mounted) {
+            setState(() {});
+          } 
         });
       }
       
@@ -124,6 +157,11 @@ class TimerInstanceState extends AlarmInstanceState {
     await super.toggleAlarmStatus();
 
     showSwapTimeModes = true;
+
+    if (isActive) {
+      (widget.recur as RelativeRecur).initTime = DateTime.now();
+      tDB.updateAlarm(widget.alarmSettings.id, {'inittime' : (widget.recur as RelativeRecur).initTime.millisecondsSinceEpoch});
+    }
   }
 
   @override

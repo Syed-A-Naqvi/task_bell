@@ -87,12 +87,12 @@ class AlarmInstanceState extends State<AlarmInstance> {
   @override
   void initState() {
     super.initState();
-    _initialize();
+    initialize();
     fakeName = widget.name;
     fakeRecur = widget.recur;
   }
 
-  Future<void> _initialize() async {
+  Future<void> initialize() async {
     try {
       AlarmInstance? currentAlarm = await tDB.getAlarm(widget.alarmSettings.id);
       // AlarmSettings? alarmSettings2 = Alarm.getAlarm(widget.alarmSettings.id);
