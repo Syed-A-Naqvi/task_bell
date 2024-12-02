@@ -175,7 +175,7 @@ class TimerPageState extends AlarmClockPageState {
       body: ListView(
         children: items,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         mini: true,
         onPressed: () {

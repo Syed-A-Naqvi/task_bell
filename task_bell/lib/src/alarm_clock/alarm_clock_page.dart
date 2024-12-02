@@ -234,7 +234,7 @@ class AlarmClockPageState extends State<AlarmClockPage> {
       body: ListView(
         children: items,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         mini: true,
         onPressed: () {
