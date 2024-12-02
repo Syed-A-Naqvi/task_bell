@@ -38,7 +38,7 @@
   "enterCity": "Enter City",
   "cityExamplePhrase": "(e.g. Toronto)", 
   "refreshTimes": "Refresh Times",
-  "noCities": "No cities added yet.",
+
 
   "downloadAudio": "Download Audio from YouTube",
   "enterYTVideoURL": "Enter YouTube Video URL",
@@ -47,6 +47,12 @@
   "failToDownload": "Failed to Download",
 
   "alarmDisable": "Alarm Deactivated",
+
+  "noTimersMessage": "No timers yet!",
+  "noAlarmsMessage": "No alarms yet!",
+  "noCitiesMessage": "No cities yet!",
+  "noLapsMessage": "No labs yet!",
+
 
   "alarmScheduled": "Scheduled for ({timephrase}) from now",
   "@alarmScheduled": {

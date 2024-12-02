@@ -44,6 +44,10 @@
   "failToDownload": "Échec du Téléchargement",
 
   "alarmDisable": "Alarme désactivée",
+  "noAlarmsMessage": "Aucune alarme!",
+  "noTimersMessage": "Pas de minuterie!",
+  "noCitiesMessage": "Pas de villes!",
+  "noLapsMessage": "Pas de tours!",
 
   "alarmScheduled": "Prévu pour ({timephrase}) à partir de maintenant",
   

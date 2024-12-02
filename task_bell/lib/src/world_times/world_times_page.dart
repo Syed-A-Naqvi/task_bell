@@ -278,7 +278,7 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
           ),
           Expanded(
             child: _worldTimes.isEmpty
-                ? Center(child: Text(AppLocalizations.of(context)!.noCities))
+                ? Center(child: Text(AppLocalizations.of(context)!.noCitiesMessage, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())))
                 : ListView.builder(
               itemCount: _worldTimes.length,
               itemBuilder: (context, index) {
