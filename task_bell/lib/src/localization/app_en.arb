@@ -51,7 +51,7 @@
   "noTimersMessage": "No timers yet!",
   "noAlarmsMessage": "No alarms yet!",
   "noCitiesMessage": "No cities yet!",
-  "noLapsMessage": "No labs yet!",
+  "noLapsMessage": "No laps yet!",
 
 
   "alarmScheduled": "Scheduled for ({timephrase}) from now",
