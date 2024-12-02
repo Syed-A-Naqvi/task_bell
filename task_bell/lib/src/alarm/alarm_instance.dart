@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:task_bell/src/alarm/helpers/alarm_or_folder.dart';
 import 'package:task_bell/src/alarm/helpers/map_converters.dart';
 import 'package:task_bell/src/storage/task_bell_database.dart';
+import '../settings/settings_global_references.dart';
 import 'recurrence/recur.dart';
 import 'recurrence/relative_recur.dart';
 import 'recurrence/week_recur.dart';
@@ -358,7 +359,8 @@ class AlarmInstanceState extends State<AlarmInstance> {
               content: Text("${AppLocalizations.of(context)!.deleted} ${
                 AppLocalizations.of(context)!.quoteLeft}${
                 edited ? fakeName : widget.name}${
-                AppLocalizations.of(context)!.quoteRight}"),
+                AppLocalizations.of(context)!.quoteRight}",
+              ),
               action: SnackBarAction(label: AppLocalizations.of(context)!.undo, onPressed: (){
                 deleted = false;
                 tDB.insertAlarm(AlarmInstance(
@@ -405,10 +407,12 @@ class AlarmInstanceState extends State<AlarmInstance> {
                       },
                       icon: Icon(isActive ? Icons.toggle_on : Icons.toggle_off_outlined),
                     ),
-                    Text(edited ? fakeName : widget.name), // no idea why this is necessary
+                    Text(edited ? fakeName : widget.name,
+                    style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())), // no idea why this is necessary
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: Text(formatDateTime(showRelativeTime)),
+                      child: Text(formatDateTime(showRelativeTime),
+                        style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
                     ),
                     Visibility(
                       visible: showSwapTimeModes,

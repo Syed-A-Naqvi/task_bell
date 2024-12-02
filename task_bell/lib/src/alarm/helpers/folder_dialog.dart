@@ -1,5 +1,6 @@
 // create_alarm_dialog.dart
 import 'package:flutter/material.dart';
+import 'package:task_bell/src/settings/settings_global_references.dart';
 import '../alarm_folder.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -30,7 +31,7 @@ class FolderDialogState extends State<FolderDialog> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(AppLocalizations.of(context)!.invalidName),
+          title: Text(AppLocalizations.of(context)!.invalidName, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
         ),
       );
       return;
@@ -65,8 +66,8 @@ class FolderDialogState extends State<FolderDialog> {
             child: TextButton(
               onPressed: _createFolder,
               child: widget.namePrefill.isEmpty ? 
-                Text(AppLocalizations.of(context)!.create) : 
-                Text(AppLocalizations.of(context)!.update), 
+                Text(AppLocalizations.of(context)!.create, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())) : 
+                Text(AppLocalizations.of(context)!.update, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
             ),
           ),
         ],

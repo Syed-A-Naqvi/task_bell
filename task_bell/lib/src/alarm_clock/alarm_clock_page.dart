@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_bell/src/services/audio_download.dart';
+import '../settings/settings_global_references.dart';
 import '../settings/settings_view.dart';
 import '../alarm/alarm_folder.dart';
 import '../storage/task_bell_database.dart';
@@ -173,12 +174,12 @@ class AlarmClockPageState extends State<AlarmClockPage> {
               const SizedBox(height: 10),
               DropdownButton<String>(
                 value: selectedTitle,
-                hint: Text(AppLocalizations.of(context)!.selectYoutubeURL),
+                hint: Text(AppLocalizations.of(context)!.selectYoutubeURL, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
                 isExpanded: true,
                 items: videoOptions.keys.map((title) {
                   return DropdownMenuItem<String>(
                     value: title,
-                    child: Text(title),
+                    child: Text(title, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -188,7 +189,7 @@ class AlarmClockPageState extends State<AlarmClockPage> {
               ),
               const SizedBox(height: 10),
               TextButton(
-                child: Text(AppLocalizations.of(context)!.download),
+                child: Text(AppLocalizations.of(context)!.download, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
                 onPressed: () async {
                   String responsePath = await AudioDownload.downloadAudio(urlController.text);
                   if (responsePath.isEmpty) {
@@ -196,7 +197,7 @@ class AlarmClockPageState extends State<AlarmClockPage> {
                       showDialog(
                         context: this.context,
                         builder: (context) {
-                          return AlertDialog(title: Text(AppLocalizations.of(context)!.failToDownload));
+                          return AlertDialog(title: Text(AppLocalizations.of(context)!.failToDownload, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())));
                         },
                       );
                     }
@@ -220,7 +221,7 @@ class AlarmClockPageState extends State<AlarmClockPage> {
     return Scaffold(
       appBar: AppBar(
         // title: const Text('Alarm Clock'),
-        title: Text(AppLocalizations.of(context)!.alarmClock),
+        title: Text(AppLocalizations.of(context)!.alarmClock, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
         actions: [
           IconButton(
             icon: const Icon(Icons.cloud_upload),

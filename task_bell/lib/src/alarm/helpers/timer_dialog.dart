@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:task_bell/src/alarm/timer_instance.dart';
+import '../../settings/settings_global_references.dart';
 import '../alarm_instance.dart';
 import '../recurrence/relative_recur.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -37,7 +38,7 @@ class TimerDialogState extends State<TimerDialog> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(AppLocalizations.of(context)!.missingInformation),
+          title: Text(AppLocalizations.of(context)!.missingInformation, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
         ),
       );
       return;
@@ -123,7 +124,7 @@ class TimerDialogState extends State<TimerDialog> {
               // Hour Picker
               Column(
                 children: [
-                  Text(AppLocalizations.of(context)!.hours),
+                  Text(AppLocalizations.of(context)!.hours, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
                   NumberPicker(
                     value: hours,
                     minValue: 0,
@@ -140,7 +141,7 @@ class TimerDialogState extends State<TimerDialog> {
               // Minute Picker
               Column(
                 children: [
-                  Text(AppLocalizations.of(context)!.minutes),
+                  Text(AppLocalizations.of(context)!.minutes, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
                   NumberPicker(
                     value: minutes,
                     minValue: 0,
@@ -161,8 +162,8 @@ class TimerDialogState extends State<TimerDialog> {
             child: TextButton(
               onPressed: _createTimer,
               child: widget.namePrefill.isEmpty ? 
-                Text(AppLocalizations.of(context)!.create) : 
-                Text(AppLocalizations.of(context)!.update), 
+                Text(AppLocalizations.of(context)!.create, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())) : 
+                Text(AppLocalizations.of(context)!.update, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())), 
             ),
           ),
         ],

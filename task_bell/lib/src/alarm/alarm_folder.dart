@@ -264,7 +264,10 @@ class AlarmFolderState extends State<AlarmFolder> {
                   var snackBar = SnackBar(
                     content: Text("${AppLocalizations.of(context)!.deleted} ${
                       AppLocalizations.of(context)!.quoteLeft}$fakeName${
-                      AppLocalizations.of(context)!.quoteRight}"),
+                      AppLocalizations.of(context)!.quoteRight}",
+                      style: TextStyle(
+                        fontSize: SettingGlobalReferences.defaultFontSize.toDouble(),
+                      ),),
                     action: SnackBarAction(label: AppLocalizations.of(context)!.undo, onPressed: (){
                       deleted = false;
 
@@ -291,7 +294,8 @@ class AlarmFolderState extends State<AlarmFolder> {
                         padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
                         child: Icon(Icons.folder),
                       ),
-                      Text(fakeName),
+                      Text(fakeName,
+                        style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
                       IconButton(
                         icon: const Icon(Icons.add),
                         onPressed: addNewAlarmFolder,

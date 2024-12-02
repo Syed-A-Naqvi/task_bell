@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
+import '../../settings/settings_global_references.dart';
 import '../weekday_selector.dart';
 import '../recurrence/week_recur.dart';
 import '../alarm_instance.dart';
@@ -86,7 +87,8 @@ class AlarmDialogState extends State<AlarmDialog> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(AppLocalizations.of(context)!.missingInformation),
+          title: Text(AppLocalizations.of(context)!.missingInformation,
+            style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
         ),
       );
       return;
@@ -171,7 +173,8 @@ class AlarmDialogState extends State<AlarmDialog> {
             onPressed: _selectTime,
             child: Text(recurTime == null
                 ? AppLocalizations.of(context)!.selectTime
-                : '${AppLocalizations.of(context)!.selectedTime}${recurTime!.hour.toString().padLeft(2,'0')}:${recurTime!.minute.toString().padLeft(2,'0')}'),
+                : '${AppLocalizations.of(context)!.selectedTime}${recurTime!.hour.toString().padLeft(2,'0')}:${recurTime!.minute.toString().padLeft(2,'0')}',
+                style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
           ),
           const SizedBox(height: 5),
           Align(
@@ -179,8 +182,8 @@ class AlarmDialogState extends State<AlarmDialog> {
             child: TextButton(
               onPressed: _createAlarm,
               child: widget.namePrefill.isEmpty ? 
-                Text(AppLocalizations.of(context)!.create) : 
-                Text(AppLocalizations.of(context)!.update), 
+                Text(AppLocalizations.of(context)!.create, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())) : 
+                Text(AppLocalizations.of(context)!.update, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())), 
             ),
           ),
         ],

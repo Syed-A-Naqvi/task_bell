@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../settings/settings_global_references.dart';
 import 'recurrence/week_recur.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -51,7 +52,7 @@ class WeekdaySelectorState extends State<WeekdaySelector>{
           width: colWidth,
           child: Column(
             children: [
-              Text(AppLocalizations.of(context)!.sundayLetter),
+              Text(AppLocalizations.of(context)!.sundayLetter, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
               Checkbox(
                 value: activeDays & WeekRecur.sunday == WeekRecur.sunday,
                 onChanged: (bool? value) {
@@ -66,7 +67,7 @@ class WeekdaySelectorState extends State<WeekdaySelector>{
           width: colWidth,
           child: Column(
             children: [
-              Text(AppLocalizations.of(context)!.mondayLetter),
+              Text(AppLocalizations.of(context)!.mondayLetter, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
               Checkbox(
                 value: activeDays & WeekRecur.monday == WeekRecur.monday,
                 onChanged: (bool? value) {
@@ -81,7 +82,7 @@ class WeekdaySelectorState extends State<WeekdaySelector>{
           width: colWidth,
           child: Column(
             children: [
-              Text(AppLocalizations.of(context)!.tuesdayLetter),
+              Text(AppLocalizations.of(context)!.tuesdayLetter, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
               Checkbox(
                 value: activeDays & WeekRecur.tuesday == WeekRecur.tuesday,
                 onChanged: (bool? value) {
@@ -96,7 +97,7 @@ class WeekdaySelectorState extends State<WeekdaySelector>{
           width: colWidth,
           child: Column(
             children: [
-              Text(AppLocalizations.of(context)!.wednesdayLetter),
+              Text(AppLocalizations.of(context)!.wednesdayLetter, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
               Checkbox(
                 value: activeDays & WeekRecur.wednesday == WeekRecur.wednesday,
                 onChanged: (bool? value) {
@@ -111,7 +112,7 @@ class WeekdaySelectorState extends State<WeekdaySelector>{
           width: colWidth,
           child: Column(
             children: [
-              Text(AppLocalizations.of(context)!.thursdayLetter),
+              Text(AppLocalizations.of(context)!.thursdayLetter, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
               Checkbox(
                 value: activeDays & WeekRecur.thursday == WeekRecur.thursday,
                 onChanged: (bool? value) {
@@ -126,7 +127,7 @@ class WeekdaySelectorState extends State<WeekdaySelector>{
           width: colWidth,
           child: Column(
             children: [
-              Text(AppLocalizations.of(context)!.fridayLetter),
+              Text(AppLocalizations.of(context)!.fridayLetter, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
               Checkbox(
                 value: activeDays & WeekRecur.friday == WeekRecur.friday,
                 onChanged: (bool? value) {
@@ -141,7 +142,7 @@ class WeekdaySelectorState extends State<WeekdaySelector>{
           width: colWidth,
           child: Column(
             children: [
-              Text(AppLocalizations.of(context)!.saturdayLetter),
+              Text(AppLocalizations.of(context)!.saturdayLetter, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
               Checkbox(
                 value: activeDays & WeekRecur.saturday == WeekRecur.saturday,
                 onChanged: (bool? value) {
