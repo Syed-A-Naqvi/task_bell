@@ -7,6 +7,7 @@ import 'helpers/alarm_or_folder.dart';
 import 'alarm_instance.dart';
 import '../storage/task_bell_database.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../settings/settings_global_references.dart';
 
 // Each folder will need to pull all its children from the database upon initialization
 // this should be implemented in the state's initstate logic

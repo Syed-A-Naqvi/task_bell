@@ -1,5 +1,5 @@
 class SettingGlobalReferences {
-  int defaultFontSize = 16;
-  int seperationPadding = 10;
-  int edgePadding = 20;
+  static int defaultFontSize = 16;
+  static int seperationPadding = 10;
+  static int edgePadding = 20;
 }
