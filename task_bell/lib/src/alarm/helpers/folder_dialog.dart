@@ -1,5 +1,6 @@
 // create_alarm_dialog.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:task_bell/src/settings/settings_global_references.dart';
 import '../alarm_folder.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -59,6 +60,9 @@ class FolderDialogState extends State<FolderDialog> {
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.enterFolderName,
             ),
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(SettingGlobalReferences.maxChars),
+            ],
           ),
           const SizedBox(height: 10),
           Align(

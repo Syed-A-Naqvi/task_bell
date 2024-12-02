@@ -221,7 +221,7 @@ class AlarmClockPageState extends State<AlarmClockPage> {
     return Scaffold(
       appBar: AppBar(
         // title: const Text('Alarm Clock'),
-        title: Text(AppLocalizations.of(context)!.alarmClock, style: TextStyle(fontSize: SettingGlobalReferences.appBarFontSize.toDouble())),
+        title: Text(AppLocalizations.of(context)!.alarmClock, style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())),
         actions: [
           IconButton(
             icon: const Icon(Icons.cloud_upload),

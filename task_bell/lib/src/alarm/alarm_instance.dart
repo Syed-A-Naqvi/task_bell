@@ -319,6 +319,13 @@ class AlarmInstanceState extends State<AlarmInstance> {
 
   @override
   Widget build(BuildContext context) {
+
+    // cannot use fakeName all the time due to it not being updated properly in init; nothing we can do
+    String displayString = edited ? fakeName : widget.name;
+    if (displayString.length > SettingGlobalReferences.maxDisplayChars) {
+      displayString = displayString.substring(0, SettingGlobalReferences.maxDisplayChars-3);
+      displayString += "...";
+    }
     return Visibility(
       visible: !deleted,
       child: GestureDetector(
@@ -397,7 +404,8 @@ class AlarmInstanceState extends State<AlarmInstance> {
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(xOffset,0,0,0),
-              child: SizedBox(
+              child: FittedBox(
+                fit: BoxFit.fitWidth, // this is not an ideal solution but all the buttons can still be pressed
                 child: Row(
                   children: [
                     IconButton(
@@ -407,7 +415,8 @@ class AlarmInstanceState extends State<AlarmInstance> {
                       },
                       icon: Icon(isActive ? Icons.toggle_on : Icons.toggle_off_outlined),
                     ),
-                    Text(edited ? fakeName : widget.name,
+                    // Text((edited ? fakeName : widget.name), softWrap: true,
+                    Text(displayString,
                     style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble())), // no idea why this is necessary
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),

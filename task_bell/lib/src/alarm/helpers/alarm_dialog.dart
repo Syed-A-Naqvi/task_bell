@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
+import 'package:flutter/services.dart';
 import '../../settings/settings_global_references.dart';
 import '../weekday_selector.dart';
 import '../recurrence/week_recur.dart';
@@ -162,6 +163,9 @@ class AlarmDialogState extends State<AlarmDialog> {
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.enterAlarmName,
             ),
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(SettingGlobalReferences.maxChars),
+            ],
           ),
           const SizedBox(height: 30),
           WeekdaySelector(

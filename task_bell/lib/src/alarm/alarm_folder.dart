@@ -305,8 +305,8 @@ class AlarmFolderState extends State<AlarmFolder> {
                   ),
                 ] + (_expanded ? indentChildren() : []),
               ),
-            ),
-          )
+            )
+          ),
         ]
       )
     );

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
+import 'package:flutter/services.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:task_bell/src/alarm/timer_instance.dart';
 import '../../settings/settings_global_references.dart';
@@ -116,6 +117,9 @@ class TimerDialogState extends State<TimerDialog> {
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.enterTimerName,
             ),
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(SettingGlobalReferences.maxChars),
+            ],
           ),
           const SizedBox(height: 20),
           Row(
