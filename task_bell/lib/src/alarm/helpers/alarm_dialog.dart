@@ -30,8 +30,11 @@ class AlarmDialog extends StatefulWidget {
 }
 
 class AlarmDialogState extends State<AlarmDialog> {
+
   late final TextEditingController nameController = TextEditingController(text: widget.namePrefill);
+
   late int activeDays = widget.activeDays;
+
   late DateTime? recurTime = widget.initialTime.hour < 0 ? null : DateTime(
           DateTime.now().year,
           DateTime.now().month,
@@ -39,6 +42,8 @@ class AlarmDialogState extends State<AlarmDialog> {
           widget.initialTime.hour,
           widget.initialTime.minute,
         );
+
+  // Need this for setting correct placeholder info in case of editing alarms; defaults to current time of day
   late TimeOfDay initialTime = widget.initialTime.hour < 0 ? TimeOfDay.now() : widget.initialTime;
 
   void _handleActiveDaysChanged(int newActiveDays) {
@@ -48,11 +53,12 @@ class AlarmDialogState extends State<AlarmDialog> {
   }
 
   Future<void> _selectTime() async {
-    debugPrint("always use 24h format: ${MediaQuery.of(context).alwaysUse24HourFormat.toString()}");
     TimeOfDay? selectedTime = await showTimePicker(
       context: context,
       initialTime: initialTime,
       builder: (BuildContext context, Widget? child) {
+        // This makes sure it uses the systems preference for 12h or 24h format
+        // requires app restart for format change to take effect
         return MediaQuery(
           data: MediaQuery.of(context),
           child: child!,
@@ -74,6 +80,7 @@ class AlarmDialogState extends State<AlarmDialog> {
   }
 
   void _createAlarm() async {
+    
     if (nameController.text.isEmpty || recurTime == null) {
       debugPrint(recurTime.toString());
       showDialog(
@@ -112,13 +119,13 @@ class AlarmDialogState extends State<AlarmDialog> {
 
     WeekRecur recur = WeekRecur(activeDays: activeDays, recurTime: recurTime!);
 
+    // Create a complete AlarmInstance / AlarmSettings
     AlarmInstance alarmInstance = AlarmInstance(
       name: nameController.text,
       parentId: widget.parentId,
       isActive: true,
       alarmSettings: AlarmSettings(
         id: (DateTime.now().millisecondsSinceEpoch ~/ 100) % 2147483647,
-        // dateTime: recurTime!,
         dateTime: recur.getNextOccurrence(DateTime.now())!,
         assetAudioPath: path,
         vibrate: true,

@@ -72,6 +72,10 @@ class AlarmFolderState extends State<AlarmFolder> {
   late String fakeName;
   bool deleted = false;
 
+  double dragStartX = 0;
+  double xOffset = 0;
+  final double maxOffset = 40;
+
   @override
   void initState(){
     super.initState();
@@ -95,18 +99,23 @@ class AlarmFolderState extends State<AlarmFolder> {
     });
   }
 
+  // show user the dialog for creating a new alarm or folder
   void addNewAlarmFolder() {
     showDialog(
       context: context,
       builder: (context) => AlarmOrFolderDialog(
         parentId: widget.id,
         folderPos: subfolders.length,
+
+        // add the alarm user creates to the list
         onCreateAlarm: (alarmInstance) async {
           await tDB.insertAlarm(alarmInstance);
           setState(() {
             alarms.add(alarmInstance);
           });
         },
+
+        // add the folder user creates to the list
         onCreateFolder: (folder) async {
           await tDB.insertFolder(folder);
           setState(() {
@@ -117,6 +126,7 @@ class AlarmFolderState extends State<AlarmFolder> {
     );
   }
 
+  // Set the padding for each child of this widget
   List<Widget> indentChildren() {
     List<Widget> indented = [];
 
@@ -126,6 +136,7 @@ class AlarmFolderState extends State<AlarmFolder> {
     for (AlarmFolder af in folders) {
       indented.add(
         Padding(
+          // check if its the default list; if so don't indent
           padding: EdgeInsets.fromLTRB((af.parentId == -1) ? 0 : widget.childIndent, 0, 0, 0),
           child: af,
         ),
@@ -134,6 +145,7 @@ class AlarmFolderState extends State<AlarmFolder> {
     for (AlarmInstance al in alarmsList) {
       indented.add(
         Padding(
+          // check if its the default list; if so don't indent
           padding: EdgeInsets.fromLTRB((al.parentId == -1) ? 0 : widget.childIndent, 0, 0, 0),
           child: al,
         ),
@@ -143,6 +155,7 @@ class AlarmFolderState extends State<AlarmFolder> {
     return indented;
   }
 
+  // open modification of alarm or folder dialog prefilled with data for current alarm
   void openEditMenu() {
     HapticFeedback.mediumImpact();
     debugPrint("pressed ${widget.name}");
@@ -173,6 +186,8 @@ class AlarmFolderState extends State<AlarmFolder> {
       // can't do this unfortunately, throws huge error
       // don't think there is a way to get it to hide the snackbar when this widget is deleted
       // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      // if this widget gets deleted, and this folder is flagged for deletion, make sure it gets deleted
       tDB.deleteFolder(widget.id);
       
     }
@@ -180,12 +195,12 @@ class AlarmFolderState extends State<AlarmFolder> {
     super.dispose();
   }
 
-  double dragStartX = 0;
-  double xOffset = 0;
-  final double maxOffset = 40;
+  
 
   @override
   Widget build(BuildContext context) {
+
+    // hide the widget if its marked as deleted
     return Visibility(
       visible: !deleted,
       child: Stack(
@@ -199,31 +214,39 @@ class AlarmFolderState extends State<AlarmFolder> {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(xOffset,0,0,0),
+
             child: GestureDetector(
+
               onLongPress: openEditMenu,
+              
+              // keep track of where the dragging starts; important for the animation
               onHorizontalDragStart: (details) {
                 xOffset = 0;
                 dragStartX = details.globalPosition.dx;
               },
+
               onHorizontalDragUpdate: (details) {
+                // calculate the offset from where drag started
+                // updates padding so the widget slides with the drag
                 xOffset = details.globalPosition.dx - dragStartX;
                 if (xOffset < 0) {
                   xOffset = 0;
+                  // limit drag so it doesn't go off screen
                 } else if (xOffset > maxOffset) {
                   xOffset = maxOffset;
                 }
                 setState((){});
               },
+
               onHorizontalDragEnd: (details) {
                 
                 if (details.globalPosition.dx - dragStartX > maxOffset) {
-                  // there isn't really a good way to undo deleting the folder
-                  // - cannot access the subfolders of its children
-                  // so just hide this until snackbar disappears
-                  // if snackbar disappears without undo being pressed, delete everything from db
-                  // has issues but we can just ignore those
+                  
+                  // mark this widget as deleted and hide it
                   deleted = true;
 
+                  // wait until after the snackbar expires before actually deleting the folder
+                  // cannot easily undo the delete, so we don't; just delay it until user loses the option
                   Timer(const Duration(milliseconds: 4000), () {
                     if (!deleted) {
                       return;
@@ -235,6 +258,8 @@ class AlarmFolderState extends State<AlarmFolder> {
                   setState((){});
                   HapticFeedback.heavyImpact(); // haptic feedback when deleting
 
+                  // Give user option to undo the delete through the snackbar
+                  // don't actually delete until after this expires
                   var snackBar = SnackBar(
                     content: Text("${AppLocalizations.of(context)!.deleted} ${
                       AppLocalizations.of(context)!.quoteLeft}$fakeName${

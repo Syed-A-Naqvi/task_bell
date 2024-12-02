@@ -68,6 +68,7 @@ void main() async {
         return;
       }
 
+      // set up a new alarm instance for updating the database with
       AlarmSettings newAlarmSettings = alarmInstance.alarmSettings.copyWith(dateTime: nextOccur);
 
       AlarmInstance newAlarmInstance = AlarmInstance(

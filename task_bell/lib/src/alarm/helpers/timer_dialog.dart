@@ -37,7 +37,6 @@ class TimerDialogState extends State<TimerDialog> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          // title: Text("Please provide all details"),
           title: Text(AppLocalizations.of(context)!.missingInformation),
         ),
       );

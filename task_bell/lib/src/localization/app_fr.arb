@@ -41,6 +41,7 @@
   "enterYTVideoURL": "Entrez l'URL de la vidéo YouTube",
   "selectYoutubeURL": "Sélectionnez une vidéo YouTube",
   "download": "Télécharger",
+  "failToDownload": "Échec du Téléchargement",
 
   "alarmDisable": "Alarme désactivée",
 
@@ -66,6 +67,8 @@
   "oct": "Oct",
   "nov": "Nov",
   "dec": "Déc",
+
+  "invalidName": "Nom Invalide",
 
   "create": "Créer",
   "update": "Mise à jour",

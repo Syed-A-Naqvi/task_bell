@@ -29,8 +29,8 @@ class FolderDialogState extends State<FolderDialog> {
     if (nameController.text.isEmpty) {
       showDialog(
         context: context,
-        builder: (context) => const AlertDialog(
-          title: Text("Invalid name"),
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.invalidName),
         ),
       );
       return;

@@ -227,6 +227,7 @@ class AlarmInstanceState extends State<AlarmInstance> {
       return "${days}d, ${hours}h, ${minutes}m, ${seconds}s";
     }
 
+    // Set the localized shortened month based on the integer month from DateTime
     String month = "";
     switch(nextOccurrence.month){
       case  1: month = AppLocalizations.of(context)!.jan; break;
@@ -289,9 +290,6 @@ class AlarmInstanceState extends State<AlarmInstance> {
             map["isactive"] = isActive ? 1 : 0;
             await tDB.updateAlarm(widget.alarmSettings.id, map);
             
-            // await tDB.updateAlarm(widget.alarmSettings.id, alarmInstance.recur.toMap());
-            // await tDB.updateAlarm(widget.alarmSettings.id, {"name":alarmInstance.name, "isactive": isActive ? 1 : 0});
-
             // if the alarm is toggled on, remove from queue, update time and re-add to queue
             if (isActive) {
               Alarm.stop(widget.alarmSettings.id); // remove from queue, may be unnecessary
@@ -356,7 +354,6 @@ class AlarmInstanceState extends State<AlarmInstance> {
             Alarm.stop(widget.alarmSettings.id);
 
             var snackBar = SnackBar(
-              // content: Text("Deleted Alarm"),
               content: Text("${AppLocalizations.of(context)!.deleted} ${
                 AppLocalizations.of(context)!.quoteLeft}${
                 edited ? fakeName : widget.name}${
@@ -385,10 +382,6 @@ class AlarmInstanceState extends State<AlarmInstance> {
           dragStartX = 0;
           vibrate = 0;
           setState((){});
-
-          // if (mounted) {
-          //   setState((){});
-          // }
         },
         child: Stack(
           children: [
@@ -437,30 +430,3 @@ class AlarmInstanceState extends State<AlarmInstance> {
     );
   }
 }
-
-  /* Current List of all fields for alarm instance
-    "name" String
-    "isactive" bool
-    "parentId" String
-    "key" String
-    "recurtype" String
-    "activedays": int,
-    "skipweeks": int,
-    "repeatweeks": int,
-    "recurtime": int,
-    "inittime": int,
-    "id" int // this refers to the alarmsettings id, could potentially benefit from renaming
-    "datetime" int // milliseconds since epoch when alarm will go off
-    "assetAudioPath" String
-    "loopAudio" bool
-    "vibrate" bool
-    "volume" double (nullable)
-    "volumeEnforced" bool
-    "fadeDuration" double
-    "warningNotificationOnKill" bool
-    "androidFullScreenIntent" bool
-    "title" String // notification title
-    "body" String // notification body
-    "stopButton" String (nullable) // notification stop button text 
-    "icon" String (nullable) // icon path? to for the icon of the alarm, for notification
-  */

@@ -151,20 +151,20 @@ class AlarmClockPageState extends State<AlarmClockPage> {
         }; // Map of titles to URLs
 
         return AlertDialog(
-          title: const Text("Download audio from YouTube"),
+          title: Text(AppLocalizations.of(context)!.downloadAudio),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
                 controller: urlController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter YouTube Video URL',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.enterYTVideoURL,
                 ),
               ),
               const SizedBox(height: 10),
               DropdownButton<String>(
                 value: selectedTitle,
-                hint: const Text("Select a YouTube video"),
+                hint: Text(AppLocalizations.of(context)!.selectYoutubeURL),
                 isExpanded: true,
                 items: videoOptions.keys.map((title) {
                   return DropdownMenuItem<String>(
@@ -179,14 +179,14 @@ class AlarmClockPageState extends State<AlarmClockPage> {
               ),
               const SizedBox(height: 10),
               TextButton(
-                child: const Text("Download"),
+                child: Text(AppLocalizations.of(context)!.download),
                 onPressed: () async {
                   String responsePath = await AudioDownload.downloadAudio(urlController.text);
                   if (responsePath.isEmpty) {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return const AlertDialog(title: Text("Failed to download"));
+                        return AlertDialog(title: Text(AppLocalizations.of(context)!.failToDownload));
                       },
                     );
                   } else {

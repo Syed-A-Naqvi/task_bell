@@ -28,6 +28,8 @@ class TimerPageState extends AlarmClockPageState {
 
   @override
   Future<void> loadData() async {
+
+    // get all the child folders, assign to list representing default folder
     topLevelFolders = await tDB.getAllChildFolders(-2);
     topLevelFolders = topLevelFolders.map((alarmFolder) => TimerFolder(
       id: alarmFolder.id,
@@ -37,6 +39,7 @@ class TimerPageState extends AlarmClockPageState {
     topLevelFolders.sort(compareFolders);
     debugPrint('Fetched ${topLevelFolders.length} folders');
 
+    // get all the child timers, assign to list representing default folder
     topLevelAlarms = await tDB.getAllChildAlarms(-2);
     topLevelAlarms = topLevelAlarms.map((alarm) => TimerInstance(
       name: alarm.name,
@@ -140,18 +143,6 @@ class TimerPageState extends AlarmClockPageState {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.timer),
         actions: [
-          // IconButton(
-          //   onPressed: () async {
-          //     for (var i in items) {
-          //       if (i is AlarmFolder && i.parentId == -2) {
-          //         await tDB.deleteFolder(i.id);
-          //       } else if (i is AlarmInstance && i.parentId == -2) {
-          //         await tDB.deleteAlarm(i.alarmSettings.id);
-          //       }
-          //     }
-          //     loadData();
-          //   },
-          //   icon: const Icon(Icons.delete) ),
           IconButton(
             icon: const Icon(Icons.cloud_upload),
             onPressed: _uploadToCloud,
@@ -179,6 +170,7 @@ class TimerPageState extends AlarmClockPageState {
       floatingActionButton: FloatingActionButton(
         mini: true,
         onPressed: () {
+          // dialog to create timers/folders and add them to the default folder
           showDialog(
             context: context,
             builder: (BuildContext context) {

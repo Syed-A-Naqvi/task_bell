@@ -44,6 +44,7 @@
   "enterYTVideoURL": "Enter YouTube Video URL",
   "selectYoutubeURL": "Select a YouTube video",
   "download": "Download",
+  "failToDownload": "Failed to Download",
 
   "alarmDisable": "Alarm Deactivated",
 
@@ -77,6 +78,8 @@
   "oct": "Oct",
   "nov": "Nov",
   "dec": "Dec",
+
+  "invalidName": "Invalid Name",
 
   "create": "Create",
   "update": "Update",
