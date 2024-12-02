@@ -158,7 +158,7 @@ class AlarmDialogState extends State<AlarmDialog> {
             onPressed: _selectTime,
             child: Text(recurTime == null
                 ? AppLocalizations.of(context)!.selectTime
-                : '${AppLocalizations.of(context)!.selectedTime}${recurTime!.hour}:${recurTime!.minute}'),
+                : '${AppLocalizations.of(context)!.selectedTime}${recurTime!.hour.toString().padLeft(2,'0')}:${recurTime!.minute.toString().padLeft(2,'0')}'),
           ),
           const SizedBox(height: 5),
           Align(
