@@ -154,6 +154,17 @@ class StopwatchPageState extends State<StopwatchPage> {
               initialData: _stopwatchService.laps,
               builder: (context, snapshot) {
                 final laps = snapshot.data ?? [];
+                if (laps.isEmpty) {
+                  return Center(
+                      child: Text(
+                          AppLocalizations.of(context)!.noLapsMessage,
+                          style: TextStyle(
+                              fontSize: SettingGlobalReferences.defaultFontSize.toDouble(),
+                          )
+                      )
+                  );
+                }
+
                 return ListView.builder(
                   itemCount: laps.length,
                   itemBuilder: (context, index) {

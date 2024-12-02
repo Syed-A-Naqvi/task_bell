@@ -172,9 +172,17 @@ class TimerPageState extends AlarmClockPageState {
           ),
         ],
       ),
-      body: ListView(
+      body: items.isEmpty
+          ? Center(
+        child: Text(
+          AppLocalizations.of(context)!.noTimersMessage, // Localized message for no timers
+          style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble()),
+        ),
+      )
+          : ListView(
         children: items,
       ),
+
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         mini: true,

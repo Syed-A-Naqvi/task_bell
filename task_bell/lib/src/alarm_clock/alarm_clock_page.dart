@@ -243,7 +243,14 @@ class AlarmClockPageState extends State<AlarmClockPage> {
           ),
         ],
       ),
-      body: ListView(
+      body: items.isEmpty
+          ? Center(
+        child: Text(
+          AppLocalizations.of(context)!.noAlarmsMessage, // Replace with your localized message
+          style: TextStyle(fontSize: SettingGlobalReferences.defaultFontSize.toDouble()),
+        ),
+      )
+          : ListView(
         children: items,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
