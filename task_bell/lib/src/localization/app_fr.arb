@@ -23,6 +23,7 @@
   "hourLetter": "h",
   "minuteLetter": "m",
   "secondLetter": "s",
+  "hourMinuteSeparator": "h",
   
   "stopwatch": "Chronomètre",
   "start": "Commencer",

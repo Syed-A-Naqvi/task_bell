@@ -246,8 +246,23 @@ class AlarmInstanceState extends State<AlarmInstance> {
     // theoretically should base this on the locale, but day month year is standard most places
     // not sure if time should go before or after date; not sure what should be considered more important
     // don't display seconds, alarms are not that precise
-    return "${nextOccurrence.day} $month ${nextOccurrence.hour}${AppLocalizations.of(context)!.hourLetter}${
-      nextOccurrence.minute}";
+    if (MediaQuery.of(context).alwaysUse24HourFormat) {
+      return "${nextOccurrence.day} $month ${nextOccurrence.hour.toString().padLeft(2, '0')}${AppLocalizations.of(context)!.hourMinuteSeparator}${
+      nextOccurrence.minute.toString().padLeft(2, '0')}";
+    }
+
+    // not sure if there is any point in localizing it since I think 12h time isn't seen much in other languages
+    if (nextOccurrence.hour > 12) {
+      return "${nextOccurrence.day} $month ${(nextOccurrence.hour-12).toString().padLeft(2, '0')}${AppLocalizations.of(context)!.hourMinuteSeparator}${
+      nextOccurrence.minute.toString().padLeft(2, '0')}pm";
+    }
+    if (nextOccurrence.hour == 0) {
+      return "${nextOccurrence.day} $month 12${AppLocalizations.of(context)!.hourLetter}${
+      nextOccurrence.minute}am";
+    }
+    return "${nextOccurrence.day} $month ${nextOccurrence.hour.toString().padLeft(2, '0')}${AppLocalizations.of(context)!.hourMinuteSeparator}${
+      nextOccurrence.minute.toString().padLeft(2, '0')}am";
+    
 
     // return nextOccurrence.toString();
   }

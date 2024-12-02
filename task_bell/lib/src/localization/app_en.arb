@@ -26,6 +26,7 @@
   "hourLetter": "d",
   "minuteLetter": "m",
   "secondLetter": "s",
+  "hourMinuteSeparator": ":",
 
   "stopwatch": "Stopwatch",
   "start": "Start",

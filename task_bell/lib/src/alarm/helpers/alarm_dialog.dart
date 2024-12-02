@@ -48,10 +48,16 @@ class AlarmDialogState extends State<AlarmDialog> {
   }
 
   Future<void> _selectTime() async {
-
+    debugPrint("always use 24h format: ${MediaQuery.of(context).alwaysUse24HourFormat.toString()}");
     TimeOfDay? selectedTime = await showTimePicker(
       context: context,
       initialTime: initialTime,
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context),
+          child: child!,
+        );
+      },
     );
 
     if (selectedTime != null) {
