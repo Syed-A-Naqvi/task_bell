@@ -6,6 +6,7 @@ import 'dart:async'; // For Timer
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../settings/settings_view.dart';
+import '../settings/settings_global_references.dart';
 
 class WorldTimesPage extends StatefulWidget {
   const WorldTimesPage({super.key});
@@ -229,7 +230,7 @@ class _WorldTimesPageState extends State<WorldTimesPage> with WidgetsBindingObse
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.worldTimes),
+        title: Text(AppLocalizations.of(context)!.worldTimes, style: TextStyle(fontSize: SettingGlobalReferences.appBarFontSize.toDouble())),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

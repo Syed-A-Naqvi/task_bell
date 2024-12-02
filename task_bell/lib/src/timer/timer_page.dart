@@ -8,6 +8,7 @@ import '../alarm/helpers/timer_or_folder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../alarm/alarm_instance.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../settings/settings_global_references.dart';
 
 class TimerPage extends AlarmClockPage {
   const TimerPage({super.key});
@@ -149,7 +150,7 @@ class TimerPageState extends AlarmClockPageState {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.timer),
+        title: Text(AppLocalizations.of(context)!.timer, style: TextStyle(fontSize: SettingGlobalReferences.appBarFontSize.toDouble())),
         actions: [
           IconButton(
             icon: const Icon(Icons.cloud_upload),

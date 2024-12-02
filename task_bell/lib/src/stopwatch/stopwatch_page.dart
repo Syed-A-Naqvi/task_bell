@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../settings/settings_view.dart';
 import 'stopwatch.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../settings/settings_global_references.dart';
 
 class StopwatchPage extends StatefulWidget {
   const StopwatchPage({super.key});
@@ -58,7 +59,7 @@ class StopwatchPageState extends State<StopwatchPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.stopwatch),
+        title: Text(AppLocalizations.of(context)!.stopwatch, style: TextStyle(fontSize: SettingGlobalReferences.appBarFontSize.toDouble())),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
