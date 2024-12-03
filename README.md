@@ -29,6 +29,10 @@ An effective local alarm system for shift workers and busy individuals.
 
 7. HTTP Requests
   - Can press the Music note icon in the app bar to paste a youtube video link. The video's audio will be downloaded and saved. This can then be used for the alarm sound when creating a new alarm
+  - Can get time of day in various cities around the world
+
+8. Internationalization/Localization
+  - Option to use app in french or english, depending on the system settings.
 
 ### How to use
 
@@ -41,6 +45,10 @@ Once everything has been filled out, you can press Create. This will then prompt
 
 These same instructions apply for Timers, with the only difference being that when selecting the time, it doesn't refer to time of day, but rather a time offset from when the alarm was enabled
 
+You can edit Alarms/Timers/Folders by pressing and holding on the alarm/timer you want to edit
+
+You can delete Alarms/Timers/Folders by swiping right on them. Option to undo until snackbar disappears
+
 #### Stopwatch
 
 This has all the basically functionality you would expect from a stopwatch. It can be started, stopped, restarted, reset, and keeps track of lap times.
@@ -48,8 +56,9 @@ This has all the basically functionality you would expect from a stopwatch. It c
 Laps are displayed below the stopwatch, with the lap number and time.
 
 
+#### Global City Times
 
-
+you can enter the name of various large cities to get the time of day at that city. This requires an internet connection
 
 ### Planned Core Functionality
 
