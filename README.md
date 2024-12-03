@@ -4,7 +4,7 @@ An effective local alarm system for shift workers and busy individuals.
 
 By:
 - Brendan Murray 100825624
-- Syed Rizvi
+- Syed Naqvi 100590852
 - Evan Goldenberg 100826897
 
 ### Implemented Functionality
